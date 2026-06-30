@@ -1,18 +1,12 @@
-import { ConfigPlugin } from "expo/config-plugins";
+import { ExpoConfig } from "expo/config";
 
-export const withAndroidConfig: ConfigPlugin = (config) => {
-  config.android = {
-    ...config.android,
+export const androidConfig: ExpoConfig["android"] = {
+  adaptiveIcon: {
+    backgroundColor: "#E6F4FE",
+    foregroundImage: "./assets/images/android-icon-foreground.png",
+    backgroundImage: "./assets/images/android-icon-background.png",
+    monochromeImage: "./assets/images/android-icon-monochrome.png",
+  },
 
-    adaptiveIcon: {
-      backgroundColor: "#E6F4FE",
-      foregroundImage: "./assets/images/android-icon-foreground.png",
-      backgroundImage: "./assets/images/android-icon-background.png",
-      monochromeImage: "./assets/images/android-icon-monochrome.png",
-    },
-
-    predictiveBackGestureEnabled: false,
-  };
-
-  return config;
+  predictiveBackGestureEnabled: false,
 };

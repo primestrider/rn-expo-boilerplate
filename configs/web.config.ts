@@ -1,11 +1,6 @@
-import { ConfigPlugin } from "expo/config-plugins";
+import { ExpoConfig } from "expo/config";
 
-export const withWebConfig: ConfigPlugin = (config) => {
-  config.web = {
-    ...config.web,
-    output: "static",
-    favicon: "./assets/images/favicon.png",
-  };
-
-  return config;
+export const webConfig: ExpoConfig["web"] = {
+  output: "static",
+  favicon: "./assets/images/favicon.png",
 };

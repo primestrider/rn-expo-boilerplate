@@ -1,18 +1,22 @@
-import { ConfigPlugin, withPlugins } from "expo/config-plugins";
+import { ExpoConfig } from "expo/config";
 
-export const withAppPlugins: ConfigPlugin = (config) =>
-  withPlugins(config, [
-    "expo-router",
+import { fontPlugin } from "./font.config";
+import { localesPlugin } from "./locales.config";
 
-    [
-      "expo-splash-screen",
-      {
-        backgroundColor: "#208AEF",
+export const plugins: NonNullable<ExpoConfig["plugins"]> = [
+  "expo-router",
 
-        android: {
-          image: "./assets/images/splash-icon.png",
-          imageWidth: 76,
-        },
+  [
+    "expo-splash-screen",
+    {
+      backgroundColor: "#208AEF",
+      android: {
+        image: "./assets/images/splash-icon.png",
+        imageWidth: 76,
       },
-    ],
-  ]);
+    },
+  ],
+
+  fontPlugin as [string, any],
+  localesPlugin as [string, any],
+];

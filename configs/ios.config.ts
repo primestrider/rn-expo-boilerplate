@@ -1,10 +1,5 @@
-import { ConfigPlugin } from "expo/config-plugins";
+import { ExpoConfig } from "expo/config";
 
-export const withIOSConfig: ConfigPlugin = (config) => {
-  config.ios = {
-    ...config.ios,
-    icon: "./assets/expo.icon",
-  };
-
-  return config;
+export const iosConfig: ExpoConfig["ios"] = {
+  icon: "./assets/expo.icon",
 };
