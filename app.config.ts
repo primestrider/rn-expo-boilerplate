@@ -5,11 +5,12 @@ import { androidConfig } from "./configs/android.config";
 import { iosConfig } from "./configs/ios.config";
 import { plugins } from "./configs/plugins.config";
 import { webConfig } from "./configs/web.config";
+import packageJson from "./package.json";
 
 const config: ExpoConfig = {
-  name: "rn-expo-boilerplate",
+  name: process.env.EXPO_PUBLIC_APP_NAME ?? packageJson.name,
   slug: "rn-expo-boilerplate",
-  version: "1.0.0",
+  version: packageJson.version,
 
   orientation: "portrait",
   icon: "./assets/images/icon.png",
