@@ -1,12 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import {
-  fontFamily,
-  fontSize,
-  fontWeight,
-  letterSpacing,
-  lineHeight,
-} from "../tokens";
+import { fontFamily, fontSize, letterSpacing, lineHeight } from "../tokens";
 
 export const typography = StyleSheet.create({
   // Font Family
