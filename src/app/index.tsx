@@ -1,15 +1,32 @@
 import { Link, type LinkProps } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
-import { view, text, styles } from "@/styles";
+import { styles, text, view } from "@/styles";
 
 export default function Index() {
   return (
-    <View style={view(styles.flex1, styles.bgBackground, styles.p6, styles.center)}>
-      <Text style={text(styles.text2xl, styles.fontBold, styles.textForeground, styles.fontSans, styles.mb2)}>
+    <View
+      style={view(styles.flex1, styles.bgBackground, styles.p6, styles.center)}
+    >
+      <Text
+        style={text(
+          styles.text2xl,
+          styles.fontBold,
+          styles.textForeground,
+          styles.fontSans,
+          styles.mb2,
+        )}
+      >
         RN Expo Boilerplate
       </Text>
-      <Text style={text(styles.textSm, styles.textMuted, styles.mb8, styles.textCenter)}>
+      <Text
+        style={text(
+          styles.textSm,
+          styles.textMuted,
+          styles.mb8,
+          styles.textCenter,
+        )}
+      >
         Tailwind-like utility styling with React Native's built-in StyleSheet
       </Text>
 
@@ -17,16 +34,22 @@ export default function Index() {
         <Pressable
           style={({ pressed }) =>
             view(
-              styles.bgPrimary,
+              styles.bgAmber100,
               styles.px6,
               styles.py4,
               styles.roundedXl,
               styles.shadowMd,
-              pressed && styles.opacity75
+              pressed && styles.opacity75,
             )
           }
         >
-          <Text style={text(styles.textBase, styles.fontSemibold, styles.textWhite)}>
+          <Text
+            style={text(
+              styles.textBase,
+              styles.fontSemibold,
+              styles.textAmber900,
+            )}
+          >
             Open Style Examples →
           </Text>
         </Pressable>

@@ -8,17 +8,17 @@ import { AppProvider } from "@/providers/AppProvider";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [fontLoaded] = useFonts({
     "Plus Jakarta Sans": require("@/assets/fonts/PlusJakartaSans-Regular.ttf"),
   });
 
   useEffect(() => {
-    if (loaded) {
+    if (fontLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontLoaded]);
 
-  if (!loaded) return null;
+  if (!fontLoaded) return null;
 
   return (
     <AppProvider>
