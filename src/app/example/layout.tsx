@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { view, text, gridCol, styles } from "@/styles";
+import { gridCol, styles, text, view } from "@/styles";
 
 const flexDirections = [
   { name: "flexRow", style: styles.flexRow },
@@ -32,7 +32,10 @@ export default function LayoutExample() {
   return (
     <>
       <Stack.Screen options={{ title: "Layout & Flex" }} />
-      <ExampleScreen title="Layout & Flex" subtitle="Flexbox, alignment, position, and grid">
+      <ExampleScreen
+        title="Layout & Flex"
+        subtitle="Flexbox, alignment, position, and grid"
+      >
         <Section
           title="Flex Direction"
           utilities={flexDirections.map((item) => item.name)}
@@ -41,8 +44,18 @@ export default function LayoutExample() {
             <DemoBox key={item.name} label={item.name} style={styles.mb3}>
               <View style={view(styles.h20, item.style, styles.gap2)}>
                 {[1, 2, 3].map((n) => (
-                  <View key={n} style={view(styles.bgPrimary, styles.px3, styles.py1, styles.rounded)}>
-                    <Text style={text(styles.textXs, styles.textWhite)}>{n}</Text>
+                  <View
+                    key={n}
+                    style={view(
+                      styles.bgPrimary,
+                      styles.px3,
+                      styles.py1,
+                      styles.rounded,
+                    )}
+                  >
+                    <Text style={text(styles.textXs, styles.textWhite)}>
+                      {n}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -56,11 +69,35 @@ export default function LayoutExample() {
         >
           {alignItems.map((item) => (
             <DemoBox key={item.name} label={item.name} style={styles.mb3}>
-              <View style={view(styles.flexRow, styles.h16, item.style, styles.gap2, styles.bgGray100, styles.rounded, styles.p2)}>
-                <View style={view(styles.bgPrimary, styles.px2, styles.py4, styles.rounded)}>
+              <View
+                style={view(
+                  styles.flexRow,
+                  styles.h16,
+                  item.style,
+                  styles.gap2,
+                  styles.bgGray100,
+                  styles.rounded,
+                  styles.p2,
+                )}
+              >
+                <View
+                  style={view(
+                    styles.bgPrimary,
+                    styles.px2,
+                    styles.py4,
+                    styles.rounded,
+                  )}
+                >
                   <Text style={text(styles.textXs, styles.textWhite)}>A</Text>
                 </View>
-                <View style={view(styles.bgPrimary, styles.px2, styles.py1, styles.rounded)}>
+                <View
+                  style={view(
+                    styles.bgPrimary,
+                    styles.px2,
+                    styles.py1,
+                    styles.rounded,
+                  )}
+                >
                   <Text style={text(styles.textXs, styles.textWhite)}>B</Text>
                 </View>
               </View>
@@ -74,10 +111,30 @@ export default function LayoutExample() {
         >
           {justifyContent.map((item) => (
             <DemoBox key={item.name} label={item.name} style={styles.mb3}>
-              <View style={view(styles.flexRow, item.style, styles.gap1, styles.bgGray100, styles.rounded, styles.p2)}>
+              <View
+                style={view(
+                  styles.flexRow,
+                  item.style,
+                  styles.gap1,
+                  styles.bgGray100,
+                  styles.rounded,
+                  styles.p2,
+                )}
+              >
                 {[1, 2, 3].map((n) => (
-                  <View key={n} style={view(styles.bgPrimary, styles.w8, styles.h8, styles.rounded, styles.center)}>
-                    <Text style={text(styles.textXs, styles.textWhite)}>{n}</Text>
+                  <View
+                    key={n}
+                    style={view(
+                      styles.bgPrimary,
+                      styles.w8,
+                      styles.h8,
+                      styles.rounded,
+                      styles.center,
+                    )}
+                  >
+                    <Text style={text(styles.textXs, styles.textWhite)}>
+                      {n}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -87,22 +144,53 @@ export default function LayoutExample() {
 
         <Section
           title="Flex Grow & Shrink"
-          utilities={["flex1", "flexGrow", "flexShrink0", "rowBetween", "center"]}
+          utilities={[
+            "flex1",
+            "flexGrow",
+            "flexShrink0",
+            "rowBetween",
+            "center",
+          ]}
         >
           <DemoBox label="flex1 — kedua box membagi ruang">
             <View style={view(styles.flexRow, styles.gap2, styles.h12)}>
-              <View style={view(styles.flex1, styles.bgPrimary, styles.rounded, styles.center)}>
+              <View
+                style={view(
+                  styles.flex1,
+                  styles.bgPrimary,
+                  styles.rounded,
+                  styles.center,
+                )}
+              >
                 <Text style={text(styles.textXs, styles.textWhite)}>flex1</Text>
               </View>
-              <View style={view(styles.flex1, styles.bgGray500, styles.rounded, styles.center)}>
+              <View
+                style={view(
+                  styles.flex1,
+                  styles.bgGray500,
+                  styles.rounded,
+                  styles.center,
+                )}
+              >
                 <Text style={text(styles.textXs, styles.textWhite)}>flex1</Text>
               </View>
             </View>
           </DemoBox>
           <DemoBox label="rowBetween" style={styles.mt3}>
-            <View style={view(styles.rowBetween, styles.bgGray100, styles.p3, styles.rounded)}>
-              <Text style={text(styles.textSm, styles.textForeground)}>Left</Text>
-              <Text style={text(styles.textSm, styles.textForeground)}>Right</Text>
+            <View
+              style={view(
+                styles.rowBetween,
+                styles.bgGray100,
+                styles.p3,
+                styles.rounded,
+              )}
+            >
+              <Text style={text(styles.textSm, styles.textForeground)}>
+                Left
+              </Text>
+              <Text style={text(styles.textSm, styles.textForeground)}>
+                Right
+              </Text>
             </View>
           </DemoBox>
         </Section>
@@ -112,7 +200,14 @@ export default function LayoutExample() {
           utilities={["relative", "absolute", "inset0", "z10", "z50"]}
         >
           <DemoBox label="absolute + top0 + right0">
-            <View style={view(styles.relative, styles.h24, styles.bgGray100, styles.roundedLg)}>
+            <View
+              style={view(
+                styles.relative,
+                styles.h24,
+                styles.bgGray100,
+                styles.roundedLg,
+              )}
+            >
               <View
                 style={view(
                   styles.absolute,
@@ -122,13 +217,15 @@ export default function LayoutExample() {
                   styles.px2,
                   styles.py1,
                   styles.rounded,
-                  styles.z50
+                  styles.z50,
                 )}
               >
                 <Text style={text(styles.textXs, styles.textWhite)}>Badge</Text>
               </View>
               <View style={view(styles.center, styles.hFull)}>
-                <Text style={text(styles.textSm, styles.textMuted)}>relative container</Text>
+                <Text style={text(styles.textSm, styles.textMuted)}>
+                  relative container
+                </Text>
               </View>
             </View>
           </DemoBox>
@@ -151,10 +248,12 @@ export default function LayoutExample() {
                     styles.rounded,
                     styles.center,
                     styles.border,
-                    styles.borderPrimary
+                    styles.borderPrimary,
                   )}
                 >
-                  <Text style={text(styles.textSm, styles.textPrimary500)}>{n}</Text>
+                  <Text style={text(styles.textSm, styles.textPrimary500)}>
+                    {n}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -164,9 +263,17 @@ export default function LayoutExample() {
               {["A", "B", "C", "D"].map((label) => (
                 <View
                   key={label}
-                  style={view(gridCol(2), styles.bgGray100, styles.p4, styles.roundedLg, styles.center)}
+                  style={view(
+                    gridCol(2),
+                    styles.bgGray100,
+                    styles.p4,
+                    styles.roundedLg,
+                    styles.center,
+                  )}
                 >
-                  <Text style={text(styles.textBase, styles.fontSemibold)}>{label}</Text>
+                  <Text style={text(styles.textBase, styles.fontSemiBold)}>
+                    {label}
+                  </Text>
                 </View>
               ))}
             </View>

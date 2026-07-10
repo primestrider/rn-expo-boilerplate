@@ -25,11 +25,12 @@ export const typography = StyleSheet.create({
   text5xl: { fontSize: fontSize["5xl"], lineHeight: lineHeight["5xl"] },
   text6xl: { fontSize: fontSize["6xl"], lineHeight: lineHeight["6xl"] },
 
-  // Font Weight
-  fontNormal: { fontWeight: fontWeight.normal },
-  fontMedium: { fontWeight: fontWeight.medium },
-  fontSemibold: { fontWeight: fontWeight.semibold },
-  fontBold: { fontWeight: fontWeight.bold },
+  // Font Weight — uses weight-specific font families for real bold glyphs
+  fontNormal: { fontFamily: fontFamily.sans },
+  fontMedium: { fontFamily: fontFamily.medium },
+  fontSemiBold: { fontFamily: fontFamily.semibold },
+  fontBold: { fontFamily: fontFamily.bold },
+  fontExtraBold: { fontFamily: fontFamily.extrabold },
 
   // Letter Spacing
   trackingTighter: { letterSpacing: letterSpacing.tighter },

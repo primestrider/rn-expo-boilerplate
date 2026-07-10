@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { view, text, palette, styles } from "@/styles";
+import { palette, styles, text, view } from "@/styles";
 
 const semanticBgs = [
   { name: "bgBackground", style: styles.bgBackground },
@@ -56,8 +56,21 @@ export default function ColorsExample() {
         >
           <View style={view(styles.flexRow, styles.flexWrap, styles.gap2)}>
             {semanticBgs.map((item) => (
-              <View key={item.name} style={view(styles.w24, styles.h16, styles.roundedLg, item.style, styles.center)}>
-                <Text style={text(styles.textXs, styles.fontMono, styles.textWhite)}>{item.name}</Text>
+              <View
+                key={item.name}
+                style={view(
+                  styles.w24,
+                  styles.h16,
+                  styles.roundedLg,
+                  item.style,
+                  styles.center,
+                )}
+              >
+                <Text
+                  style={text(styles.textXs, styles.fontMono, styles.textWhite)}
+                >
+                  {item.name}
+                </Text>
               </View>
             ))}
           </View>
@@ -70,8 +83,25 @@ export default function ColorsExample() {
         >
           <View style={view(styles.flexRow, styles.flexWrap, styles.gap2)}>
             {paletteBgs.map((item) => (
-              <View key={item.name} style={view(styles.w24, styles.h16, styles.roundedLg, item.style, styles.center)}>
-                <Text style={text(styles.textXs, styles.fontMono, styles.textGray700)}>{item.name}</Text>
+              <View
+                key={item.name}
+                style={view(
+                  styles.w24,
+                  styles.h16,
+                  styles.roundedLg,
+                  item.style,
+                  styles.center,
+                )}
+              >
+                <Text
+                  style={text(
+                    styles.textXs,
+                    styles.fontMono,
+                    styles.textGray700,
+                  )}
+                >
+                  {item.name}
+                </Text>
               </View>
             ))}
           </View>
@@ -83,8 +113,25 @@ export default function ColorsExample() {
         >
           <View style={view(styles.flexRow, styles.flexWrap, styles.gap2)}>
             {statusBgs.map((item) => (
-              <View key={item.name} style={view(styles.flex1, styles.h12, styles.roundedLg, item.style, styles.center)}>
-                <Text style={text(styles.textXs, styles.fontMedium, styles.textWhite)}>{item.name}</Text>
+              <View
+                key={item.name}
+                style={view(
+                  styles.flex1,
+                  styles.h12,
+                  styles.roundedLg,
+                  item.style,
+                  styles.center,
+                )}
+              >
+                <Text
+                  style={text(
+                    styles.textXs,
+                    styles.fontMedium,
+                    styles.textWhite,
+                  )}
+                >
+                  {item.name}
+                </Text>
               </View>
             ))}
           </View>
@@ -96,7 +143,10 @@ export default function ColorsExample() {
         >
           <DemoBox>
             {textColors.map((item) => (
-              <Text key={item.name} style={text(styles.textBase, styles.mb1, item.style)}>
+              <Text
+                key={item.name}
+                style={text(styles.textBase, styles.mb1, item.style)}
+              >
                 {item.name} — The quick brown fox
               </Text>
             ))}
@@ -112,11 +162,20 @@ export default function ColorsExample() {
             {Object.entries(palette.primary).map(([shade, color]) => (
               <View
                 key={shade}
-                style={view(styles.flex1, styles.h12, styles.rounded, { backgroundColor: color })}
+                style={view(styles.flex1, styles.h12, styles.rounded, {
+                  backgroundColor: color,
+                })}
               />
             ))}
           </View>
-          <Text style={text(styles.textXs, styles.textMuted, styles.mt2, styles.textCenter)}>
+          <Text
+            style={text(
+              styles.textXs,
+              styles.textMuted,
+              styles.mt2,
+              styles.textCenter,
+            )}
+          >
             primary 50 → 900
           </Text>
         </Section>

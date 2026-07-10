@@ -1,8 +1,12 @@
 import type { TextStyle } from "react-native";
 
-/** Font family configuration — loaded via expo-font config plugin */
+/** Font family configuration — each weight variant is registered as a separate family */
 export const fontFamily = {
-  sans: "Plus Jakarta Sans",
+  sans: "PlusJakartaSans-Regular",
+  medium: "PlusJakartaSans-Medium",
+  semibold: "PlusJakartaSans-SemiBold",
+  bold: "PlusJakartaSans-Bold",
+  extrabold: "PlusJakartaSans-ExtraBold",
   mono: "monospace",
 } as const;
 
@@ -38,6 +42,7 @@ export const fontWeight = {
   medium: "500",
   semibold: "600",
   bold: "700",
+  extrabold: "800",
 } as const satisfies Record<string, TextStyle["fontWeight"]>;
 
 export const letterSpacing = {

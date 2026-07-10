@@ -10,10 +10,9 @@ export default function Index() {
     >
       <Text
         style={text(
-          styles.text2xl,
-          styles.fontBold,
+          styles.text3xl,
+          styles.fontExtraBold,
           styles.textForeground,
-          styles.fontSans,
           styles.mb2,
         )}
       >
@@ -46,7 +45,7 @@ export default function Index() {
           <Text
             style={text(
               styles.textBase,
-              styles.fontSemibold,
+              styles.fontSemiBold,
               styles.textAmber900,
             )}
           >

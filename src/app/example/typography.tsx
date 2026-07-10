@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { view, text, styles } from "@/styles";
+import { styles, text } from "@/styles";
 
 const fontSizes = [
   { name: "textXs", style: styles.textXs },
@@ -19,7 +19,7 @@ const fontSizes = [
 const fontWeights = [
   { name: "fontNormal", style: styles.fontNormal },
   { name: "fontMedium", style: styles.fontMedium },
-  { name: "fontSemibold", style: styles.fontSemibold },
+  { name: "fontSemiBold", style: styles.fontSemiBold },
   { name: "fontBold", style: styles.fontBold },
 ] as const;
 
@@ -40,16 +40,28 @@ export default function TypographyExample() {
   return (
     <>
       <Stack.Screen options={{ title: "Typography" }} />
-      <ExampleScreen title="Typography" subtitle="Font size, weight, alignment, and decoration">
-        <Section
-          title="Font Family"
-          utilities={["fontSans", "fontMono"]}
-        >
+      <ExampleScreen
+        title="Typography"
+        subtitle="Font size, weight, alignment, and decoration"
+      >
+        <Section title="Font Family" utilities={["fontSans", "fontMono"]}>
           <DemoBox>
-            <Text style={text(styles.textLg, styles.fontSans, styles.textForeground, styles.mb2)}>
+            <Text
+              style={text(
+                styles.textLg,
+                styles.textForeground,
+                styles.mb2,
+              )}
+            >
               fontSans — Plus Jakarta Sans
             </Text>
-            <Text style={text(styles.textLg, styles.fontMono, styles.textForeground)}>
+            <Text
+              style={text(
+                styles.textLg,
+                styles.fontMono,
+                styles.textForeground,
+              )}
+            >
               fontMono — monospace 0123456789
             </Text>
           </DemoBox>
@@ -61,7 +73,14 @@ export default function TypographyExample() {
         >
           <DemoBox>
             {fontSizes.map((item) => (
-              <Text key={item.name} style={text(item.style, styles.textForeground, styles.mb1, styles.fontSans)}>
+              <Text
+                key={item.name}
+                style={text(
+                  item.style,
+                  styles.textForeground,
+                  styles.mb1,
+                )}
+              >
                 {item.name} — Typography scale
               </Text>
             ))}
@@ -74,7 +93,15 @@ export default function TypographyExample() {
         >
           <DemoBox>
             {fontWeights.map((item) => (
-              <Text key={item.name} style={text(styles.textBase, item.style, styles.textForeground, styles.mb1)}>
+              <Text
+                key={item.name}
+                style={text(
+                  styles.textBase,
+                  item.style,
+                  styles.textForeground,
+                  styles.mb1,
+                )}
+              >
                 {item.name} — Weight preview
               </Text>
             ))}
@@ -87,8 +114,19 @@ export default function TypographyExample() {
         >
           {textAligns.map((item) => (
             <DemoBox key={item.name} style={styles.mb2}>
-              <Text style={text(styles.textSm, styles.textGray500, styles.mb1, styles.fontMono)}>{item.name}</Text>
-              <Text style={text(styles.textBase, item.style, styles.textForeground)}>
+              <Text
+                style={text(
+                  styles.textSm,
+                  styles.textGray500,
+                  styles.mb1,
+                  styles.fontMono,
+                )}
+              >
+                {item.name}
+              </Text>
+              <Text
+                style={text(styles.textBase, item.style, styles.textForeground)}
+              >
                 Lorem ipsum dolor sit amet
               </Text>
             </DemoBox>
@@ -101,7 +139,15 @@ export default function TypographyExample() {
         >
           <DemoBox>
             {letterSpacings.map((item) => (
-              <Text key={item.name} style={text(styles.textBase, item.style, styles.textForeground, styles.mb2)}>
+              <Text
+                key={item.name}
+                style={text(
+                  styles.textBase,
+                  item.style,
+                  styles.textForeground,
+                  styles.mb2,
+                )}
+              >
                 {item.name} — SPACED TEXT
               </Text>
             ))}
@@ -113,16 +159,43 @@ export default function TypographyExample() {
           utilities={["underline", "lineThrough", "uppercase", "capitalize"]}
         >
           <DemoBox>
-            <Text style={text(styles.textBase, styles.underline, styles.textPrimary, styles.mb2)}>
+            <Text
+              style={text(
+                styles.textBase,
+                styles.underline,
+                styles.textPrimary,
+                styles.mb2,
+              )}
+            >
               underline — Underlined text
             </Text>
-            <Text style={text(styles.textBase, styles.lineThrough, styles.textMuted, styles.mb2)}>
+            <Text
+              style={text(
+                styles.textBase,
+                styles.lineThrough,
+                styles.textMuted,
+                styles.mb2,
+              )}
+            >
               lineThrough — Strikethrough text
             </Text>
-            <Text style={text(styles.textBase, styles.uppercase, styles.textForeground, styles.mb2)}>
+            <Text
+              style={text(
+                styles.textBase,
+                styles.uppercase,
+                styles.textForeground,
+                styles.mb2,
+              )}
+            >
               uppercase — transformed text
             </Text>
-            <Text style={text(styles.textBase, styles.capitalize, styles.textForeground)}>
+            <Text
+              style={text(
+                styles.textBase,
+                styles.capitalize,
+                styles.textForeground,
+              )}
+            >
               capitalize — hello world example
             </Text>
           </DemoBox>

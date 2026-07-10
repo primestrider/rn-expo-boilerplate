@@ -5,7 +5,7 @@ import { Pressable, Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { view, text, gridCol, space, styles } from "@/styles";
+import { gridCol, space, styles, text, view } from "@/styles";
 
 export default function HelpersExample() {
   const [active, setActive] = useState(false);
@@ -21,10 +21,22 @@ export default function HelpersExample() {
         <Section
           title="view() — Conditional Styles"
           description="Combine utility classes with conditions, like clsx/cn"
-          utilities={["view()", "styles.flex1", "styles.bgPrimary", "styles.opacity75"]}
+          utilities={[
+            "view()",
+            "styles.flex1",
+            "styles.bgPrimary",
+            "styles.opacity75",
+          ]}
         >
           <DemoBox>
-            <Text style={text(styles.textSm, styles.fontMono, styles.textGray600, styles.mb3)}>
+            <Text
+              style={text(
+                styles.textSm,
+                styles.fontMono,
+                styles.textGray600,
+                styles.mb3,
+              )}
+            >
               {`view(styles.p4, styles.roundedLg, active && styles.bgPrimary)`}
             </Text>
             <Pressable
@@ -34,10 +46,15 @@ export default function HelpersExample() {
                 styles.roundedLg,
                 styles.border,
                 styles.borderBorder,
-                active ? styles.bgPrimary : styles.bgGray100
+                active ? styles.bgPrimary : styles.bgGray100,
               )}
             >
-              <Text style={text(styles.textBase, active ? styles.textWhite : styles.textForeground)}>
+              <Text
+                style={text(
+                  styles.textBase,
+                  active ? styles.textWhite : styles.textForeground,
+                )}
+              >
                 {active ? "Active — tap to deactivate" : "Tap to activate"}
               </Text>
             </Pressable>
@@ -52,11 +69,19 @@ export default function HelpersExample() {
                   styles.py3,
                   styles.roundedLg,
                   styles.center,
-                  pressed && styles.opacity75
+                  pressed && styles.opacity75,
                 )
               }
             >
-              <Text style={text(styles.textBase, styles.fontSemibold, styles.textWhite)}>Press Me</Text>
+              <Text
+                style={text(
+                  styles.textBase,
+                  styles.fontSemiBold,
+                  styles.textWhite,
+                )}
+              >
+                Press Me
+              </Text>
             </Pressable>
           </DemoBox>
         </Section>
@@ -67,20 +92,48 @@ export default function HelpersExample() {
           utilities={["space('p', 20)", "space('mx', 8)"]}
         >
           <DemoBox>
-            <Text style={text(styles.textSm, styles.fontMono, styles.textGray600, styles.mb3)}>
+            <Text
+              style={text(
+                styles.textSm,
+                styles.fontMono,
+                styles.textGray600,
+                styles.mb3,
+              )}
+            >
               {`space('p', ${dynamicPadding})`}
             </Text>
             <View style={view(styles.bgGray100, styles.roundedLg)}>
-              <View style={view(styles.bgPrimary, styles.rounded, space("p", dynamicPadding))}>
-                <Text style={text(styles.textSm, styles.textWhite)}>Dynamic padding: {dynamicPadding}px</Text>
+              <View
+                style={view(
+                  styles.bgPrimary,
+                  styles.rounded,
+                  space("p", dynamicPadding),
+                )}
+              >
+                <Text style={text(styles.textSm, styles.textWhite)}>
+                  Dynamic padding: {dynamicPadding}px
+                </Text>
               </View>
             </View>
           </DemoBox>
 
           <DemoBox label="space('mx', 8)" style={styles.mt3}>
             <View style={view(styles.bgGray100, styles.roundedLg, styles.p4)}>
-              <View style={view(styles.bgPrimary100, styles.rounded, space("mx", 8), styles.py3)}>
-                <Text style={text(styles.textSm, styles.textPrimary500, styles.textCenter)}>
+              <View
+                style={view(
+                  styles.bgPrimary100,
+                  styles.rounded,
+                  space("mx", 8),
+                  styles.py3,
+                )}
+              >
+                <Text
+                  style={text(
+                    styles.textSm,
+                    styles.textPrimary500,
+                    styles.textCenter,
+                  )}
+                >
                   Horizontal margin 8px
                 </Text>
               </View>
@@ -106,10 +159,12 @@ export default function HelpersExample() {
                       styles.rounded,
                       styles.center,
                       styles.border,
-                      styles.borderPrimary
+                      styles.borderPrimary,
                     )}
                   >
-                    <Text style={text(styles.textXs, styles.textPrimary500)}>{i + 1}</Text>
+                    <Text style={text(styles.textXs, styles.textPrimary500)}>
+                      {i + 1}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -129,10 +184,17 @@ export default function HelpersExample() {
               styles.border,
               styles.borderBorder,
               styles.shadow,
-              space("p", 16)
+              space("p", 16),
             )}
           >
-            <Text style={text(styles.textLg, styles.fontBold, styles.textForeground, styles.mb4)}>
+            <Text
+              style={text(
+                styles.textLg,
+                styles.fontBold,
+                styles.textForeground,
+                styles.mb4,
+              )}
+            >
               Dashboard Preview
             </Text>
             <View style={view(styles.flexRow, styles.flexWrap, styles.gap3)}>
@@ -143,10 +205,31 @@ export default function HelpersExample() {
               ].map((stat) => (
                 <View
                   key={stat.label}
-                  style={view(gridCol(3), stat.color, styles.roundedLg, styles.p3)}
+                  style={view(
+                    gridCol(3),
+                    stat.color,
+                    styles.roundedLg,
+                    styles.p3,
+                  )}
                 >
-                  <Text style={text(styles.textXs, styles.textWhite, styles.opacity75)}>{stat.label}</Text>
-                  <Text style={text(styles.textXl, styles.fontBold, styles.textWhite)}>{stat.value}</Text>
+                  <Text
+                    style={text(
+                      styles.textXs,
+                      styles.textWhite,
+                      styles.opacity75,
+                    )}
+                  >
+                    {stat.label}
+                  </Text>
+                  <Text
+                    style={text(
+                      styles.textXl,
+                      styles.fontBold,
+                      styles.textWhite,
+                    )}
+                  >
+                    {stat.value}
+                  </Text>
                 </View>
               ))}
             </View>

@@ -3,7 +3,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { exampleScreens } from "@/example/data/navigation";
-import { view, text, styles } from "@/styles";
+import { styles, text, view } from "@/styles";
 
 export default function ExampleIndex() {
   const insets = useSafeAreaInsets();
@@ -13,9 +13,18 @@ export default function ExampleIndex() {
       <Stack.Screen options={{ title: "Style Examples" }} />
       <ScrollView
         style={view(styles.flex1, styles.bgBackground)}
-        contentContainerStyle={view(styles.p4, { paddingBottom: insets.bottom + 24 })}
+        contentContainerStyle={view(styles.p4, {
+          paddingBottom: insets.bottom + 24,
+        })}
       >
-        <Text style={text(styles.text2xl, styles.fontBold, styles.textForeground, styles.mb2, styles.fontSans)}>
+        <Text
+          style={text(
+            styles.text2xl,
+            styles.fontBold,
+            styles.textForeground,
+            styles.mb2,
+          )}
+        >
           Utility Styling
         </Text>
         <Text style={text(styles.textSm, styles.textMuted, styles.mb6)}>
@@ -35,18 +44,45 @@ export default function ExampleIndex() {
                     styles.border,
                     styles.borderBorder,
                     styles.shadowSm,
-                    pressed && styles.opacity75
+                    pressed && styles.opacity75,
                   )
                 }
               >
-                <Text style={text(styles.textBase, styles.fontSemibold, styles.textForeground, styles.mb1)}>
+                <Text
+                  style={text(
+                    styles.textBase,
+                    styles.fontSemiBold,
+                    styles.textForeground,
+                    styles.mb1,
+                  )}
+                >
                   {screen.title}
                 </Text>
-                <Text style={text(styles.textSm, styles.textMuted, styles.mb3)}>{screen.description}</Text>
-                <View style={view(styles.flexRow, styles.flexWrap, styles.gap1)}>
+                <Text style={text(styles.textSm, styles.textMuted, styles.mb3)}>
+                  {screen.description}
+                </Text>
+                <View
+                  style={view(styles.flexRow, styles.flexWrap, styles.gap1)}
+                >
                   {screen.utilities.map((utility) => (
-                    <View key={utility} style={view(styles.bgPrimary50, styles.px2, styles.py1, styles.rounded)}>
-                      <Text style={text(styles.textXs, styles.fontMono, styles.textPrimary500)}>{utility}</Text>
+                    <View
+                      key={utility}
+                      style={view(
+                        styles.bgPrimary50,
+                        styles.px2,
+                        styles.py1,
+                        styles.rounded,
+                      )}
+                    >
+                      <Text
+                        style={text(
+                          styles.textXs,
+                          styles.fontMono,
+                          styles.textPrimary500,
+                        )}
+                      >
+                        {utility}
+                      </Text>
                     </View>
                   ))}
                 </View>

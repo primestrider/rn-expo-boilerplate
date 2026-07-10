@@ -10,7 +10,7 @@ type Props = {
   children?: ReactNode;
 };
 
-export function DemoBox({ label, style, children }: Props) {
+export function DemoBox({ label, style, children }: Readonly<Props>) {
   return (
     <View
       style={view(
