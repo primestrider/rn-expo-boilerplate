@@ -4,50 +4,50 @@ import { Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { cx, tx, u } from "@/styles";
+import { view, text, styles } from "@/styles";
 
 const borderRadii = [
-  { name: "roundedNone", style: u.roundedNone },
-  { name: "roundedSm", style: u.roundedSm },
-  { name: "rounded", style: u.rounded },
-  { name: "roundedLg", style: u.roundedLg },
-  { name: "roundedXl", style: u.roundedXl },
-  { name: "rounded2xl", style: u.rounded2xl },
-  { name: "roundedFull", style: u.roundedFull },
+  { name: "roundedNone", style: styles.roundedNone },
+  { name: "roundedSm", style: styles.roundedSm },
+  { name: "rounded", style: styles.rounded },
+  { name: "roundedLg", style: styles.roundedLg },
+  { name: "roundedXl", style: styles.roundedXl },
+  { name: "rounded2xl", style: styles.rounded2xl },
+  { name: "roundedFull", style: styles.roundedFull },
 ] as const;
 
 const shadows = [
-  { name: "shadowSm", style: u.shadowSm },
-  { name: "shadow", style: u.shadow },
-  { name: "shadowMd", style: u.shadowMd },
-  { name: "shadowLg", style: u.shadowLg },
+  { name: "shadowSm", style: styles.shadowSm },
+  { name: "shadow", style: styles.shadow },
+  { name: "shadowMd", style: styles.shadowMd },
+  { name: "shadowLg", style: styles.shadowLg },
 ] as const;
 
 const opacities = [
-  { name: "opacity25", style: u.opacity25 },
-  { name: "opacity50", style: u.opacity50 },
-  { name: "opacity75", style: u.opacity75 },
-  { name: "opacity100", style: u.opacity100 },
+  { name: "opacity25", style: styles.opacity25 },
+  { name: "opacity50", style: styles.opacity50 },
+  { name: "opacity75", style: styles.opacity75 },
+  { name: "opacity100", style: styles.opacity100 },
 ] as const;
 
 export default function AppearanceExample() {
   return (
     <>
       <Stack.Screen options={{ title: "Appearance" }} />
-      <ExampleScreen title="Appearance" subtitle="Border, radius, shadow, dan opacity">
+      <ExampleScreen title="Appearance" subtitle="Border, radius, shadow, and opacity">
         <Section
           title="Border Width & Color"
           utilities={["border", "border2", "borderT", "borderPrimary", "borderGray200"]}
         >
-          <View style={cx(u.flexRow, u.flexWrap, u.gap3)}>
-            <View style={cx(u.w20, u.h20, u.border, u.borderBorder, u.rounded, u.center)}>
-              <Text style={tx(u.textXs, u.fontMono)}>border</Text>
+          <View style={view(styles.flexRow, styles.flexWrap, styles.gap3)}>
+            <View style={view(styles.w20, styles.h20, styles.border, styles.borderBorder, styles.rounded, styles.center)}>
+              <Text style={text(styles.textXs, styles.fontMono)}>border</Text>
             </View>
-            <View style={cx(u.w20, u.h20, u.border2, u.borderPrimary, u.rounded, u.center)}>
-              <Text style={tx(u.textXs, u.fontMono, u.textPrimary)}>border2</Text>
+            <View style={view(styles.w20, styles.h20, styles.border2, styles.borderPrimary, styles.rounded, styles.center)}>
+              <Text style={text(styles.textXs, styles.fontMono, styles.textPrimary)}>border2</Text>
             </View>
-            <View style={cx(u.w20, u.h20, u.borderT, u.borderGray300, u.bgGray50, u.rounded)}>
-              <Text style={tx(u.textXs, u.fontMono, u.textCenter, u.mt6)}>borderT</Text>
+            <View style={view(styles.w20, styles.h20, styles.borderT, styles.borderGray300, styles.bgGray50, styles.rounded)}>
+              <Text style={text(styles.textXs, styles.fontMono, styles.textCenter, styles.mt6)}>borderT</Text>
             </View>
           </View>
         </Section>
@@ -56,11 +56,11 @@ export default function AppearanceExample() {
           title="Border Radius"
           utilities={borderRadii.map((item) => item.name)}
         >
-          <View style={cx(u.flexRow, u.flexWrap, u.gap3)}>
+          <View style={view(styles.flexRow, styles.flexWrap, styles.gap3)}>
             {borderRadii.map((item) => (
-              <View key={item.name} style={cx(u.itemsCenter)}>
-                <View style={cx(u.w16, u.h16, u.bgPrimary, item.style)} />
-                <Text style={tx(u.textXs, u.fontMono, u.textGray500, u.mt1)}>{item.name}</Text>
+              <View key={item.name} style={view(styles.itemsCenter)}>
+                <View style={view(styles.w16, styles.h16, styles.bgPrimary, item.style)} />
+                <Text style={text(styles.textXs, styles.fontMono, styles.textGray500, styles.mt1)}>{item.name}</Text>
               </View>
             ))}
           </View>
@@ -70,18 +70,18 @@ export default function AppearanceExample() {
           title="Corner Radius"
           utilities={["roundedT", "roundedB", "roundedL", "roundedR"]}
         >
-          <View style={cx(u.flexRow, u.gap3)}>
+          <View style={view(styles.flexRow, styles.gap3)}>
             {(
               [
-                { name: "roundedT", style: u.roundedT },
-                { name: "roundedB", style: u.roundedB },
-                { name: "roundedL", style: u.roundedL },
-                { name: "roundedR", style: u.roundedR },
+                { name: "roundedT", style: styles.roundedT },
+                { name: "roundedB", style: styles.roundedB },
+                { name: "roundedL", style: styles.roundedL },
+                { name: "roundedR", style: styles.roundedR },
               ] as const
             ).map((item) => (
-              <View key={item.name} style={cx(u.flex1, u.itemsCenter)}>
-                <View style={cx(u.w16, u.h16, u.bgPrimary100, item.style, u.border, u.borderPrimary)} />
-                <Text style={tx(u.textXs, u.fontMono, u.textGray500, u.mt1)}>{item.name}</Text>
+              <View key={item.name} style={view(styles.flex1, styles.itemsCenter)}>
+                <View style={view(styles.w16, styles.h16, styles.bgPrimary100, item.style, styles.border, styles.borderPrimary)} />
+                <Text style={text(styles.textXs, styles.fontMono, styles.textGray500, styles.mt1)}>{item.name}</Text>
               </View>
             ))}
           </View>
@@ -91,11 +91,11 @@ export default function AppearanceExample() {
           title="Shadow"
           utilities={shadows.map((item) => item.name)}
         >
-          <View style={cx(u.flexRow, u.flexWrap, u.gap4, u.p2)}>
+          <View style={view(styles.flexRow, styles.flexWrap, styles.gap4, styles.p2)}>
             {shadows.map((item) => (
-              <View key={item.name} style={cx(u.itemsCenter)}>
-                <View style={cx(u.w24, u.h16, u.bgCard, item.style, u.roundedLg, u.center)}>
-                  <Text style={tx(u.textXs, u.fontMono, u.textGray600)}>{item.name}</Text>
+              <View key={item.name} style={view(styles.itemsCenter)}>
+                <View style={view(styles.w24, styles.h16, styles.bgCard, item.style, styles.roundedLg, styles.center)}>
+                  <Text style={text(styles.textXs, styles.fontMono, styles.textGray600)}>{item.name}</Text>
                 </View>
               </View>
             ))}
@@ -107,13 +107,13 @@ export default function AppearanceExample() {
           utilities={opacities.map((item) => item.name)}
         >
           <DemoBox>
-            <View style={cx(u.flexRow, u.gap2)}>
+            <View style={view(styles.flexRow, styles.gap2)}>
               {opacities.map((item) => (
                 <View
                   key={item.name}
-                  style={cx(u.flex1, u.h12, u.bgPrimary, item.style, u.rounded, u.center)}
+                  style={view(styles.flex1, styles.h12, styles.bgPrimary, item.style, styles.rounded, styles.center)}
                 >
-                  <Text style={tx(u.textXs, u.textWhite, u.fontMono)}>{item.name}</Text>
+                  <Text style={text(styles.textXs, styles.textWhite, styles.fontMono)}>{item.name}</Text>
                 </View>
               ))}
             </View>
@@ -121,15 +121,15 @@ export default function AppearanceExample() {
         </Section>
 
         <Section
-          title="Kombinasi Card"
+          title="Card Combination"
           utilities={["bgCard", "roundedXl", "border", "shadowMd", "p5"]}
         >
-          <View style={cx(u.bgCard, u.roundedXl, u.border, u.borderBorder, u.shadowMd, u.p5)}>
-            <Text style={tx(u.textLg, u.fontSemibold, u.textForeground, u.mb1)}>
+          <View style={view(styles.bgCard, styles.roundedXl, styles.border, styles.borderBorder, styles.shadowMd, styles.p5)}>
+            <Text style={text(styles.textLg, styles.fontSemibold, styles.textForeground, styles.mb1)}>
               Card Component
             </Text>
-            <Text style={tx(u.textSm, u.textMuted)}>
-              Contoh kombinasi appearance utilities untuk membuat card.
+            <Text style={text(styles.textSm, styles.textMuted)}>
+              Example of combining appearance utilities to create a card.
             </Text>
           </View>
         </Section>

@@ -1,33 +1,33 @@
 import { Link, type LinkProps } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
-import { cx, tx, u } from "@/styles";
+import { view, text, styles } from "@/styles";
 
 export default function Index() {
   return (
-    <View style={cx(u.flex1, u.bgBackground, u.p6, u.center)}>
-      <Text style={tx(u.text2xl, u.fontBold, u.textForeground, u.fontSans, u.mb2)}>
+    <View style={view(styles.flex1, styles.bgBackground, styles.p6, styles.center)}>
+      <Text style={text(styles.text2xl, styles.fontBold, styles.textForeground, styles.fontSans, styles.mb2)}>
         RN Expo Boilerplate
       </Text>
-      <Text style={tx(u.textSm, u.textMuted, u.mb8, u.textCenter)}>
-        Utility styling mirip Tailwind dengan StyleSheet bawaan React Native
+      <Text style={text(styles.textSm, styles.textMuted, styles.mb8, styles.textCenter)}>
+        Tailwind-like utility styling with React Native's built-in StyleSheet
       </Text>
 
       <Link href={"/example" as LinkProps["href"]} asChild>
         <Pressable
           style={({ pressed }) =>
-            cx(
-              u.bgPrimary,
-              u.px6,
-              u.py4,
-              u.roundedXl,
-              u.shadowMd,
-              pressed && u.opacity75
+            view(
+              styles.bgPrimary,
+              styles.px6,
+              styles.py4,
+              styles.roundedXl,
+              styles.shadowMd,
+              pressed && styles.opacity75
             )
           }
         >
-          <Text style={tx(u.textBase, u.fontSemibold, u.textWhite)}>
-            Buka Style Examples →
+          <Text style={text(styles.textBase, styles.fontSemibold, styles.textWhite)}>
+            Open Style Examples →
           </Text>
         </Pressable>
       </Link>

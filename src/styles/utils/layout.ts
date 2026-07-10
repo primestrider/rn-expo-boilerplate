@@ -85,14 +85,14 @@ export const layout = StyleSheet.create({
   },
 });
 
-/** Gap utilities — dinamis karena RN gap butuh nilai numerik */
+/** Gap utilities — dynamically generated from spacing tokens since React Native's `gap` requires numeric values */
 export const gap = StyleSheet.create(
   Object.fromEntries(
     Object.entries(spacing).map(([key, value]) => [`gap${key}`, { gap: value }])
   ) as Record<string, { gap: number }>
 );
 
-/** Grid-like helpers (RN tidak punya CSS Grid, ini simulasi dengan flex) */
+/** Grid-like helpers — React Native doesn't have CSS Grid, so this simulates it with flexbox + flexWrap */
 export const grid = StyleSheet.create({
   gridCols1: { flexDirection: "row", flexWrap: "wrap" },
   gridCols2: { flexDirection: "row", flexWrap: "wrap" },
@@ -102,7 +102,18 @@ export const grid = StyleSheet.create({
 
 import type { ViewStyle } from "react-native";
 
-/** Helper untuk membuat grid item dengan lebar kolom tertentu */
+/**
+ * Calculate grid column width as a percentage based on the number of columns.
+ * Used with `gridCols*` container styles to create a CSS Grid-like layout.
+ *
+ * @param cols - Number of columns (1-6)
+ *
+ * @example
+ * <View style={styles.gridCols3}>
+ *   <View style={gridCol(3)} />
+ *   <View style={gridCol(3)} />
+ * </View>
+ */
 export function gridCol(cols: 1 | 2 | 3 | 4 | 5 | 6): ViewStyle {
   return { width: `${100 / cols}%` };
 }

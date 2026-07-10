@@ -11,20 +11,20 @@ import {
   sizing,
   typography,
 } from "./utils";
-import { cx, space, tx, vx } from "./helpers";
+import { space, view, vx, text } from "./helpers";
 import type { Utilities } from "./types";
 
 /**
- * Utility styles — API mirip Tailwind, tapi pakai StyleSheet bawaan React Native.
+ * Utility styles — Tailwind-like API using React Native's built-in StyleSheet.
  *
  * @example
- * import { u, cx } from '@/styles';
+ * import { styles, view } from '@/styles';
  *
- * <View style={cx(u.flex1, u.p4, u.bgBackground)}>
- *   <Text style={tx(u.textLg, u.fontBold, u.textForeground)}>Hello</Text>
+ * <View style={view(styles.flex1, styles.p4, styles.bgBackground)}>
+ *   <Text style={text(styles.textLg, styles.fontBold, styles.textForeground)}>Hello</Text>
  * </View>
  */
-export const u = {
+export const styles = {
   ...layout,
   ...gap,
   ...grid,
@@ -37,9 +37,9 @@ export const u = {
   ...appearance,
 } as Utilities;
 
-export { cx, space, tx, vx, gridCol };
+export { view, space, text, vx, gridCol };
 
-// Re-export tokens untuk akses langsung
+// Re-export tokens for direct access
 export * from "./tokens";
 
 // Re-export individual utility groups

@@ -5,8 +5,15 @@ import type {
   ViewStyle,
 } from "react-native";
 
+import { fontFamily } from "./tokens";
+
 type Falsy = false | null | undefined | "";
 
+/**
+ * Filters out falsy values from a style array and returns a single merged style.
+ * Returns `undefined` for empty arrays, the single style for arrays of length 1,
+ * or the array itself for multiple styles (React Native handles array merging natively).
+ */
 function filterStyles<T extends ViewStyle | TextStyle | ImageStyle>(
   styles: (StyleProp<T> | Falsy)[]
 ): StyleProp<T> {
@@ -21,37 +28,44 @@ function filterStyles<T extends ViewStyle | TextStyle | ImageStyle>(
 }
 
 /**
- * Gabungkan style utilities untuk View / Pressable / ScrollView.
+ * Combine style utilities for View / Pressable / ScrollView.
+ * Filters out falsy values, making it safe to use conditional styles inline.
  *
  * @example
- * <View style={cx(u.flex1, u.p4, isActive && u.bgPrimary)} />
+ * <View style={view(styles.flex1, styles.p4, isActive && styles.bgPrimary)} />
  */
-export function cx(
+export function view(
   ...styles: (StyleProp<ViewStyle> | Falsy)[]
 ): StyleProp<ViewStyle> {
   return filterStyles(styles);
 }
 
 /**
- * Gabungkan style utilities untuk Text.
+ * Combine style utilities for Text.
+ * Automatically applies the default font family (Plus Jakarta Sans).
+ * Filters out falsy values for safe conditional styling.
  *
  * @example
- * <Text style={tx(u.textLg, u.fontBold, u.textForeground, u.mb2)} />
+ * <Text style={text(styles.textLg, styles.fontBold, styles.textForeground, styles.mb2)} />
  */
-export function tx(
+export function text(
   ...styles: (StyleProp<TextStyle> | Falsy)[]
 ): StyleProp<TextStyle> {
-  return filterStyles(styles);
+  return filterStyles([{ fontFamily: fontFamily.sans }, ...styles]);
 }
 
-/** @deprecated Gunakan `cx` — alias untuk kompatibilitas */
-export const vx = cx;
+/** @deprecated Use `view` instead — alias for backward compatibility */
+export const vx = view;
 
 /**
- * Buat style dinamis dari token spacing.
+ * Create dynamic spacing styles from numeric values.
+ * Useful when spacing needs to be computed at runtime rather than using static tokens.
+ *
+ * @param type - Spacing type: p/padding, m/margin, px/py/pt/pr/pb/pl, mx/my/mt/mr/mb/ml
+ * @param value - The spacing value in pixels
  *
  * @example
- * <View style={cx(u.p4, space('p', 6))} />
+ * <View style={view(styles.p4, space('p', 6))} />
  */
 export function space(
   type:

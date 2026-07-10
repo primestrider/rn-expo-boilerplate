@@ -1,12 +1,12 @@
 import type { TextStyle } from "react-native";
 
-/** Font family dari font.config.ts */
+/** Font family configuration — loaded via expo-font config plugin */
 export const fontFamily = {
   sans: "Plus Jakarta Sans",
   mono: "monospace",
 } as const;
 
-/** Skala font size — mirip Tailwind */
+/** Font size scale — inspired by Tailwind CSS */
 export const fontSize = {
   xs: 12,
   sm: 14,

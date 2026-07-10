@@ -1,4 +1,4 @@
-/** Skala spacing 4px base — mirip Tailwind */
+/** 4px-based spacing scale — inspired by Tailwind CSS */
 export const spacing = {
   0: 0,
   0.5: 2,

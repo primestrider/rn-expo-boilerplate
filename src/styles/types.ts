@@ -77,6 +77,22 @@ type FixedSizeUtilities = {
   [K in SpacingToken as `maxH${K}`]: Pick<ViewStyle, "maxHeight">;
 };
 
+type ColorFamily = "primary" | "red" | "orange" | "amber" | "yellow" | "lime" | "green" | "emerald" | "teal" | "cyan" | "sky" | "blue" | "indigo" | "violet" | "purple" | "fuchsia" | "pink" | "rose" | "slate" | "gray" | "zinc" | "neutral" | "stone" | "taupe" | "mauve" | "mist" | "olive" | "success" | "warning" | "error" | "info";
+
+type ColorShade = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+
+type SimpleColor = "white" | "black" | "transparent";
+
+type ColorUtilities<Prefix extends string, Prop extends keyof (ViewStyle & TextStyle)> = {
+  [F in ColorFamily as `${Prefix}${Capitalize<F & string>}${ColorShade}`]: Pick<ViewStyle & TextStyle, Prop>;
+} & {
+  [S in SimpleColor as `${Prefix}${Capitalize<S & string>}`]: Pick<ViewStyle & TextStyle, Prop>;
+};
+
+type BgColorUtilities = ColorUtilities<"bg", "backgroundColor">;
+type TextColorUtilities = ColorUtilities<"text", "color">;
+type BorderColorUtilities = ColorUtilities<"border", "borderColor">;
+
 export type Utilities = typeof layout &
   typeof grid &
   typeof sizing &
@@ -86,4 +102,7 @@ export type Utilities = typeof layout &
   AxisSpacing<"m"> &
   NegativeMarginUtilities &
   GapUtilities &
-  FixedSizeUtilities;
+  FixedSizeUtilities &
+  BgColorUtilities &
+  TextColorUtilities &
+  BorderColorUtilities;

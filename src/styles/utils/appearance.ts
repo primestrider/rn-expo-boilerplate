@@ -2,7 +2,47 @@ import { StyleSheet } from "react-native";
 
 import { colors, palette, radii } from "../tokens";
 
+type ColorShadeObject = {
+  [shade: string]: string;
+};
+
+/**
+ * Generate background, text, or border color utilities from the palette.
+ * Creates entries like `bgRed500`, `textBlue200`, `borderGray300` for every color×shade combination.
+ */
+function buildColorUtilities<K extends string>(
+  prefix: K,
+  property: "backgroundColor" | "color" | "borderColor"
+): Record<string, { [P in typeof property]: string }> {
+  const styles: Record<string, { [P in typeof property]: string }> = {};
+
+  for (const [colorName, value] of Object.entries(palette)) {
+    if (typeof value === "string") {
+      // Single color value (white, black, transparent)
+      styles[`${prefix}${colorName.charAt(0).toUpperCase() + colorName.slice(1)}`] = {
+        [property]: value,
+      } as any;
+    } else {
+      // Color shade object (red, blue, gray, etc.)
+      const shades = value as Record<string, string | ColorShadeObject>;
+      for (const [shade, colorValue] of Object.entries(shades)) {
+        if (typeof colorValue === "string") {
+          styles[`${prefix}${colorName.charAt(0).toUpperCase() + colorName.slice(1)}${shade}`] = {
+            [property]: colorValue,
+          } as any;
+        }
+      }
+    }
+  }
+
+  return styles;
+}
+
 export const appearance = StyleSheet.create({
+  ...buildColorUtilities("bg", "backgroundColor"),
+  ...buildColorUtilities("text", "color"),
+  ...buildColorUtilities("border", "borderColor"),
+
   // Background — semantic
   bgBackground: { backgroundColor: colors.background },
   bgForeground: { backgroundColor: colors.foreground },
@@ -11,29 +51,10 @@ export const appearance = StyleSheet.create({
   bgMuted: { backgroundColor: colors.muted },
   bgCard: { backgroundColor: colors.card },
   bgDestructive: { backgroundColor: colors.destructive },
-  bgTransparent: { backgroundColor: palette.transparent },
-  bgWhite: { backgroundColor: palette.white },
-  bgBlack: { backgroundColor: palette.black },
-
-  // Background — palette primary
-  bgPrimary50: { backgroundColor: palette.primary[50] },
-  bgPrimary100: { backgroundColor: palette.primary[100] },
-  bgPrimary500: { backgroundColor: palette.primary[500] },
-  bgPrimary600: { backgroundColor: palette.primary[600] },
-
-  // Background — palette gray
-  bgGray50: { backgroundColor: palette.gray[50] },
-  bgGray100: { backgroundColor: palette.gray[100] },
-  bgGray200: { backgroundColor: palette.gray[200] },
-  bgGray500: { backgroundColor: palette.gray[500] },
-  bgGray800: { backgroundColor: palette.gray[800] },
-  bgGray900: { backgroundColor: palette.gray[900] },
-
-  // Background — semantic colors
-  bgSuccess: { backgroundColor: palette.success[500] },
-  bgWarning: { backgroundColor: palette.warning[500] },
-  bgError: { backgroundColor: palette.error[500] },
-  bgInfo: { backgroundColor: palette.info[500] },
+  bgError: { backgroundColor: colors.destructive },
+  bgSuccess: { backgroundColor: colors.success },
+  bgWarning: { backgroundColor: colors.warning },
+  bgInfo: { backgroundColor: colors.info },
 
   // Text color — semantic
   textForeground: { color: colors.foreground },
@@ -42,21 +63,19 @@ export const appearance = StyleSheet.create({
   textMuted: { color: colors.muted },
   textMutedForeground: { color: colors.mutedForeground },
   textDestructive: { color: colors.destructive },
-  textWhite: { color: palette.white },
-  textBlack: { color: palette.black },
+  textSuccess: { color: colors.success },
+  textWarning: { color: colors.warning },
+  textError: { color: colors.destructive },
 
-  // Text color — palette
-  textPrimary500: { color: palette.primary[500] },
-  textGray400: { color: palette.gray[400] },
-  textGray500: { color: palette.gray[500] },
-  textGray600: { color: palette.gray[600] },
-  textGray700: { color: palette.gray[700] },
-  textGray900: { color: palette.gray[900] },
-  textSuccess: { color: palette.success[700] },
-  textWarning: { color: palette.warning[700] },
-  textError: { color: palette.error[700] },
+  // Border — semantic
+  borderBorder: { borderColor: colors.border },
+  borderPrimary: { borderColor: colors.primary },
+  borderDestructive: { borderColor: colors.destructive },
+  borderSuccess: { borderColor: colors.success },
+  borderWarning: { borderColor: colors.warning },
+  borderInfo: { borderColor: colors.info },
 
-  // Border
+  // Border Width
   border0: { borderWidth: 0 },
   border: { borderWidth: 1 },
   border2: { borderWidth: 2 },
@@ -65,12 +84,6 @@ export const appearance = StyleSheet.create({
   borderR: { borderRightWidth: 1 },
   borderB: { borderBottomWidth: 1 },
   borderL: { borderLeftWidth: 1 },
-
-  borderBorder: { borderColor: colors.border },
-  borderPrimary: { borderColor: colors.primary },
-  borderGray200: { borderColor: palette.gray[200] },
-  borderGray300: { borderColor: palette.gray[300] },
-  borderTransparent: { borderColor: palette.transparent },
 
   // Border Radius
   roundedNone: { borderRadius: radii.none },
@@ -108,40 +121,25 @@ export const appearance = StyleSheet.create({
   opacity75: { opacity: 0.75 },
   opacity100: { opacity: 1 },
 
-  // Shadow (iOS + Android elevation)
+  // Shadow
   shadowSm: {
-    shadowColor: palette.black,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
     elevation: 1,
   },
   shadow: {
-    shadowColor: palette.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
     elevation: 3,
   },
   shadowMd: {
-    shadowColor: palette.black,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
+    boxShadow: "0 4px 6px rgba(0,0,0,0.12)",
     elevation: 5,
   },
   shadowLg: {
-    shadowColor: palette.black,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
+    boxShadow: "0 8px 12px rgba(0,0,0,0.15)",
     elevation: 8,
   },
   shadowNone: {
-    shadowColor: palette.transparent,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0,
-    shadowRadius: 0,
+    boxShadow: "none",
     elevation: 0,
   },
 });

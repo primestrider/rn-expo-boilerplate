@@ -5,7 +5,7 @@ import { Pressable, Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { cx, tx, gridCol, space, u } from "@/styles";
+import { view, text, gridCol, space, styles } from "@/styles";
 
 export default function HelpersExample() {
   const [active, setActive] = useState(false);
@@ -16,71 +16,71 @@ export default function HelpersExample() {
       <Stack.Screen options={{ title: "Helpers" }} />
       <ExampleScreen
         title="Helpers"
-        subtitle="cx(), space(), dan gridCol() untuk styling dinamis"
+        subtitle="view(), space(), and gridCol() for dynamic styling"
       >
         <Section
-          title="cx() — Conditional Styles"
-          description="Gabungkan utility class dengan kondisi, mirip clsx/cn"
-          utilities={["cx()", "u.flex1", "u.bgPrimary", "u.opacity75"]}
+          title="view() — Conditional Styles"
+          description="Combine utility classes with conditions, like clsx/cn"
+          utilities={["view()", "styles.flex1", "styles.bgPrimary", "styles.opacity75"]}
         >
           <DemoBox>
-            <Text style={tx(u.textSm, u.fontMono, u.textGray600, u.mb3)}>
-              {`cx(u.p4, u.roundedLg, active && u.bgPrimary)`}
+            <Text style={text(styles.textSm, styles.fontMono, styles.textGray600, styles.mb3)}>
+              {`view(styles.p4, styles.roundedLg, active && styles.bgPrimary)`}
             </Text>
             <Pressable
               onPress={() => setActive((prev) => !prev)}
-              style={cx(
-                u.p4,
-                u.roundedLg,
-                u.border,
-                u.borderBorder,
-                active ? u.bgPrimary : u.bgGray100
+              style={view(
+                styles.p4,
+                styles.roundedLg,
+                styles.border,
+                styles.borderBorder,
+                active ? styles.bgPrimary : styles.bgGray100
               )}
             >
-              <Text style={tx(u.textBase, active ? u.textWhite : u.textForeground)}>
+              <Text style={text(styles.textBase, active ? styles.textWhite : styles.textForeground)}>
                 {active ? "Active — tap to deactivate" : "Tap to activate"}
               </Text>
             </Pressable>
           </DemoBox>
 
-          <DemoBox label="Pressed state dengan callback" style={u.mt3}>
+          <DemoBox label="Pressed state with callback" style={styles.mt3}>
             <Pressable
               style={({ pressed }) =>
-                cx(
-                  u.bgPrimary,
-                  u.px4,
-                  u.py3,
-                  u.roundedLg,
-                  u.center,
-                  pressed && u.opacity75
+                view(
+                  styles.bgPrimary,
+                  styles.px4,
+                  styles.py3,
+                  styles.roundedLg,
+                  styles.center,
+                  pressed && styles.opacity75
                 )
               }
             >
-              <Text style={tx(u.textBase, u.fontSemibold, u.textWhite)}>Press Me</Text>
+              <Text style={text(styles.textBase, styles.fontSemibold, styles.textWhite)}>Press Me</Text>
             </Pressable>
           </DemoBox>
         </Section>
 
         <Section
           title="space() — Dynamic Spacing"
-          description="Buat padding/margin dinamis dari nilai numerik"
+          description="Create dynamic padding/margin from numeric values"
           utilities={["space('p', 20)", "space('mx', 8)"]}
         >
           <DemoBox>
-            <Text style={tx(u.textSm, u.fontMono, u.textGray600, u.mb3)}>
+            <Text style={text(styles.textSm, styles.fontMono, styles.textGray600, styles.mb3)}>
               {`space('p', ${dynamicPadding})`}
             </Text>
-            <View style={cx(u.bgGray100, u.roundedLg)}>
-              <View style={cx(u.bgPrimary, u.rounded, space("p", dynamicPadding))}>
-                <Text style={tx(u.textSm, u.textWhite)}>Dynamic padding: {dynamicPadding}px</Text>
+            <View style={view(styles.bgGray100, styles.roundedLg)}>
+              <View style={view(styles.bgPrimary, styles.rounded, space("p", dynamicPadding))}>
+                <Text style={text(styles.textSm, styles.textWhite)}>Dynamic padding: {dynamicPadding}px</Text>
               </View>
             </View>
           </DemoBox>
 
-          <DemoBox label="space('mx', 8)" style={u.mt3}>
-            <View style={cx(u.bgGray100, u.roundedLg, u.p4)}>
-              <View style={cx(u.bgPrimary100, u.rounded, space("mx", 8), u.py3)}>
-                <Text style={tx(u.textSm, u.textPrimary500, u.textCenter)}>
+          <DemoBox label="space('mx', 8)" style={styles.mt3}>
+            <View style={view(styles.bgGray100, styles.roundedLg, styles.p4)}>
+              <View style={view(styles.bgPrimary100, styles.rounded, space("mx", 8), styles.py3)}>
+                <Text style={text(styles.textSm, styles.textPrimary500, styles.textCenter)}>
                   Horizontal margin 8px
                 </Text>
               </View>
@@ -90,26 +90,26 @@ export default function HelpersExample() {
 
         <Section
           title="gridCol() — Dynamic Grid Columns"
-          description="Hitung lebar kolom berdasarkan jumlah kolom"
+          description="Calculate column width based on column count"
           utilities={["gridCol(2)", "gridCol(3)", "gridCol(4)"]}
         >
           {[2, 3, 4].map((cols) => (
-            <DemoBox key={cols} label={`gridCol(${cols})`} style={u.mb3}>
-              <View style={cx(u.flexRow, u.flexWrap, u.gap2)}>
+            <DemoBox key={cols} label={`gridCol(${cols})`} style={styles.mb3}>
+              <View style={view(styles.flexRow, styles.flexWrap, styles.gap2)}>
                 {Array.from({ length: cols * 2 }, (_, i) => (
                   <View
                     key={i}
-                    style={cx(
+                    style={view(
                       gridCol(cols as 2 | 3 | 4),
-                      u.bgPrimary50,
-                      u.p2,
-                      u.rounded,
-                      u.center,
-                      u.border,
-                      u.borderPrimary
+                      styles.bgPrimary50,
+                      styles.p2,
+                      styles.rounded,
+                      styles.center,
+                      styles.border,
+                      styles.borderPrimary
                     )}
                   >
-                    <Text style={tx(u.textXs, u.textPrimary500)}>{i + 1}</Text>
+                    <Text style={text(styles.textXs, styles.textPrimary500)}>{i + 1}</Text>
                   </View>
                 ))}
               </View>
@@ -118,35 +118,35 @@ export default function HelpersExample() {
         </Section>
 
         <Section
-          title="Kombinasi Lengkap"
-          description="cx + u + space + gridCol dalam satu komponen"
-          utilities={["cx()", "u.*", "space()", "gridCol()"]}
+          title="Full Combination"
+          description="view + styles + space + gridCol in one component"
+          utilities={["view()", "styles.*", "space()", "gridCol()"]}
         >
           <View
-            style={cx(
-              u.bgCard,
-              u.roundedXl,
-              u.border,
-              u.borderBorder,
-              u.shadow,
+            style={view(
+              styles.bgCard,
+              styles.roundedXl,
+              styles.border,
+              styles.borderBorder,
+              styles.shadow,
               space("p", 16)
             )}
           >
-            <Text style={tx(u.textLg, u.fontBold, u.textForeground, u.mb4)}>
+            <Text style={text(styles.textLg, styles.fontBold, styles.textForeground, styles.mb4)}>
               Dashboard Preview
             </Text>
-            <View style={cx(u.flexRow, u.flexWrap, u.gap3)}>
+            <View style={view(styles.flexRow, styles.flexWrap, styles.gap3)}>
               {[
-                { label: "Users", value: "1.2k", color: u.bgPrimary },
-                { label: "Orders", value: "348", color: u.bgSuccess },
-                { label: "Revenue", value: "$12k", color: u.bgWarning },
+                { label: "Users", value: "1.2k", color: styles.bgPrimary },
+                { label: "Orders", value: "348", color: styles.bgSuccess },
+                { label: "Revenue", value: "$12k", color: styles.bgWarning },
               ].map((stat) => (
                 <View
                   key={stat.label}
-                  style={cx(gridCol(3), stat.color, u.roundedLg, u.p3)}
+                  style={view(gridCol(3), stat.color, styles.roundedLg, styles.p3)}
                 >
-                  <Text style={tx(u.textXs, u.textWhite, u.opacity75)}>{stat.label}</Text>
-                  <Text style={tx(u.textXl, u.fontBold, u.textWhite)}>{stat.value}</Text>
+                  <Text style={text(styles.textXs, styles.textWhite, styles.opacity75)}>{stat.label}</Text>
+                  <Text style={text(styles.textXl, styles.fontBold, styles.textWhite)}>{stat.value}</Text>
                 </View>
               ))}
             </View>

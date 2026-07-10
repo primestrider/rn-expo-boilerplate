@@ -4,6 +4,10 @@ import { spacing } from "../tokens";
 
 type SpacingStyle = Record<string, Record<string, number>>;
 
+/**
+ * Generate padding or margin utilities for all spacing tokens.
+ * Creates entries like `p4`, `px4`, `pt4` and `m4`, `mx4`, `mt4` for every token value.
+ */
 function buildSpacingUtilities(
   prefix: "p" | "m",
   property: "padding" | "margin"
@@ -36,7 +40,7 @@ export const margin = StyleSheet.create(
   buildSpacingUtilities("m", "margin") as Parameters<typeof StyleSheet.create>[0]
 );
 
-/** Negative margin — prefix -m, -mt, dll */
+/** Negative margin utilities — prefixes: -m, -mx, -my, -mt, -mr, -mb, -ml */
 export const negativeMargin = StyleSheet.create(
   Object.fromEntries(
     Object.entries(spacing)
