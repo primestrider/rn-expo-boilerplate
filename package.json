@@ -1,7 +1,7 @@
 {
   "name": "rn-expo-boilerplate",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "@expo/config": "^56.0.9",
     "@expo/config-plugins": "^56.0.9",
@@ -50,6 +50,7 @@
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
+    "android:apk:distribution": "node ./scripts/build-android-distribution.mjs",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint"
