@@ -49,8 +49,11 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
+
     "android": "expo run:android",
-    "android:apk:distribution": "node ./scripts/build-android-distribution.mjs",
+    "android:release": "node ./scripts/build-android-release.mjs",
+    "android:release:clean": "node ./scripts/build-android-release.mjs --clean",
+
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint"

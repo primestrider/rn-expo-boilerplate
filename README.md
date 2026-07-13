@@ -1,56 +1,325 @@
-# Welcome to your Expo app 👋
+# React Native Expo Boilerplate
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern and production-ready React Native boilerplate built with Expo, Expo Router, TypeScript, and a collection of carefully selected libraries for state management, data fetching, forms, validation, storage, animations, and internationalization.
 
-## Get started
+## Tech Stack
 
-1. Install dependencies
+This boilerplate includes:
 
-   ```bash
-   npm install
-   ```
+- Expo SDK 56
+- React Native 0.85
+- React 19
+- TypeScript
+- Expo Router
+- TanStack Query
+- Zustand
+- React Hook Form
+- Zod
+- Axios
+- React Native MMKV
+- React Native Reanimated
+- React Native Worklets
+- React Native Gesture Handler
+- React Native Keyboard Controller
+- Shopify FlashList
+- Expo Image
+- Expo Localization
+- Expo Font
 
-2. Start the app
+## Requirements
 
-   ```bash
-   npx expo start
-   ```
+Before starting, make sure the following tools are installed:
 
-In the output, you'll find options to open the app in a
+- Node.js
+- npm
+- Android Studio
+- Android SDK
+- JDK compatible with the current Expo and React Native versions
+- ADB for physical Android device testing
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+For iOS development:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- macOS
+- Xcode
+- CocoaPods
 
-## Get a fresh project
+## Getting Started
 
-When you're ready, run:
+Clone the repository:
 
 ```bash
-npm run reset-project
+git clone <repository-url>
+cd rn-expo-boilerplate
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Install dependencies:
 
-### Other setup steps
+```bash
+npm install
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Start the Expo development server:
 
-## Learn more
+```bash
+npm start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Running the Application
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Android
 
-## Join the community
+Run the application on an Android emulator or connected physical device:
 
-Join our community of developers creating universal apps.
+```bash
+npm run android
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This command runs:
+
+```bash
+expo run:android
+```
+
+If the native Android project does not exist yet, Expo will generate it automatically.
+
+### iOS
+
+Run the application on iOS:
+
+```bash
+npm run ios
+```
+
+> iOS native builds require macOS and Xcode.
+
+### Web
+
+Run the application in a browser:
+
+```bash
+npm run web
+```
+
+## Available Scripts
+
+| Command                         | Description                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------------- |
+| `npm start`                     | Starts the Expo development server                                           |
+| `npm run android`               | Builds and runs the Android development application                          |
+| `npm run android:release`       | Builds a release APK for all supported Android ABIs                          |
+| `npm run android:release:clean` | Regenerates the Android native project from scratch and builds a release APK |
+| `npm run ios`                   | Builds and runs the iOS application                                          |
+| `npm run web`                   | Starts the web application                                                   |
+| `npm run lint`                  | Runs the Expo linter                                                         |
+| `npm run reset-project`         | Runs the project reset script                                                |
+
+## Android Release Build
+
+The project includes a custom Android release build script:
+
+```text
+scripts/build-android-release.mjs
+```
+
+To create a normal Android release build:
+
+```bash
+npm run android:release
+```
+
+The build process:
+
+```text
+Expo config synchronization
+        ↓
+Android native project
+        ↓
+Gradle release build
+        ↓
+Universal release APK
+```
+
+The resulting APK is located at:
+
+```text
+android/app/build/outputs/apk/release/app-release.apk
+```
+
+### Supported Android Architectures
+
+The release build supports:
+
+```text
+armeabi-v7a
+arm64-v8a
+x86
+x86_64
+```
+
+This allows the APK to run on a broad range of physical Android devices and Android emulators.
+
+The build command internally uses:
+
+```bash
+gradlew assembleRelease -PreactNativeArchitectures=armeabi-v7a,arm64-v8a,x86,x86_64
+```
+
+> A universal APK containing all ABIs will be larger than a single-architecture APK. For Google Play production distribution, consider using an Android App Bundle (`.aab`) so Google Play can deliver architecture-specific artifacts to each device.
+
+## Clean Android Release Build
+
+For most builds, use:
+
+```bash
+npm run android:release
+```
+
+If you encounter native build problems, stale configuration, CMake issues, or corrupted native build state, run:
+
+```bash
+npm run android:release:clean
+```
+
+The clean build runs:
+
+```bash
+expo prebuild --clean --platform android
+```
+
+This deletes and regenerates the native Android project before building the release APK.
+
+> Do not use the clean build unnecessarily. A normal build is usually faster because Gradle, CMake, and native dependencies can reuse existing build caches.
+
+## App Versioning
+
+The application version is sourced from `package.json`:
+
+```json
+{
+  "version": "1.0.1"
+}
+```
+
+The Expo configuration reads this value:
+
+```ts
+import packageJson from "./package.json";
+
+const config: ExpoConfig = {
+  version: packageJson.version,
+};
+```
+
+For Android, `versionCode` can be generated automatically from the semantic version.
+
+Example:
+
+```ts
+function getVersionCode(version: string): number {
+  const [major, minor, patch] = version.split(".").map(Number);
+
+  return major * 10000 + minor * 100 + patch;
+}
+```
+
+Example mappings:
+
+| Version | Android versionCode |
+| ------- | ------------------: |
+| `1.0.0` |             `10000` |
+| `1.0.1` |             `10001` |
+| `1.1.0` |             `10100` |
+| `2.0.0` |             `20000` |
+
+To increase the patch version without automatically creating a Git commit or tag:
+
+```bash
+npm version patch --no-git-tag-version
+```
+
+Then create a new release build:
+
+```bash
+npm run android:release
+```
+
+## Firebase App Distribution
+
+The generated release APK can be uploaded to Firebase App Distribution:
+
+```text
+android/app/build/outputs/apk/release/app-release.apk
+```
+
+A release APK is standalone and includes the JavaScript bundle, so testers do not need to run Metro Bundler.
+
+Before uploading a new release, make sure:
+
+- `version` has been updated.
+- Android `versionCode` is greater than the previous release.
+- The APK is signed consistently with previous builds.
+- The required Android ABI is included in the APK.
+
+## Android ABI Troubleshooting
+
+If Android installation fails with:
+
+```text
+INSTALL_FAILED_NO_MATCHING_ABIS
+```
+
+check the device ABI:
+
+```bash
+adb shell getprop ro.product.cpu.abilist
+```
+
+Example:
+
+```text
+arm64-v8a
+```
+
+On PowerShell, inspect the ABIs included in an APK with:
+
+```powershell
+tar -tf android/app/build/outputs/apk/release/app-release.apk |
+  Select-String "^lib/" |
+  ForEach-Object { ($_ -split "/")[1] } |
+  Sort-Object -Unique
+```
+
+For the universal release build, the expected output is:
+
+```text
+arm64-v8a
+armeabi-v7a
+x86
+x86_64
+```
+
+The APK must contain at least one ABI supported by the target device.
+
+## React Native Reanimated Build Issues on Windows
+
+React Native Reanimated uses native C++ code and relies on tools such as CMake and Ninja during Android builds. Windows users may encounter native build errors, especially when building React Native's New Architecture.
+
+Common errors may include:
+
+```text
+ninja: error: manifest 'build.ninja' still dirty after 100 tries
+```
+
+or errors involving:
+
+```text
+CMake
+Ninja
+.cxx
+externalNativeBuild
+react-native-reanimated
+```
+
+Refer to the official Reanimated documentation for current Windows-specific setup and troubleshooting guidance:
+
+https://docs.swmansion.com/react-native-reanimated/docs/guides/building-on-windows/
