@@ -47,3 +47,5 @@ yarn-error.*
 
 # But keep the example file
 !.env.example
+
+.opencode
