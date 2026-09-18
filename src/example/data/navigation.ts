@@ -50,4 +50,10 @@ export const exampleScreens: ExampleScreen[] = [
     description: "view(), space(), and gridCol() for dynamic styles",
     utilities: ["view()", "space('p', 20)", "gridCol(3)"],
   },
+  {
+    href: "/example/form" as LinkProps["href"],
+    title: "Form",
+    description: "React Hook Form with shared Input and Button components",
+    utilities: ["useForm", "Controller", "Button", "Input"],
+  },
 ];

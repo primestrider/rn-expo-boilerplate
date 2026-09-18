@@ -4,6 +4,7 @@ const gradleCommand =
   process.platform === "win32" ? "gradlew.bat" : "./gradlew";
 
 const isCleanBuild = process.argv.includes("--clean");
+const shouldPrebuild = process.argv.includes("--prebuild") || isCleanBuild;
 
 const architectures = ["armeabi-v7a", "arm64-v8a", "x86", "x86_64"].join(",");
 
@@ -20,17 +21,20 @@ const run = (command, options = {}) => {
   });
 };
 
-const prebuildCommand = isCleanBuild
-  ? "npx expo prebuild --clean --platform android"
-  : "npx expo prebuild --platform android";
+// Jalankan prebuild hanya jika diminta
+if (shouldPrebuild) {
+  console.log(
+    isCleanBuild
+      ? "\nRegenerating Android native project from scratch...\n"
+      : "\nSyncing Expo config to Android native project...\n",
+  );
 
-console.log(
-  isCleanBuild
-    ? "\nRegenerating Android native project from scratch...\n"
-    : "\nSyncing Expo config to Android native project...\n"
-);
-
-run(prebuildCommand);
+  run(
+    isCleanBuild
+      ? "npx expo prebuild --clean --platform android"
+      : "npx expo prebuild --platform android",
+  );
+}
 
 console.log(`\nBuilding Android release APK for: ${architectures}\n`);
 
@@ -38,10 +42,12 @@ run(
   `${gradleCommand} assembleRelease -PreactNativeArchitectures=${architectures}`,
   {
     cwd: "android",
-  }
+  },
 );
 
-console.log(
-  "\nBuild successful!\n" +
-    "APK: android/app/build/outputs/apk/release/app-release.apk\n"
-);
+console.log(`
+✅ Build successful!
+
+APK:
+android/app/build/outputs/apk/release/app-release.apk
+`);

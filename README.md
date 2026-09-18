@@ -6,8 +6,8 @@ A modern and production-ready React Native boilerplate built with Expo, Expo Rou
 
 This boilerplate includes:
 
-- Expo SDK 56
-- React Native 0.85
+- Expo SDK 57
+- React Native 0.86
 - React 19
 - TypeScript
 - Expo Router
@@ -111,6 +111,9 @@ npm run web
 | `npm run ios`                   | Builds and runs the iOS application                                          |
 | `npm run web`                   | Starts the web application                                                   |
 | `npm run lint`                  | Runs the Expo linter                                                         |
+| `npm test`                      | Runs the Jest unit test suite                                                |
+| `npm run test:watch`            | Runs the tests in watch mode                                                 |
+| `npm run test:coverage`         | Runs the tests and reports coverage                                          |
 | `npm run reset-project`         | Runs the project reset script                                                |
 
 ## Android Release Build

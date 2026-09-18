@@ -53,6 +53,31 @@ export default function Index() {
           </Text>
         </Pressable>
       </Link>
+
+      <Link href={"/example/form" as LinkProps["href"]} asChild>
+        <Pressable
+          style={({ pressed }) =>
+            view(
+              styles.bgAmber100,
+              styles.px6,
+              styles.py4,
+              styles.roundedXl,
+              styles.shadowMd,
+              pressed && styles.opacity75,
+            )
+          }
+        >
+          <Text
+            style={text(
+              styles.textBase,
+              styles.fontSemiBold,
+              styles.textAmber900,
+            )}
+          >
+            Open Form Examples →
+          </Text>
+        </Pressable>
+      </Link>
     </View>
   );
 }
