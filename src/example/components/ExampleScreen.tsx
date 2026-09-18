@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native";
 
-import { text, useStyles, view } from "@/styles";
+import { AppText, Screen } from "@/shared/components";
+import { useStyles, view } from "@/styles";
 
 type Props = {
   title: string;
@@ -12,32 +12,18 @@ type Props = {
 
 export function ExampleScreen({ title, subtitle, children }: Readonly<Props>) {
   const styles = useStyles();
-  const insets = useSafeAreaInsets();
 
   return (
-    <ScrollView
-      style={view(styles.flex1, styles.bgBackground)}
-      contentContainerStyle={view(styles.p4, {
-        paddingBottom: insets.bottom + 24,
-      })}
-    >
+    <Screen>
       <View style={view(styles.mb6)}>
-        <Text
-          style={text(
-            styles.text2xl,
-            styles.fontBold,
-            styles.textForeground,
-          )}
-        >
-          {title}
-        </Text>
+        <AppText variant="h2">{title}</AppText>
         {subtitle ? (
-          <Text style={text(styles.textSm, styles.textMuted, styles.mt1)}>
+          <AppText variant="caption" color="muted" style={styles.mt1}>
             {subtitle}
-          </Text>
+          </AppText>
         ) : null}
       </View>
       {children}
-    </ScrollView>
+    </Screen>
   );
 }

@@ -54,7 +54,7 @@ export function Button({
           styles.flexRow,
           styles.itemsCenter,
           styles.justifyCenter,
-          styles.roundedLg,
+          styles.roundedFull,
           block && styles.wFull,
           {
             opacity: isDisabled ? 0.5 : state.pressed ? 0.7 : 1,

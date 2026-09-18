@@ -3,7 +3,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
   type Ref,
@@ -72,7 +71,7 @@ export const Input = forwardRef<TextInput, InputProps>(
     const { colors } = useTheme();
 
     const [isFocused, setIsFocused] = useState(false);
-    const focusAnim = useRef(new Animated.Value(0)).current;
+    const focusAnim = useState(() => new Animated.Value(0))[0];
 
     useEffect(() => {
       Animated.timing(focusAnim, {
@@ -178,9 +177,11 @@ export const Input = forwardRef<TextInput, InputProps>(
               styles.flexRow,
               styles.itemsCenter,
               styles.border,
-              styles.roundedLg,
+              styles.rounded2xl,
               styles.bgBackground,
-              styles.px3,
+              // A 24px radius eats into the corners, so the gutter widens to
+              // keep the text optically centered between the rounded ends.
+              styles.px4,
             ),
             !editable && { opacity: 0.5 },
             !error && { borderColor: animatedBorderColor },

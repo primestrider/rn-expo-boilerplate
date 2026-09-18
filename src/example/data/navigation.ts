@@ -62,4 +62,11 @@ export const exampleScreens: ExampleScreen[] = [
     description: "React Hook Form with shared Input and Button components",
     utilities: ["useForm", "Controller", "Button", "Input"],
   },
+  {
+    href: "/example/components" as LinkProps["href"],
+    title: "Components",
+    description:
+      "The shared component library — surfaces, overlays, and form controls",
+    utilities: ["Card", "Dialog", "BottomSheet", "Toast", "ListItem"],
+  },
 ];

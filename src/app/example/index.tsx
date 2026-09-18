@@ -1,97 +1,41 @@
-import { Link, Stack } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Stack, useRouter, type LinkProps } from "expo-router";
+import { View } from "react-native";
 
 import { exampleScreens } from "@/example/data/navigation";
-import { text, useStyles, view } from "@/styles";
+import { AppText, Badge, Card, Screen } from "@/shared/components";
+import { useStyles, view } from "@/styles";
 
 export default function ExampleIndex() {
   const styles = useStyles();
-  const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <>
       <Stack.Screen options={{ title: "Style Examples" }} />
-      <ScrollView
-        style={view(styles.flex1, styles.bgBackground)}
-        contentContainerStyle={view(styles.p4, {
-          paddingBottom: insets.bottom + 24,
-        })}
-      >
-        <Text
-          style={text(
-            styles.text2xl,
-            styles.fontBold,
-            styles.textForeground,
-            styles.mb2,
-          )}
-        >
-          Utility Styling
-        </Text>
-        <Text style={text(styles.textSm, styles.textMuted, styles.mb6)}>
+      <Screen contentContainerStyle={styles.gap3}>
+        <AppText variant="h2">Utility Styling</AppText>
+        <AppText variant="caption" color="muted" style={styles.mb3}>
           Collection of examples showcasing all utility classes. Tailwind-like
-          styling using React Native's built-in StyleSheet.
-        </Text>
+          styling using React Native&apos;s built-in StyleSheet.
+        </AppText>
 
-        <View style={view(styles.gap3)}>
-          {exampleScreens.map((screen) => (
-            <Link key={screen.title} href={screen.href} asChild>
-              <Pressable
-                style={({ pressed }) =>
-                  view(
-                    styles.bgCard,
-                    styles.p4,
-                    styles.roundedXl,
-                    styles.border,
-                    styles.borderBorder,
-                    styles.shadowSm,
-                    pressed && styles.opacity75,
-                  )
-                }
-              >
-                <Text
-                  style={text(
-                    styles.textBase,
-                    styles.fontSemiBold,
-                    styles.textForeground,
-                    styles.mb1,
-                  )}
-                >
-                  {screen.title}
-                </Text>
-                <Text style={text(styles.textSm, styles.textMuted, styles.mb3)}>
-                  {screen.description}
-                </Text>
-                <View
-                  style={view(styles.flexRow, styles.flexWrap, styles.gap1)}
-                >
-                  {screen.utilities.map((utility) => (
-                    <View
-                      key={utility}
-                      style={view(
-                        styles.bgPrimary50,
-                        styles.px2,
-                        styles.py1,
-                        styles.rounded,
-                      )}
-                    >
-                      <Text
-                        style={text(
-                          styles.textXs,
-                          styles.fontMono,
-                          styles.textPrimary500,
-                        )}
-                      >
-                        {utility}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              </Pressable>
-            </Link>
-          ))}
-        </View>
-      </ScrollView>
+        {exampleScreens.map((screen) => (
+          <Card
+            key={screen.title}
+            variant="outlined"
+            onPress={() => router.push(screen.href as LinkProps["href"])}
+          >
+            <Card.Header title={screen.title} subtitle={screen.description} />
+            <Card.Body>
+              <View style={view(styles.flexRow, styles.flexWrap, styles.gap1)}>
+                {screen.utilities.map((utility) => (
+                  <Badge key={utility} label={utility} size="sm" variant="outline" />
+                ))}
+              </View>
+            </Card.Body>
+          </Card>
+        ))}
+      </Screen>
     </>
   );
 }

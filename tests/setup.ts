@@ -11,6 +11,12 @@ jest.mock("react-native-keyboard-controller", () =>
   require("react-native-keyboard-controller/jest"),
 );
 
+// `Screen` reads safe-area insets, which are measured natively. The library's
+// own mock reports a fixed inset, so layout assertions stay deterministic.
+jest.mock("react-native-safe-area-context", () =>
+  require("react-native-safe-area-context/jest/mock").default,
+);
+
 // MMKV is a Nitro native module with no JS fallback, and `@/styles` now reaches
 // it through the persisted theme store. This in-memory stand-in keeps the real
 // storage semantics (synchronous, string values) that the app relies on.
