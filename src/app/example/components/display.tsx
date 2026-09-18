@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 
-import { Section } from "@/example/components";
+import { Section } from "@/features/example/components";
 import {
   AppText,
   Avatar,

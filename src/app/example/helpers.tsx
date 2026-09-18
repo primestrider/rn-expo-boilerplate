@@ -2,9 +2,9 @@ import { Stack } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
-import { DemoBox } from "@/example/components/DemoBox";
-import { ExampleScreen } from "@/example/components/ExampleScreen";
-import { Section } from "@/example/components/Section";
+import { DemoBox } from "@/features/example/components/DemoBox";
+import { ExampleScreen } from "@/features/example/components/ExampleScreen";
+import { Section } from "@/features/example/components/Section";
 import { gridCol, space, text, useStyles, view } from "@/styles";
 
 export default function HelpersExample() {

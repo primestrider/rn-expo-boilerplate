@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { View } from "react-native";
 
-import { Section } from "@/example/components";
+import { Section } from "@/features/example/components";
 import {
   Accordion,
   AppText,

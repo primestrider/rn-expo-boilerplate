@@ -1,6 +1,6 @@
-import { Stack, useRouter, type LinkProps } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 
-import { componentGroups } from "@/example/data/components";
+import { componentGroups } from "@/features/example/routes";
 import { AppText, Card, Screen } from "@/shared/components";
 import { useStyles } from "@/styles";
 
@@ -22,7 +22,7 @@ export default function ComponentsIndex() {
           <Card
             key={group.title}
             variant="outlined"
-            onPress={() => router.push(group.href as LinkProps["href"])}
+            onPress={() => router.push(group.href)}
           >
             <Card.Header title={group.title} subtitle={group.description} />
             <Card.Body>

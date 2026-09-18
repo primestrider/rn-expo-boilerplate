@@ -1,9 +1,9 @@
 import { Stack } from "expo-router";
 import { Text, View } from "react-native";
 
-import { DemoBox } from "@/example/components/DemoBox";
-import { ExampleScreen } from "@/example/components/ExampleScreen";
-import { Section } from "@/example/components/Section";
+import { DemoBox } from "@/features/example/components/DemoBox";
+import { ExampleScreen } from "@/features/example/components/ExampleScreen";
+import { Section } from "@/features/example/components/Section";
 import { ThemeToggle } from "@/shared/components";
 import { text, useStyles, useTheme, view, type ThemedUtilities } from "@/styles";
 

@@ -1,9 +1,9 @@
 import { Stack } from "expo-router";
 import { Text } from "react-native";
 
-import { DemoBox } from "@/example/components/DemoBox";
-import { ExampleScreen } from "@/example/components/ExampleScreen";
-import { Section } from "@/example/components/Section";
+import { DemoBox } from "@/features/example/components/DemoBox";
+import { ExampleScreen } from "@/features/example/components/ExampleScreen";
+import { Section } from "@/features/example/components/Section";
 import { styles as staticStyles, text, useStyles } from "@/styles";
 
 const fontSizes = [

@@ -1,6 +1,7 @@
-import { useRouter, type LinkProps } from "expo-router";
+import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { examplePaths } from "@/features/example/routes";
 import { AppText, Button, Screen } from "@/shared/components";
 import { useStyles, view } from "@/styles";
 
@@ -22,19 +23,19 @@ export default function Index() {
         <Button
           title="Open Style Examples"
           block
-          onPress={() => router.push("/example" as LinkProps["href"])}
+          onPress={() => router.push(examplePaths.index)}
         />
         <Button
           title="Open Components"
           variant="secondary"
           block
-          onPress={() => router.push("/example/components" as LinkProps["href"])}
+          onPress={() => router.push(examplePaths.components)}
         />
         <Button
           title="Open Form Example"
           variant="outline"
           block
-          onPress={() => router.push("/example/form" as LinkProps["href"])}
+          onPress={() => router.push(examplePaths.form)}
         />
       </View>
     </Screen>
