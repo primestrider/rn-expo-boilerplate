@@ -6,8 +6,8 @@ import {
   type PressableProps,
 } from "react-native";
 
-import { styles, text, view } from "@/styles";
-import { colors, fontSize, palette, spacing } from "@/styles/tokens";
+import { text, useStyles, useTheme, view } from "@/styles";
+import { fontSize, palette, spacing, type ThemeColors } from "@/styles/tokens";
 
 type ButtonVariant =
   | "primary"
@@ -38,10 +38,12 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const children = childrenProp as ReactNode;
+  const styles = useStyles();
+  const { colors } = useTheme();
 
   const isDisabled = disabled || loading;
 
-  const variantStyles = getVariantStyles(variant);
+  const variantStyles = getVariantStyles(variant, colors);
   const sizeStyles = getSizeStyles(size);
 
   return (
@@ -94,7 +96,7 @@ export function Button({
   );
 }
 
-function getVariantStyles(variant: ButtonVariant) {
+function getVariantStyles(variant: ButtonVariant, colors: ThemeColors) {
   switch (variant) {
     case "primary":
       return {

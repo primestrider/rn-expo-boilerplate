@@ -4,33 +4,35 @@ import { Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { styles, text, view } from "@/styles";
+import { styles as staticStyles, text, useStyles, view } from "@/styles";
 
 const borderRadii = [
-  { name: "roundedNone", style: styles.roundedNone },
-  { name: "roundedSm", style: styles.roundedSm },
-  { name: "rounded", style: styles.rounded },
-  { name: "roundedLg", style: styles.roundedLg },
-  { name: "roundedXl", style: styles.roundedXl },
-  { name: "rounded2xl", style: styles.rounded2xl },
-  { name: "roundedFull", style: styles.roundedFull },
+  { name: "roundedNone", style: staticStyles.roundedNone },
+  { name: "roundedSm", style: staticStyles.roundedSm },
+  { name: "rounded", style: staticStyles.rounded },
+  { name: "roundedLg", style: staticStyles.roundedLg },
+  { name: "roundedXl", style: staticStyles.roundedXl },
+  { name: "rounded2xl", style: staticStyles.rounded2xl },
+  { name: "roundedFull", style: staticStyles.roundedFull },
 ] as const;
 
 const shadows = [
-  { name: "shadowSm", style: styles.shadowSm },
-  { name: "shadow", style: styles.shadow },
-  { name: "shadowMd", style: styles.shadowMd },
-  { name: "shadowLg", style: styles.shadowLg },
+  { name: "shadowSm", style: staticStyles.shadowSm },
+  { name: "shadow", style: staticStyles.shadow },
+  { name: "shadowMd", style: staticStyles.shadowMd },
+  { name: "shadowLg", style: staticStyles.shadowLg },
 ] as const;
 
 const opacities = [
-  { name: "opacity25", style: styles.opacity25 },
-  { name: "opacity50", style: styles.opacity50 },
-  { name: "opacity75", style: styles.opacity75 },
-  { name: "opacity100", style: styles.opacity100 },
+  { name: "opacity25", style: staticStyles.opacity25 },
+  { name: "opacity50", style: staticStyles.opacity50 },
+  { name: "opacity75", style: staticStyles.opacity75 },
+  { name: "opacity100", style: staticStyles.opacity100 },
 ] as const;
 
 export default function AppearanceExample() {
+  const styles = useStyles();
+
   return (
     <>
       <Stack.Screen options={{ title: "Appearance" }} />

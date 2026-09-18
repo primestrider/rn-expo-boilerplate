@@ -4,34 +4,36 @@ import { Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { styles, text, view } from "@/styles";
+import { styles as staticStyles, text, useStyles, view } from "@/styles";
 
 const paddings = [
-  { name: "p2", style: styles.p2 },
-  { name: "p4", style: styles.p4 },
-  { name: "p6", style: styles.p6 },
-  { name: "px4", style: styles.px4 },
-  { name: "py2", style: styles.py2 },
-  { name: "pt4", style: styles.pt4 },
+  { name: "p2", style: staticStyles.p2 },
+  { name: "p4", style: staticStyles.p4 },
+  { name: "p6", style: staticStyles.p6 },
+  { name: "px4", style: staticStyles.px4 },
+  { name: "py2", style: staticStyles.py2 },
+  { name: "pt4", style: staticStyles.pt4 },
 ] as const;
 
 const margins = [
-  { name: "m2", style: styles.m2 },
-  { name: "m4", style: styles.m4 },
-  { name: "mx4", style: styles.mx4 },
-  { name: "my2", style: styles.my2 },
-  { name: "mt4", style: styles.mt4 },
-  { name: "mb2", style: styles.mb2 },
+  { name: "m2", style: staticStyles.m2 },
+  { name: "m4", style: staticStyles.m4 },
+  { name: "mx4", style: staticStyles.mx4 },
+  { name: "my2", style: staticStyles.my2 },
+  { name: "mt4", style: staticStyles.mt4 },
+  { name: "mb2", style: staticStyles.mb2 },
 ] as const;
 
 const gaps = [
-  { name: "gap1", style: styles.gap1 },
-  { name: "gap2", style: styles.gap2 },
-  { name: "gap4", style: styles.gap4 },
-  { name: "gap6", style: styles.gap6 },
+  { name: "gap1", style: staticStyles.gap1 },
+  { name: "gap2", style: staticStyles.gap2 },
+  { name: "gap4", style: staticStyles.gap4 },
+  { name: "gap6", style: staticStyles.gap6 },
 ] as const;
 
 export default function SpacingExample() {
+  const styles = useStyles();
+
   return (
     <>
       <Stack.Screen options={{ title: "Spacing" }} />

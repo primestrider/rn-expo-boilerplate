@@ -5,9 +5,10 @@ import { Pressable, Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { gridCol, space, styles, text, view } from "@/styles";
+import { gridCol, space, text, useStyles, view } from "@/styles";
 
 export default function HelpersExample() {
+  const styles = useStyles();
   const [active, setActive] = useState(false);
   const dynamicPadding = 20;
 

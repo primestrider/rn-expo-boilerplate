@@ -10,7 +10,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, Input } from "@/shared/components";
-import { styles, text, view } from "@/styles";
+import { text, useStyles, view } from "@/styles";
 
 type FormData = {
   name: string;
@@ -21,6 +21,7 @@ type FormData = {
 };
 
 export default function FormExample() {
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
   const [submitted, setSubmitted] = useState<FormData | null>(null);
 

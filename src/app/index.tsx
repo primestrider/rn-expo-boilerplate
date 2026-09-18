@@ -1,9 +1,11 @@
 import { Link, type LinkProps } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
-import { styles, text, view } from "@/styles";
+import { text, useStyles, view } from "@/styles";
 
 export default function Index() {
+  const styles = useStyles();
+
   return (
     <View
       style={view(styles.flex1, styles.bgBackground, styles.p6, styles.center)}

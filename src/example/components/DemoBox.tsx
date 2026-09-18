@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import { Text, View } from "react-native";
 
-import { styles, text, view } from "@/styles";
+import { text, useStyles, view } from "@/styles";
 
 type Props = {
   label?: string;
@@ -11,12 +11,14 @@ type Props = {
 };
 
 export function DemoBox({ label, style, children }: Readonly<Props>) {
+  const styles = useStyles();
+
   return (
     <View
       style={view(
-        styles.bgGray50,
+        styles.bgSecondary,
         styles.border,
-        styles.borderGray200,
+        styles.borderBorder,
         styles.roundedLg,
         styles.p3,
         style,
@@ -26,7 +28,7 @@ export function DemoBox({ label, style, children }: Readonly<Props>) {
         <Text
           style={text(
             styles.textXs,
-            styles.textGray500,
+            styles.textMuted,
             styles.mb2,
             styles.fontMono,
           )}

@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { colors, palette, radii } from "../tokens";
+import { palette, radii, type ThemeColors } from "../tokens";
 
 type ColorShadeObject = {
   [shade: string]: string;
@@ -38,42 +38,56 @@ function buildColorUtilities<K extends string>(
   return styles;
 }
 
+/**
+ * Semantic color utilities for one theme.
+ *
+ * These are the only color utilities that depend on light/dark mode — the
+ * `bg{Color}{Shade}` swatches above are generated from `palette`, which is
+ * theme-independent. Built once per theme and cached in `@/styles`; reach
+ * them through `useStyles()`, never through the static `styles` object.
+ */
+export function buildSemanticColors(theme: ThemeColors) {
+  return StyleSheet.create({
+    // Background
+    bgBackground: { backgroundColor: theme.background },
+    bgForeground: { backgroundColor: theme.foreground },
+    bgPrimary: { backgroundColor: theme.primary },
+    bgSecondary: { backgroundColor: theme.secondary },
+    bgMuted: { backgroundColor: theme.muted },
+    bgCard: { backgroundColor: theme.card },
+    bgDestructive: { backgroundColor: theme.destructive },
+    bgError: { backgroundColor: theme.destructive },
+    bgSuccess: { backgroundColor: theme.success },
+    bgWarning: { backgroundColor: theme.warning },
+    bgInfo: { backgroundColor: theme.info },
+
+    // Text color
+    textForeground: { color: theme.foreground },
+    textPrimary: { color: theme.primary },
+    textSecondary: { color: theme.secondaryForeground },
+    textMuted: { color: theme.muted },
+    textMutedForeground: { color: theme.mutedForeground },
+    textDestructive: { color: theme.destructive },
+    textSuccess: { color: theme.success },
+    textWarning: { color: theme.warning },
+    textError: { color: theme.destructive },
+
+    // Border
+    borderBorder: { borderColor: theme.border },
+    borderPrimary: { borderColor: theme.primary },
+    borderDestructive: { borderColor: theme.destructive },
+    borderSuccess: { borderColor: theme.success },
+    borderWarning: { borderColor: theme.warning },
+    borderInfo: { borderColor: theme.info },
+  });
+}
+
+export type SemanticColorUtilities = ReturnType<typeof buildSemanticColors>;
+
 export const appearance = StyleSheet.create({
   ...buildColorUtilities("bg", "backgroundColor"),
   ...buildColorUtilities("text", "color"),
   ...buildColorUtilities("border", "borderColor"),
-
-  // Background — semantic
-  bgBackground: { backgroundColor: colors.background },
-  bgForeground: { backgroundColor: colors.foreground },
-  bgPrimary: { backgroundColor: colors.primary },
-  bgSecondary: { backgroundColor: colors.secondary },
-  bgMuted: { backgroundColor: colors.muted },
-  bgCard: { backgroundColor: colors.card },
-  bgDestructive: { backgroundColor: colors.destructive },
-  bgError: { backgroundColor: colors.destructive },
-  bgSuccess: { backgroundColor: colors.success },
-  bgWarning: { backgroundColor: colors.warning },
-  bgInfo: { backgroundColor: colors.info },
-
-  // Text color — semantic
-  textForeground: { color: colors.foreground },
-  textPrimary: { color: colors.primary },
-  textSecondary: { color: colors.secondaryForeground },
-  textMuted: { color: colors.muted },
-  textMutedForeground: { color: colors.mutedForeground },
-  textDestructive: { color: colors.destructive },
-  textSuccess: { color: colors.success },
-  textWarning: { color: colors.warning },
-  textError: { color: colors.destructive },
-
-  // Border — semantic
-  borderBorder: { borderColor: colors.border },
-  borderPrimary: { borderColor: colors.primary },
-  borderDestructive: { borderColor: colors.destructive },
-  borderSuccess: { borderColor: colors.success },
-  borderWarning: { borderColor: colors.warning },
-  borderInfo: { borderColor: colors.info },
 
   // Border Width
   border0: { borderWidth: 0 },

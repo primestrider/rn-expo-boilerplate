@@ -1,17 +1,19 @@
 import { Text, View } from "react-native";
 
-import { styles, text, view } from "@/styles";
+import { text, useStyles, view } from "@/styles";
 
 type Props = {
   name: string;
 };
 
 export function UtilityChip({ name }: Props) {
+  const styles = useStyles();
+
   return (
     <View
-      style={view(styles.bgGray100, styles.px2, styles.py1, styles.rounded)}
+      style={view(styles.bgSecondary, styles.px2, styles.py1, styles.rounded)}
     >
-      <Text style={text(styles.textXs, styles.fontMono, styles.textGray700)}>
+      <Text style={text(styles.textXs, styles.fontMono, styles.textSecondary)}>
         {name}
       </Text>
     </View>

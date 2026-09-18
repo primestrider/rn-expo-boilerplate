@@ -4,6 +4,7 @@ export {
   darkColors,
   type ColorToken,
   type PaletteColor,
+  type ThemeColors,
 } from "./colors";
 export { spacing, type SpacingToken } from "./spacing";
 export {

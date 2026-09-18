@@ -51,6 +51,12 @@ export const exampleScreens: ExampleScreen[] = [
     utilities: ["view()", "space('p', 20)", "gridCol(3)"],
   },
   {
+    href: "/example/theme" as LinkProps["href"],
+    title: "Theme",
+    description: "Dark mode with a persisted System / Light / Dark preference",
+    utilities: ["useTheme()", "useStyles()", "ThemeToggle"],
+  },
+  {
     href: "/example/form" as LinkProps["href"],
     title: "Form",
     description: "React Hook Form with shared Input and Button components",

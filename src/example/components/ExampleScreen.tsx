@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { styles, text, view } from "@/styles";
+import { text, useStyles, view } from "@/styles";
 
 type Props = {
   title: string;
@@ -11,6 +11,7 @@ type Props = {
 };
 
 export function ExampleScreen({ title, subtitle, children }: Readonly<Props>) {
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
 
   return (

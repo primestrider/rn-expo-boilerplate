@@ -23,8 +23,8 @@ import {
   useResizeMode,
 } from "react-native-keyboard-controller";
 
-import { styles, text, view } from "@/styles";
-import { colors, fontSize } from "@/styles/tokens";
+import { text, useStyles, useTheme, view } from "@/styles";
+import { fontSize } from "@/styles/tokens";
 import { fontFamily } from "@/styles/tokens/typography";
 
 type InputType =
@@ -67,6 +67,9 @@ export const Input = forwardRef<TextInput, InputProps>(
     ref: Ref<TextInput>,
   ) => {
     useResizeMode();
+
+    const styles = useStyles();
+    const { colors } = useTheme();
 
     const [isFocused, setIsFocused] = useState(false);
     const focusAnim = useRef(new Animated.Value(0)).current;
@@ -144,7 +147,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           inputRange: [0, 1],
           outputRange: [colors.border, colors.primary],
         }),
-      [focusAnim],
+      [focusAnim, colors],
     );
 
     const animatedLabelColor = useMemo(
@@ -153,7 +156,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           inputRange: [0, 1],
           outputRange: [colors.mutedForeground, colors.primary],
         }),
-      [focusAnim],
+      [focusAnim, colors],
     );
 
     return (
@@ -184,7 +187,8 @@ export const Input = forwardRef<TextInput, InputProps>(
             error && { borderColor: colors.destructive },
             isFocused &&
               !error && {
-                boxShadow: "0 1px 3px rgba(32, 138, 239, 0.12)",
+                // `1F` is ~12% alpha, so the focus glow follows the theme accent.
+                boxShadow: `0 1px 3px ${colors.primary}1F`,
                 elevation: 2,
               },
           ]}

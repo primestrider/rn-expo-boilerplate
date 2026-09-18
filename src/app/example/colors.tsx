@@ -4,44 +4,46 @@ import { Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { palette, styles, text, view } from "@/styles";
+import { palette, text, useStyles, view, type ThemedUtilities } from "@/styles";
 
 const semanticBgs = [
-  { name: "bgBackground", style: styles.bgBackground },
-  { name: "bgPrimary", style: styles.bgPrimary },
-  { name: "bgSecondary", style: styles.bgSecondary },
-  { name: "bgCard", style: styles.bgCard },
-  { name: "bgDestructive", style: styles.bgDestructive },
-  { name: "bgMuted", style: styles.bgMuted },
-] as const;
+  "bgBackground",
+  "bgPrimary",
+  "bgSecondary",
+  "bgCard",
+  "bgDestructive",
+  "bgMuted",
+] as const satisfies readonly (keyof ThemedUtilities)[];
 
 const paletteBgs = [
-  { name: "bgPrimary50", style: styles.bgPrimary50 },
-  { name: "bgPrimary100", style: styles.bgPrimary100 },
-  { name: "bgPrimary500", style: styles.bgPrimary500 },
-  { name: "bgGray50", style: styles.bgGray50 },
-  { name: "bgGray200", style: styles.bgGray200 },
-  { name: "bgGray800", style: styles.bgGray800 },
-] as const;
+  "bgPrimary50",
+  "bgPrimary100",
+  "bgPrimary500",
+  "bgGray50",
+  "bgGray200",
+  "bgGray800",
+] as const satisfies readonly (keyof ThemedUtilities)[];
 
 const statusBgs = [
-  { name: "bgSuccess", style: styles.bgSuccess },
-  { name: "bgWarning", style: styles.bgWarning },
-  { name: "bgError", style: styles.bgError },
-  { name: "bgInfo", style: styles.bgInfo },
-] as const;
+  "bgSuccess",
+  "bgWarning",
+  "bgError",
+  "bgInfo",
+] as const satisfies readonly (keyof ThemedUtilities)[];
 
 const textColors = [
-  { name: "textForeground", style: styles.textForeground },
-  { name: "textPrimary", style: styles.textPrimary },
-  { name: "textMuted", style: styles.textMuted },
-  { name: "textDestructive", style: styles.textDestructive },
-  { name: "textSuccess", style: styles.textSuccess },
-  { name: "textWarning", style: styles.textWarning },
-  { name: "textError", style: styles.textError },
-] as const;
+  "textForeground",
+  "textPrimary",
+  "textMuted",
+  "textDestructive",
+  "textSuccess",
+  "textWarning",
+  "textError",
+] as const satisfies readonly (keyof ThemedUtilities)[];
 
 export default function ColorsExample() {
+  const styles = useStyles();
+
   return (
     <>
       <Stack.Screen options={{ title: "Colors" }} />
@@ -52,24 +54,24 @@ export default function ColorsExample() {
         <Section
           title="Semantic Background"
           description="Colors with contextual meaning (background, primary, destructive, etc.)"
-          utilities={semanticBgs.map((item) => item.name)}
+          utilities={[...semanticBgs]}
         >
           <View style={view(styles.flexRow, styles.flexWrap, styles.gap2)}>
-            {semanticBgs.map((item) => (
+            {semanticBgs.map((name) => (
               <View
-                key={item.name}
+                key={name}
                 style={view(
                   styles.w24,
                   styles.h16,
                   styles.roundedLg,
-                  item.style,
+                  styles[name],
                   styles.center,
                 )}
               >
                 <Text
                   style={text(styles.textXs, styles.fontMono, styles.textWhite)}
                 >
-                  {item.name}
+                  {name}
                 </Text>
               </View>
             ))}
@@ -79,17 +81,17 @@ export default function ColorsExample() {
         <Section
           title="Palette Background"
           description="Color scale from design tokens"
-          utilities={paletteBgs.map((item) => item.name)}
+          utilities={[...paletteBgs]}
         >
           <View style={view(styles.flexRow, styles.flexWrap, styles.gap2)}>
-            {paletteBgs.map((item) => (
+            {paletteBgs.map((name) => (
               <View
-                key={item.name}
+                key={name}
                 style={view(
                   styles.w24,
                   styles.h16,
                   styles.roundedLg,
-                  item.style,
+                  styles[name],
                   styles.center,
                 )}
               >
@@ -100,7 +102,7 @@ export default function ColorsExample() {
                     styles.textGray700,
                   )}
                 >
-                  {item.name}
+                  {name}
                 </Text>
               </View>
             ))}
@@ -109,17 +111,17 @@ export default function ColorsExample() {
 
         <Section
           title="Status Background"
-          utilities={statusBgs.map((item) => item.name)}
+          utilities={[...statusBgs]}
         >
           <View style={view(styles.flexRow, styles.flexWrap, styles.gap2)}>
-            {statusBgs.map((item) => (
+            {statusBgs.map((name) => (
               <View
-                key={item.name}
+                key={name}
                 style={view(
                   styles.flex1,
                   styles.h12,
                   styles.roundedLg,
-                  item.style,
+                  styles[name],
                   styles.center,
                 )}
               >
@@ -130,7 +132,7 @@ export default function ColorsExample() {
                     styles.textWhite,
                   )}
                 >
-                  {item.name}
+                  {name}
                 </Text>
               </View>
             ))}
@@ -139,15 +141,15 @@ export default function ColorsExample() {
 
         <Section
           title="Text Colors"
-          utilities={textColors.map((item) => item.name)}
+          utilities={[...textColors]}
         >
           <DemoBox>
-            {textColors.map((item) => (
+            {textColors.map((name) => (
               <Text
-                key={item.name}
-                style={text(styles.textBase, styles.mb1, item.style)}
+                key={name}
+                style={text(styles.textBase, styles.mb1, styles[name])}
               >
-                {item.name} — The quick brown fox
+                {name} — The quick brown fox
               </Text>
             ))}
           </DemoBox>

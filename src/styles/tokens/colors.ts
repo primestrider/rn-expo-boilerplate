@@ -450,7 +450,13 @@ export const colors = {
   info: palette.info[500],
 } as const;
 
-/** Semantic color aliases for dark mode */
+/**
+ * Semantic color aliases for dark mode.
+ *
+ * The `satisfies` clause makes the light and dark themes structurally
+ * interchangeable: dropping or misspelling a key here is a compile error
+ * rather than a surface that silently keeps its light color.
+ */
 export const darkColors = {
   background: palette.gray[950],
   foreground: palette.gray[50],
@@ -468,7 +474,10 @@ export const darkColors = {
   success: palette.success[500],
   warning: palette.warning[500],
   info: palette.info[500],
-} as const;
+} as const satisfies Record<keyof typeof colors, string>;
 
 export type ColorToken = keyof typeof colors;
 export type PaletteColor = keyof typeof palette;
+
+/** One complete semantic theme — `colors` (light) or `darkColors` (dark). */
+export type ThemeColors = Record<ColorToken, string>;

@@ -4,24 +4,26 @@ import { Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { styles, text, view } from "@/styles";
+import { styles as staticStyles, text, useStyles, view } from "@/styles";
 
 const widths = [
-  { name: "wFull", style: styles.wFull },
-  { name: "wHalf", style: styles.wHalf },
-  { name: "wThird", style: styles.wThird },
-  { name: "wQuarter", style: styles.wQuarter },
+  { name: "wFull", style: staticStyles.wFull },
+  { name: "wHalf", style: staticStyles.wHalf },
+  { name: "wThird", style: staticStyles.wThird },
+  { name: "wQuarter", style: staticStyles.wQuarter },
 ] as const;
 
 const fixedSizes = [
-  { name: "w12", style: styles.w12 },
-  { name: "w16", style: styles.w16 },
-  { name: "h12", style: styles.h12 },
-  { name: "size16", style: styles.size16 },
-  { name: "size24", style: styles.size24 },
+  { name: "w12", style: staticStyles.w12 },
+  { name: "w16", style: staticStyles.w16 },
+  { name: "h12", style: staticStyles.h12 },
+  { name: "size16", style: staticStyles.size16 },
+  { name: "size24", style: staticStyles.size24 },
 ] as const;
 
 export default function SizingExample() {
+  const styles = useStyles();
+
   return (
     <>
       <Stack.Screen options={{ title: "Sizing" }} />

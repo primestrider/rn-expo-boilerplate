@@ -4,31 +4,33 @@ import { Text, View } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { gridCol, styles, text, view } from "@/styles";
+import { gridCol, styles as staticStyles, text, useStyles, view } from "@/styles";
 
 const flexDirections = [
-  { name: "flexRow", style: styles.flexRow },
-  { name: "flexCol", style: styles.flexCol },
-  { name: "flexRowReverse", style: styles.flexRowReverse },
+  { name: "flexRow", style: staticStyles.flexRow },
+  { name: "flexCol", style: staticStyles.flexCol },
+  { name: "flexRowReverse", style: staticStyles.flexRowReverse },
 ] as const;
 
 const alignItems = [
-  { name: "itemsStart", style: styles.itemsStart },
-  { name: "itemsCenter", style: styles.itemsCenter },
-  { name: "itemsEnd", style: styles.itemsEnd },
-  { name: "itemsStretch", style: styles.itemsStretch },
+  { name: "itemsStart", style: staticStyles.itemsStart },
+  { name: "itemsCenter", style: staticStyles.itemsCenter },
+  { name: "itemsEnd", style: staticStyles.itemsEnd },
+  { name: "itemsStretch", style: staticStyles.itemsStretch },
 ] as const;
 
 const justifyContent = [
-  { name: "justifyStart", style: styles.justifyStart },
-  { name: "justifyCenter", style: styles.justifyCenter },
-  { name: "justifyEnd", style: styles.justifyEnd },
-  { name: "justifyBetween", style: styles.justifyBetween },
-  { name: "justifyAround", style: styles.justifyAround },
-  { name: "justifyEvenly", style: styles.justifyEvenly },
+  { name: "justifyStart", style: staticStyles.justifyStart },
+  { name: "justifyCenter", style: staticStyles.justifyCenter },
+  { name: "justifyEnd", style: staticStyles.justifyEnd },
+  { name: "justifyBetween", style: staticStyles.justifyBetween },
+  { name: "justifyAround", style: staticStyles.justifyAround },
+  { name: "justifyEvenly", style: staticStyles.justifyEvenly },
 ] as const;
 
 export default function LayoutExample() {
+  const styles = useStyles();
+
   return (
     <>
       <Stack.Screen options={{ title: "Layout & Flex" }} />

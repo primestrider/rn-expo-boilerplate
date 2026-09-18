@@ -26,6 +26,57 @@ This boilerplate includes:
 - Expo Localization
 - Expo Font
 
+## Styling and Dark Mode
+
+Utility styles come from `@/styles`, split by whether they depend on the theme.
+
+Theme-neutral utilities (layout, spacing, sizing, typography) and raw palette swatches are static:
+
+```tsx
+import { styles, view } from "@/styles";
+
+<View style={view(styles.flex1, styles.p4, styles.roundedLg)} />;
+```
+
+Semantic colors (`bgBackground`, `textForeground`, `borderBorder`, ...) depend on the active
+color scheme, so they are only reachable through `useStyles()`. Name the result `styles` and the
+rest of the component stays unchanged:
+
+```tsx
+import { text, useStyles, view } from "@/styles";
+
+export function Card() {
+  const styles = useStyles();
+
+  return (
+    <View style={view(styles.p4, styles.bgCard, styles.borderBorder)}>
+      <Text style={text(styles.textBase, styles.textForeground)}>Themed</Text>
+    </View>
+  );
+}
+```
+
+Keeping semantic colors off the static object is deliberate: a surface can never be silently
+pinned to light mode.
+
+For raw color values — native chrome, icon tints, animated colors — use `useTheme()`:
+
+```tsx
+const { colors, isDark, mode, setMode } = useTheme();
+```
+
+### Theme preference
+
+`<ThemeToggle />` (from `@/shared/components`) switches between **System**, **Light**, and
+**Dark**. `System` keeps following the OS setting; the choice is persisted to MMKV and
+rehydrated synchronously, so the app never flashes the wrong theme on launch. See the
+`/example/theme` screen.
+
+Two things stay light regardless of the selected theme:
+
+- Shadow utilities use hardcoded `rgba(0, 0, 0, ...)`, so they are barely visible on dark surfaces.
+- The splash screen and adaptive icon colors are build-time config rendered before JavaScript starts.
+
 ## Requirements
 
 Before starting, make sure the following tools are installed:

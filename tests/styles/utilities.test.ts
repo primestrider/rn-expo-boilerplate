@@ -1,6 +1,5 @@
 import { styles } from "@/styles";
 import {
-  colors,
   fontFamily,
   fontSize,
   lineHeight,
@@ -76,13 +75,18 @@ describe("typography utilities", () => {
 });
 
 describe("appearance utilities", () => {
-  it("resolves semantic colors from the theme", () => {
-    expect(styles.bgPrimary).toEqual({ backgroundColor: colors.primary });
-    expect(styles.textForeground).toEqual({ color: colors.foreground });
-    expect(styles.borderBorder).toEqual({ borderColor: colors.border });
-    expect(styles.bgDestructive).toEqual({
-      backgroundColor: colors.destructive,
-    });
+  // Semantic colors depend on the active theme, so they deliberately live on
+  // `useStyles()` only. Keeping them off the static object is what stops a
+  // surface from being silently pinned to light mode — see theme.test.ts.
+  it.each([
+    "bgBackground",
+    "bgPrimary",
+    "bgCard",
+    "textForeground",
+    "textMuted",
+    "borderBorder",
+  ])("does not expose the theme-dependent %s statically", (key) => {
+    expect(styles[key as keyof typeof styles]).toBeUndefined();
   });
 
   it("generates palette shades", () => {
@@ -104,8 +108,9 @@ describe("appearance utilities", () => {
 });
 
 describe("utility keys used by the example screens", () => {
-  // These are the utilities the shipped example screens and shared components
-  // reference. A rename that drops one of them should fail here, not at runtime.
+  // Theme-neutral utilities the shipped example screens reference. A rename
+  // that drops one should fail here, not at runtime. Semantic color keys are
+  // covered in theme.test.ts, since they only exist on `useStyles()`.
   const usedKeys = [
     "flex1",
     "flexRow",
@@ -115,21 +120,11 @@ describe("utility keys used by the example screens", () => {
     "center",
     "flexWrap",
     "wFull",
-    "bgBackground",
-    "bgCard",
-    "bgPrimary",
-    "bgSuccess",
-    "bgWarning",
     "bgGray100",
     "bgAmber100",
-    "textForeground",
-    "textMuted",
     "textWhite",
     "textAmber900",
-    "textDestructive",
     "textSuccess700",
-    "borderBorder",
-    "borderPrimary",
     "border",
     "rounded",
     "roundedLg",

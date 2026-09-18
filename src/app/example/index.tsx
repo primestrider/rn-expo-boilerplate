@@ -3,9 +3,10 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { exampleScreens } from "@/example/data/navigation";
-import { styles, text, view } from "@/styles";
+import { text, useStyles, view } from "@/styles";
 
 export default function ExampleIndex() {
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
 
   return (

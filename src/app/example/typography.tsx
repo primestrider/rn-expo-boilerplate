@@ -4,39 +4,41 @@ import { Text } from "react-native";
 import { DemoBox } from "@/example/components/DemoBox";
 import { ExampleScreen } from "@/example/components/ExampleScreen";
 import { Section } from "@/example/components/Section";
-import { styles, text } from "@/styles";
+import { styles as staticStyles, text, useStyles } from "@/styles";
 
 const fontSizes = [
-  { name: "textXs", style: styles.textXs },
-  { name: "textSm", style: styles.textSm },
-  { name: "textBase", style: styles.textBase },
-  { name: "textLg", style: styles.textLg },
-  { name: "textXl", style: styles.textXl },
-  { name: "text2xl", style: styles.text2xl },
-  { name: "text3xl", style: styles.text3xl },
+  { name: "textXs", style: staticStyles.textXs },
+  { name: "textSm", style: staticStyles.textSm },
+  { name: "textBase", style: staticStyles.textBase },
+  { name: "textLg", style: staticStyles.textLg },
+  { name: "textXl", style: staticStyles.textXl },
+  { name: "text2xl", style: staticStyles.text2xl },
+  { name: "text3xl", style: staticStyles.text3xl },
 ] as const;
 
 const fontWeights = [
-  { name: "fontNormal", style: styles.fontNormal },
-  { name: "fontMedium", style: styles.fontMedium },
-  { name: "fontSemiBold", style: styles.fontSemiBold },
-  { name: "fontBold", style: styles.fontBold },
+  { name: "fontNormal", style: staticStyles.fontNormal },
+  { name: "fontMedium", style: staticStyles.fontMedium },
+  { name: "fontSemiBold", style: staticStyles.fontSemiBold },
+  { name: "fontBold", style: staticStyles.fontBold },
 ] as const;
 
 const textAligns = [
-  { name: "textLeft", style: styles.textLeft },
-  { name: "textCenter", style: styles.textCenter },
-  { name: "textRight", style: styles.textRight },
+  { name: "textLeft", style: staticStyles.textLeft },
+  { name: "textCenter", style: staticStyles.textCenter },
+  { name: "textRight", style: staticStyles.textRight },
 ] as const;
 
 const letterSpacings = [
-  { name: "trackingTight", style: styles.trackingTight },
-  { name: "trackingNormal", style: styles.trackingNormal },
-  { name: "trackingWide", style: styles.trackingWide },
-  { name: "trackingWidest", style: styles.trackingWidest },
+  { name: "trackingTight", style: staticStyles.trackingTight },
+  { name: "trackingNormal", style: staticStyles.trackingNormal },
+  { name: "trackingWide", style: staticStyles.trackingWide },
+  { name: "trackingWidest", style: staticStyles.trackingWidest },
 ] as const;
 
 export default function TypographyExample() {
+  const styles = useStyles();
+
   return (
     <>
       <Stack.Screen options={{ title: "Typography" }} />

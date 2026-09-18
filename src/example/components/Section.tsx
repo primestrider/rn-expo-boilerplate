@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Text, View } from "react-native";
 
-import { styles, text, view } from "@/styles";
+import { text, useStyles, view } from "@/styles";
 
 import { UtilityChip } from "./UtilityChip";
 
@@ -13,6 +13,8 @@ type Props = {
 };
 
 export function Section({ title, description, utilities, children }: Props) {
+  const styles = useStyles();
+
   return (
     <View style={view(styles.mb8)}>
       <Text
