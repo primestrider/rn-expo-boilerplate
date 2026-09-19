@@ -10,6 +10,12 @@ import type { AxiosRequestConfig } from "axios";
 export type CustomAxiosRequestConfig<Data = unknown> = AxiosRequestConfig<Data> & {
   meta?: {
     requiresAuth?: boolean;
+    /**
+     * Internal. Set by the response interceptor on a request it has already
+     * retried after refreshing, so a still-401 retry stops instead of looping.
+     * Callers never set this.
+     */
+    _retried?: boolean;
   };
 };
 

@@ -1,17 +1,7 @@
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
-import { mmkvStorage, storageKeys } from "@/plugins/mmkv";
+import { getSessionHandlers } from "@/plugins/axios/session";
 import type { ApiError, CustomAxiosRequestConfig } from "@/shared/models";
-
-/**
- * Reads the stored access token.
- *
- * MMKV is synchronous, so the interceptor can stay synchronous too — no
- * request is ever delayed waiting on storage.
- */
-function readAccessToken(): string | undefined {
-  return mmkvStorage.getString(storageKeys.auth.accessToken);
-}
 
 /**
  * Turns any Axios failure into one predictable shape.
@@ -46,6 +36,21 @@ function toApiError(error: AxiosError): ApiError {
   };
 }
 
+/** Whether a 401 on this request is worth trying to recover from. */
+function isRecoverable(error: AxiosError): boolean {
+  if (error.response?.status !== 401) return false;
+
+  const config = error.config as CustomAxiosRequestConfig | undefined;
+  if (!config) return false;
+
+  // An anonymous endpoint's 401 is about the request, not the session — and
+  // this is also what stops the refresh call itself from recursing.
+  if (config.meta?.requiresAuth === false) return false;
+
+  // Already retried once. A second 401 means refreshing did not help.
+  return config.meta?._retried !== true;
+}
+
 /**
  * Installs the shared request/response behaviour on an Axios instance.
  *
@@ -66,7 +71,7 @@ export function setupInterceptors(axiosInstance: AxiosInstance): void {
       // toward sending the token rather than silently dropping it.
       if (meta?.requiresAuth === false) return config;
 
-      const token = readAccessToken();
+      const token = getSessionHandlers()?.getAccessToken();
       if (token) config.headers.set("Authorization", `Bearer ${token}`);
 
       return config;
@@ -76,6 +81,30 @@ export function setupInterceptors(axiosInstance: AxiosInstance): void {
 
   axiosInstance.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => Promise.reject(toApiError(error)),
+    async (error: AxiosError) => {
+      const handlers = getSessionHandlers();
+
+      if (!handlers || !isRecoverable(error)) {
+        return Promise.reject(toApiError(error));
+      }
+
+      const token = await handlers.refreshSession();
+
+      // The session is gone. `refreshSession` has already dealt with that;
+      // the caller still gets the failure it was waiting for.
+      if (!token) return Promise.reject(toApiError(error));
+
+      const config = error.config as CustomAxiosRequestConfig;
+
+      // Annotated rather than passed as a literal: `request()` takes a plain
+      // `AxiosRequestConfig`, and excess-property checking would reject `meta`
+      // on a fresh object literal.
+      const retried: CustomAxiosRequestConfig = {
+        ...config,
+        meta: { ...config.meta, _retried: true },
+      };
+
+      return axiosInstance.request(retried);
+    },
   );
 }

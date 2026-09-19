@@ -5,7 +5,11 @@ import axios, {
 } from "axios";
 
 import { setupInterceptors } from "@/plugins/axios/interceptor";
-import { mmkvStorage, storageKeys } from "@/plugins/mmkv";
+import {
+  registerSessionHandlers,
+  resetSessionHandlers,
+} from "@/plugins/axios/session";
+import { mmkvStorage } from "@/plugins/mmkv";
 import type { ApiError, CustomAxiosRequestConfig } from "@/shared/models";
 
 /** Captures the config the adapter was handed, after interceptors ran. */
@@ -42,11 +46,15 @@ function authorizationHeader(): unknown {
 beforeEach(() => {
   seenConfig = undefined;
   mmkvStorage.clearAll();
+  resetSessionHandlers();
 });
 
 describe("axios request interceptor", () => {
   it("attaches the stored access token", async () => {
-    mmkvStorage.set(storageKeys.auth.accessToken, "token-123");
+    registerSessionHandlers({
+      getAccessToken: () => "token-123",
+      refreshSession: jest.fn(),
+    });
 
     await instanceWith(okAdapter).request({ url: "/products" });
 
@@ -60,7 +68,10 @@ describe("axios request interceptor", () => {
   });
 
   it("treats a request as authenticated when meta is absent", async () => {
-    mmkvStorage.set(storageKeys.auth.accessToken, "token-123");
+    registerSessionHandlers({
+      getAccessToken: () => "token-123",
+      refreshSession: jest.fn(),
+    });
 
     await instanceWith(okAdapter).request({ url: "/products" });
 
@@ -68,7 +79,10 @@ describe("axios request interceptor", () => {
   });
 
   it("skips the token when the caller opts out", async () => {
-    mmkvStorage.set(storageKeys.auth.accessToken, "token-123");
+    registerSessionHandlers({
+      getAccessToken: () => "token-123",
+      refreshSession: jest.fn(),
+    });
 
     const config: CustomAxiosRequestConfig = {
       url: "/auth/login",
@@ -82,7 +96,10 @@ describe("axios request interceptor", () => {
   });
 
   it("attaches the token when the caller opts in explicitly", async () => {
-    mmkvStorage.set(storageKeys.auth.accessToken, "token-123");
+    registerSessionHandlers({
+      getAccessToken: () => "token-123",
+      refreshSession: jest.fn(),
+    });
 
     const config: CustomAxiosRequestConfig = {
       url: "/me",
@@ -191,5 +208,133 @@ describe("axios response interceptor", () => {
     const error = await instance.request({ url: "/products" }).catch((rejected) => rejected);
 
     expect(error).not.toBeInstanceOf(AxiosError);
+  });
+});
+
+/** An adapter that answers 401 once, then succeeds. */
+function unauthorizedThenOk(): AxiosAdapter {
+  let served = 0;
+
+  return (config) => {
+    served += 1;
+    seenConfig = config;
+
+    if (served === 1) {
+      return Promise.reject(
+        new AxiosError("Unauthorized", "ERR_BAD_REQUEST", config, {}, {
+          data: { message: "Token expired" },
+          status: 401,
+          statusText: "Unauthorized",
+          headers: {},
+          config,
+        }),
+      );
+    }
+
+    return Promise.resolve({
+      data: { ok: true },
+      status: 200,
+      statusText: "OK",
+      headers: {},
+      config,
+    });
+  };
+}
+
+/** An adapter that answers 401 every single time. */
+const alwaysUnauthorized: AxiosAdapter = (config) =>
+  Promise.reject(
+    new AxiosError("Unauthorized", "ERR_BAD_REQUEST", config, {}, {
+      data: { message: "Token expired" },
+      status: 401,
+      statusText: "Unauthorized",
+      headers: {},
+      config,
+    }),
+  );
+
+describe("axios session handling", () => {
+  afterEach(() => {
+    resetSessionHandlers();
+  });
+
+  it("attaches the token the handlers provide", async () => {
+    registerSessionHandlers({
+      getAccessToken: () => "token-from-session",
+      refreshSession: jest.fn(),
+    });
+
+    await instanceWith(okAdapter).request({ url: "/me" });
+
+    expect(authorizationHeader()).toBe("Bearer token-from-session");
+  });
+
+  it("refreshes once and retries the request on 401", async () => {
+    const refreshSession = jest.fn().mockResolvedValue("token-2");
+    registerSessionHandlers({
+      getAccessToken: () => "token-1",
+      refreshSession,
+    });
+
+    const response = await instanceWith(unauthorizedThenOk()).request({ url: "/me" });
+
+    expect(refreshSession).toHaveBeenCalledTimes(1);
+    expect(response.data).toEqual({ ok: true });
+  });
+
+  it("does not refresh a request that opted out of auth", async () => {
+    const refreshSession = jest.fn();
+    registerSessionHandlers({ getAccessToken: () => "token-1", refreshSession });
+
+    const config: CustomAxiosRequestConfig = {
+      url: "/auth/login",
+      method: "POST",
+      meta: { requiresAuth: false },
+    };
+
+    await instanceWith(alwaysUnauthorized)
+      .request(config)
+      .catch((rejected) => rejected);
+
+    expect(refreshSession).not.toHaveBeenCalled();
+  });
+
+  it("gives up after one retry rather than looping", async () => {
+    const refreshSession = jest.fn().mockResolvedValue("token-2");
+    registerSessionHandlers({ getAccessToken: () => "token-1", refreshSession });
+
+    const error: ApiError = await instanceWith(alwaysUnauthorized)
+      .request({ url: "/me" })
+      .catch((rejected) => rejected);
+
+    expect(refreshSession).toHaveBeenCalledTimes(1);
+    expect(error.status).toBe(401);
+  });
+
+  it("rejects with the normalized error when the refresh fails", async () => {
+    registerSessionHandlers({
+      getAccessToken: () => "token-1",
+      refreshSession: jest.fn().mockResolvedValue(null),
+    });
+
+    const error: ApiError = await instanceWith(alwaysUnauthorized)
+      .request({ url: "/me" })
+      .catch((rejected) => rejected);
+
+    expect(error).toEqual({
+      message: "Token expired",
+      status: 401,
+      data: { message: "Token expired" },
+      isNetworkError: false,
+    });
+  });
+
+  it("behaves exactly as before when no handlers are registered", async () => {
+    const error: ApiError = await instanceWith(alwaysUnauthorized)
+      .request({ url: "/me" })
+      .catch((rejected) => rejected);
+
+    expect(error.status).toBe(401);
+    expect(authorizationHeader()).toBeUndefined();
   });
 });
