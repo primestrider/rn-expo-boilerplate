@@ -41,6 +41,11 @@ const exampleId: typeof example = {
       tokenNote: "Token akses tersimpan di MMKV dan disertakan di setiap permintaan.",
     },
 
+    account: {
+      title: "Akun",
+      subtitle: "Layar yang hanya bisa dibuka oleh sesi yang sudah masuk",
+    },
+
     error: {
       title: "Gagal masuk",
     },

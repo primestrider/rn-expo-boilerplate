@@ -13,6 +13,7 @@ const utilsId: typeof utils = {
     retry: "Coba lagi",
     delete: "Hapus",
     close: "Tutup",
+    goHome: "Ke beranda",
   },
 
   state: {
@@ -32,6 +33,13 @@ const utilsId: typeof utils = {
     generic: "Terjadi kesalahan. Silakan coba lagi.",
     network: "Tidak dapat menghubungi server. Periksa koneksi Anda.",
     unauthorized: "Sesi Anda telah berakhir. Silakan masuk kembali.",
+  },
+
+  fallback: {
+    notFoundTitle: "Halaman ini tidak ada",
+    notFoundDescription: "Tautannya mungkin rusak, atau layarnya sudah dipindah.",
+    errorTitle: "Terjadi kesalahan",
+    errorDescription: "Layar ini tidak dapat ditampilkan.",
   },
 };
 

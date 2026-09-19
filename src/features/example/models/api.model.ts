@@ -53,3 +53,9 @@ export type DummyLoginResponse = {
   accessToken: string;
   refreshToken: string;
 };
+
+/** What DummyJSON answers when a refresh token is exchanged. */
+export type DummyRefreshResponse = {
+  accessToken: string;
+  refreshToken: string;
+};

@@ -17,6 +17,7 @@ export default {
     retry: "Try again",
     delete: "Delete",
     close: "Close",
+    goHome: "Go to home",
   },
 
   state: {
@@ -36,5 +37,12 @@ export default {
     generic: "Something went wrong. Please try again.",
     network: "Cannot reach the server. Check your connection.",
     unauthorized: "Your session has expired. Please sign in again.",
+  },
+
+  fallback: {
+    notFoundTitle: "This screen does not exist",
+    notFoundDescription: "The link may be broken, or the screen may have moved.",
+    errorTitle: "Something went wrong",
+    errorDescription: "The screen could not be displayed.",
   },
 };
