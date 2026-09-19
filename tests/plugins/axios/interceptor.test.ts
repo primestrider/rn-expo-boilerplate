@@ -329,6 +329,24 @@ describe("axios session handling", () => {
     });
   });
 
+  it("rejects with the normalized error when the refresh rejects", async () => {
+    registerSessionHandlers({
+      getAccessToken: () => "token-1",
+      refreshSession: jest.fn().mockRejectedValue(new Error("refresh endpoint is down")),
+    });
+
+    const error: ApiError = await instanceWith(alwaysUnauthorized)
+      .request({ url: "/me" })
+      .catch((rejected) => rejected);
+
+    expect(error).toEqual({
+      message: "Token expired",
+      status: 401,
+      data: { message: "Token expired" },
+      isNetworkError: false,
+    });
+  });
+
   it("behaves exactly as before when no handlers are registered", async () => {
     const error: ApiError = await instanceWith(alwaysUnauthorized)
       .request({ url: "/me" })

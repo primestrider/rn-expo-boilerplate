@@ -46,6 +46,11 @@ export default {
       tokenNote: "The access token is stored in MMKV and attached to every request.",
     },
 
+    account: {
+      title: "Account",
+      subtitle: "A screen only a signed-in session can reach",
+    },
+
     error: {
       title: "Could not sign in",
     },

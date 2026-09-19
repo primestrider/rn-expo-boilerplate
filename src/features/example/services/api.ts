@@ -6,6 +6,7 @@ import type {
   DummyLoginResponse,
   DummyProduct,
   DummyProductListResponse,
+  DummyRefreshResponse,
 } from "../models/api.model";
 
 /**
@@ -103,5 +104,29 @@ export const login = async (
   };
 
   const { data } = await axiosInstance.request<DummyLoginResponse>(config);
+  return data;
+};
+
+/**
+ * Exchange a refresh token for a new pair.
+ *
+ * Endpoint:
+ * POST /auth/refresh
+ *
+ * Opted out of auth: the access token this is meant to replace is, by
+ * definition, the one that just stopped working. Opting out is also what keeps
+ * a failure here from recursing back into the refresh flow.
+ */
+export const refreshSession = async (
+  refreshToken: string,
+): Promise<DummyRefreshResponse> => {
+  const config: CustomAxiosRequestConfig<{ refreshToken: string }> = {
+    url: `${HOST}/auth/refresh`,
+    method: "POST",
+    data: { refreshToken },
+    meta: anonymous,
+  };
+
+  const { data } = await axiosInstance.request<DummyRefreshResponse>(config);
   return data;
 };

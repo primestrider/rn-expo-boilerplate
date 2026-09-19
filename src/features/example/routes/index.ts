@@ -35,7 +35,8 @@ export const examplePaths = {
   componentsOverlay: href("/example/components/overlay"),
 
   features: href("/example/features"),
-  signIn: href("/example/features/sign-in"),
+  signIn: href("/sign-in"),
+  account: href("/account"),
   products: href("/example/features/products"),
   productDetail: (id: number | string) =>
     href(`/example/features/products/${id}`),
@@ -193,7 +194,7 @@ export const featureScreens: FeatureNavItem[] = [
     href: examplePaths.signIn,
     titleKey: "features.example.signIn.title",
     descriptionKey: "features.example.signIn.subtitle",
-    plugins: ["react-hook-form", "zod", "axios", "mmkv", "zustand"],
+    plugins: ["react-hook-form", "zod", "axios", "mmkv", "zustand", "expo-router"],
   },
   {
     name: ExamplePageName.PRODUCTS,

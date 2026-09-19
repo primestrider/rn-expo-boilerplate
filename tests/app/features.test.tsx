@@ -2,13 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, render, screen } from "@testing-library/react-native";
 import type { ComponentType, ReactNode } from "react";
 
-import FeaturesIndex from "@/app/example/features/index";
-import ProductDetailScreen from "@/app/example/features/products/[id]";
-import ProductsScreen from "@/app/example/features/products/index";
-import SettingsScreen from "@/app/example/features/settings";
-import SignInScreen from "@/app/example/features/sign-in";
-import TodosScreen from "@/app/example/features/todos";
-import { useAuthStore } from "@/features/example/stores/auth.store";
+import FeaturesIndex from "@/app/(public)/example/features/index";
+import ProductDetailScreen from "@/app/(public)/example/features/products/[id]";
+import ProductsScreen from "@/app/(public)/example/features/products/index";
+import SettingsScreen from "@/app/(public)/example/features/settings";
+import TodosScreen from "@/app/(public)/example/features/todos";
 import { useTodosStore } from "@/features/example/stores/todos.store";
 import "@/plugins/i18n";
 import { mmkvStorage } from "@/plugins/mmkv";
@@ -75,7 +73,6 @@ function renderScreen(Component: ComponentType) {
 beforeEach(() => {
   mmkvStorage.clearAll();
   act(() => {
-    useAuthStore.setState({ user: null });
     useTodosStore.setState({ todos: [] });
   });
 });
@@ -88,34 +85,6 @@ describe("feature example screens", () => {
     expect(screen.getByText("Products")).toBeOnTheScreen();
     expect(screen.getByText("Todos")).toBeOnTheScreen();
     expect(screen.getByText("Settings")).toBeOnTheScreen();
-  });
-
-  it("renders the sign-in form when signed out", () => {
-    renderScreen(SignInScreen);
-
-    expect(screen.getByText("Username")).toBeOnTheScreen();
-    expect(screen.getByText("Password")).toBeOnTheScreen();
-    expect(screen.getByText("Demo account")).toBeOnTheScreen();
-  });
-
-  it("renders the session card when signed in", () => {
-    act(() =>
-      useAuthStore.setState({
-        user: {
-          id: 1,
-          username: "emilys",
-          email: "emily@example.com",
-          firstName: "Emily",
-          lastName: "Johnson",
-          image: "https://example.com/emily.png",
-        },
-      }),
-    );
-
-    renderScreen(SignInScreen);
-
-    expect(screen.getByText("Emily Johnson")).toBeOnTheScreen();
-    expect(screen.getByText("Sign out")).toBeOnTheScreen();
   });
 
   it("renders the products screen", () => {

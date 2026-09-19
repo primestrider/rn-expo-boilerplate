@@ -6,7 +6,7 @@ import {
   languageNames,
   supportedLanguages,
   type SupportedLanguage,
-} from "../../../../configs/i18n.config";
+} from "../../../../../configs/i18n.config";
 import { useSettingsStore } from "@/features/example/stores/settings.store";
 import { changeLanguage, getCurrentLanguage } from "@/plugins/i18n";
 import {

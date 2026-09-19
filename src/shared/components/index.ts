@@ -1,4 +1,5 @@
 // Foundation
+export { AppErrorBoundary } from "./AppErrorBoundary";
 export { AppText } from "./AppText";
 export type { AppTextProps } from "./AppText";
 export { Divider } from "./Divider";

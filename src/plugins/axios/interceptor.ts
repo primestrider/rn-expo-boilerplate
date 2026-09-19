@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
-import { getSessionHandlers } from "@/plugins/axios/session";
+import { getSessionHandlers } from "./session";
 import type { ApiError, CustomAxiosRequestConfig } from "@/shared/models";
 
 /**
@@ -88,7 +88,17 @@ export function setupInterceptors(axiosInstance: AxiosInstance): void {
         return Promise.reject(toApiError(error));
       }
 
-      const token = await handlers.refreshSession();
+      // `SessionHandlers` is a public seam: our own implementation always
+      // resolves (to a token or to null), but a swapped-in one could reject.
+      // Either way the session could not be renewed, so both collapse to the
+      // same outcome — the caller gets the normalized error for the original
+      // 401, never a raw rejection reason.
+      let token: string | null;
+      try {
+        token = await handlers.refreshSession();
+      } catch {
+        return Promise.reject(toApiError(error));
+      }
 
       // The session is gone. `refreshSession` has already dealt with that;
       // the caller still gets the failure it was waiting for.

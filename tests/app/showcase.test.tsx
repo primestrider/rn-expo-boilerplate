@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react-native";
 import type { ComponentType, ReactNode } from "react";
 
-import FormExample from "@/app/example/form";
-import ComponentsIndex from "@/app/example/components/index";
-import DisplayComponents from "@/app/example/components/display";
-import FormComponents from "@/app/example/components/form";
-import LayoutComponents from "@/app/example/components/layout";
-import OverlayComponents from "@/app/example/components/overlay";
-import Index from "@/app/index";
+import FormExample from "@/app/(public)/example/form";
+import ComponentsIndex from "@/app/(public)/example/components/index";
+import DisplayComponents from "@/app/(public)/example/components/display";
+import FormComponents from "@/app/(public)/example/components/form";
+import LayoutComponents from "@/app/(public)/example/components/layout";
+import OverlayComponents from "@/app/(public)/example/components/overlay";
+import Index from "@/app/(public)/index";
 import { ToastProvider } from "@/shared/components";
 
 /**
