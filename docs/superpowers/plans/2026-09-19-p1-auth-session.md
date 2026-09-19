@@ -956,10 +956,15 @@ export function setupInterceptors(axiosInstance: AxiosInstance): void {
 
       const config = error.config as CustomAxiosRequestConfig;
 
-      return axiosInstance.request({
+      // Annotated rather than passed as a literal: `request()` takes a plain
+      // `AxiosRequestConfig`, and excess-property checking would reject `meta`
+      // on a fresh object literal.
+      const retried: CustomAxiosRequestConfig = {
         ...config,
         meta: { ...config.meta, _retried: true },
-      });
+      };
+
+      return axiosInstance.request(retried);
     },
   );
 }
