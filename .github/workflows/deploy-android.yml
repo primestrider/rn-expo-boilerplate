@@ -60,12 +60,45 @@ jobs:
           # terhadap android/app, bukan root repo.
           echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
 
+      # Divalidasi di sini, sebelum build yang belasan menit, karena kredensial
+      # yang kosong atau salah bentuk baru muncul di step terakhir sebagai
+      # "Failed to authenticate, have you run firebase login?" — pesan yang
+      # tidak menyebut file kredensial sama sekali dan menunjuk ke arah salah.
       - name: Write Firebase service account
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+          CREDS="$RUNNER_TEMP/firebase-service-account.json"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$CREDS"
+
+          if [ ! -s "$CREDS" ]; then
+            echo "::error::Secret FIREBASE_SERVICE_ACCOUNT_JSON kosong atau tidak ada. Periksa namanya persis di environment app-distribution."
+            exit 1
+          fi
+
+          node -e '
+            const fs = require("fs");
+            let creds;
+            try {
+              creds = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+            } catch (error) {
+              console.log(`::error::FIREBASE_SERVICE_ACCOUNT_JSON bukan JSON valid: ${error.message}`);
+              process.exit(1);
+            }
+            if (creds.type !== "service_account") {
+              console.log(`::error::Field type bernilai ${JSON.stringify(creds.type)}, seharusnya "service_account" — yang terunduh kemungkinan bukan kunci service account.`);
+              process.exit(1);
+            }
+            for (const field of ["private_key", "client_email", "project_id"]) {
+              if (!creds[field]) {
+                console.log(`::error::Field ${field} tidak ada di kunci service account.`);
+                process.exit(1);
+              }
+            }
+            console.log(`Kunci service account valid untuk project ${creds.project_id}.`);
+          ' "$CREDS"
+
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$CREDS" >> "$GITHUB_ENV"
 
       # android/ di-gitignore, jadi native project dibangun ulang setiap run.
       # --no-install karena npm ci di atas sudah memasang dependensi.
