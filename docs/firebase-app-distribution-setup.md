@@ -14,17 +14,20 @@ kedua, lompat ke [Yang harus diganti saat clone](#yang-harus-diganti-saat-clone)
 Merge ke `main` memicu `.github/workflows/deploy-android.yml`, yang menjalankan:
 
 ```
-checkout
+checkout (riwayat penuh)
   → setup Node 20 + JDK 17 + cache Gradle
+  → resolve version bump              ← prefix branch menentukan bagian versi
   → npm ci
   → npm test                          ← gagal di sini, build tidak dimulai
   → decode keystore dari secret
   → tulis & validasi kunci service account
+  → npm version + commit ke main      ← chore(release): vX.Y.Z [skip ci]
   → expo prebuild --platform android  ← android/ dibuat di sini
   → gradlew assembleRelease
   → apksigner verify                  ← menolak APK debug-signed
   → upload artifact APK
   → firebase appdistribution:distribute
+  → git tag vX.Y.Z                    ← hanya kalau distribusi berhasil
 ```
 
 Bisa juga dijalankan manual dari **Actions → Distribute Android → Run
@@ -33,6 +36,84 @@ workflow**, yang penting untuk menguji sebelum merge.
 Dua step diletakkan lebih awal dengan sengaja: `npm test` dan validasi
 kredensial. Build Android makan belasan menit, jadi hal-hal yang bisa gagal
 harus gagal sebelum itu, bukan sesudah.
+
+---
+
+## Versi naik sendiri dari nama branch
+
+Tidak ada yang mengedit `package.json` dengan tangan. Prefix branch yang
+di-merge menentukan bagian versi mana yang naik:
+
+| Prefix branch | Bagian yang naik | Contoh |
+| ------------- | ---------------- | ------ |
+| `feat/`, `feature/` | tengah — *minor* | 1.4.2 → **1.5.0** |
+| `fix/`, `patch/`, `hotfix/`, `bugfix/`, `revert/` | kanan — *patch* | 1.4.2 → **1.4.3** |
+| `refactor/`, `perf/`, `chore/`, `docs/`, `test/`, `style/`, `ci/`, `build/` | kanan — *patch* | 1.4.2 → **1.4.3** |
+| apa pun yang lain | kanan — *patch*, dengan notice di log | 1.4.2 → **1.4.3** |
+| *(tidak ada)* | kiri — *major* | hanya manual, lihat di bawah |
+
+**Kenapa `refactor/` masuk ember patch.** SemVer membedakan berdasarkan apa
+yang dilihat pemakai, bukan berdasarkan besarnya diff. Refactor sebesar apa
+pun tetap backwards-compatible dan tidak menambah satu pun kemampuan baru,
+jadi ia setara `fix` di mata pemakai. Alasan yang sama berlaku untuk `perf`,
+`chore`, `docs`, `test`, `style`, `ci`, dan `build`.
+
+**Kenapa prefix asing tidak menggagalkan job.** Setiap merge ke `main`
+menghasilkan APK, dan setiap APK butuh `versionCode` yang unik. Menolak
+nama branch yang tidak dikenal berarti menolak mendistribusikan kode yang
+sudah terlanjur ada di `main` — harga yang jauh lebih mahal daripada satu
+patch bump yang mungkin kurang tepat.
+
+### Major tidak punya prefix — dan itu disengaja
+
+Major berarti breaking change. Salah ketik nama branch tidak boleh membakar
+satu major version, apalagi karena `versionCode` tidak bisa turun: begitu
+`2.0.0` terdistribusi, tidak ada jalan kembali ke `1.x` tanpa mengacaukan
+urutan `versionCode`.
+
+Jadi major dinaikkan lewat **Actions → Distribute Android → Run workflow →
+`bump: major`** dari branch `main`. Satu klik yang disadari, bukan efek
+samping dari nama branch.
+
+Input `bump` yang sama juga menerima `patch` dan `minor` kalau Anda perlu
+merilis ulang `main` tanpa merge baru. Defaultnya `none`: build dan
+distribusi jalan, tapi versinya tidak berubah.
+
+### Dari mana prefix-nya dibaca
+
+Dari **branch PR yang memuat commit itu**, lewat
+`GET /repos/{owner}/{repo}/commits/{sha}/pulls` — bukan dari pesan merge
+commit. Ini penting: squash merge dan rebase merge tidak menyisakan nama
+branch di pesan commit sama sekali, jadi pipeline yang mem-parsing
+`"Merge pull request ... from user/feat/x"` hanya bekerja untuk satu dari
+tiga strategi merge.
+
+Kalau commit-nya tidak punya PR — push langsung ke `main` — prefix diambil
+dari tipe conventional commit di subject-nya (`feat(ci): ...` → `feat`).
+
+### Versi ditulis balik ke `main`
+
+Setelah tes hijau, workflow menjalankan `npm version` lalu mendorong commit
+`chore(release): vX.Y.Z [skip ci]` ke `main`. Marker `[skip ci]` yang
+mencegah commit itu memicu workflow-nya sendiri; ada guard kedua di level
+job kalau marker-nya sampai hilang.
+
+Commit itu didorong **sebelum** build, bukan sesudah. Konsekuensinya: build
+yang gagal meninggalkan nomor versi yang terpakai tanpa rilis. Itu murah —
+nomor versi tidak terbatas. Urutan sebaliknya jauh lebih mahal: run
+berikutnya akan mengambil nomor yang sama, dan dua APK berbeda dengan
+`versionCode` identik sampai ke tester.
+
+Tag `vX.Y.Z` justru dibuat paling akhir, setelah distribusi berhasil, supaya
+`git tag` hanya menandai versi yang benar-benar sampai ke tester.
+
+### `versionCode` diturunkan dari versi
+
+`configs/android.config.ts` menghitung `major * 1_000_000 + minor * 1_000 +
+patch`. Lebar slot 1000 dipilih karena patch naik untuk hampir setiap merge,
+jadi patch tiga digit bukan kasus teoretis. Dengan lebar 100, `1.0.100` dan
+`1.1.0` sama-sama menghasilkan `10100` — `versionCode` berhenti naik monoton
+dan upload berikutnya ditolak Play Store.
 
 ---
 
@@ -273,6 +354,20 @@ job won't start until all of the environment's protection rules pass" — jadi
 branch yang tidak diizinkan membuat job **tidak jalan sama sekali**, terhalang
 secara kasat mata. Ini bukan kegagalan senyap.
 
+### C5. Izinkan Actions mendorong ke `main`
+
+Workflow mendorong commit versi dan tag ke `main`, jadi dua hal harus benar:
+
+- **Settings → Actions → General → Workflow permissions** → **Read and write
+  permissions**. Tanpa ini `GITHUB_TOKEN` hanya bisa membaca dan step
+  **Commit version bump** gagal dengan `403`.
+- Kalau `main` punya **branch protection / ruleset** yang mewajibkan pull
+  request, push dari workflow ikut tertolak. Tambahkan
+  `github-actions[bot]` ke **Bypass list** ruleset itu.
+
+Kalau Anda memang tidak mau ada commit otomatis di `main`, jalankan workflow
+hanya lewat **Run workflow** dengan `bump: none` dan naikkan versi manual.
+
 ---
 
 ## Cara menguji sebelum merge
@@ -280,18 +375,23 @@ secara kasat mata. Ini bukan kegagalan senyap.
 Trigger `push: main` tidak bisa diuji tanpa merge, jadi urutannya:
 
 1. Push branch kerja Anda.
-2. **Actions → Distribute Android → Run workflow** → pilih branch itu.
+2. **Actions → Distribute Android → Run workflow** → pilih branch itu, dan
+   biarkan `bump` di `none`. Run dari branch kerja memang tidak pernah
+   menaikkan versi: commit versi hanya boleh lahir di `main`, jadi run di
+   branch lain memaksa `bump` ke `none` dan mencetak warning.
 3. Periksa keempat hal ini, semuanya harus benar:
    - Job selesai hijau.
    - Step **Write Firebase service account** mencetak
-     `Kunci service account valid untuk project <id>`.
+     `Service account key is valid for project <id>`.
    - Step **Verify APK is signed with the release key** lulus, dan sertifikat
      yang tercetak **bukan** `CN=Android Debug`.
    - Rilis baru muncul di Firebase Console → App Distribution, dengan release
      notes berisi subject commit + nomor run + SHA pendek, dan tester menerima
      notifikasi.
 4. Baru merge ke `main`. Push ke `main` memicu workflow sekali lagi, yang
-   sekaligus membuktikan trigger `push: main` bekerja.
+   sekaligus membuktikan trigger `push: main` bekerja — dan kali ini versi
+   ikut naik. Periksa `main` punya commit `chore(release): v...` baru dan
+   tag `v...` yang sesuai.
 5. Perketat deployment branches ke `main` (C4).
 
 Kalau step verifikasi signing gagal, **jangan menonaktifkannya**. Ia sedang
@@ -393,6 +493,21 @@ branch rule environment.
 
 **Perbaikan:** tambahkan branch itu ke daftar, atau kembalikan ke **All
 branches** selama pengujian (C4).
+
+### `Commit version bump` gagal: `403` atau `protected branch hook declined`
+
+**Sebab:** `GITHUB_TOKEN` tidak punya izin tulis, atau ruleset `main`
+menolak push dari bot.
+
+**Perbaikan:** C5.
+
+### `Commit version bump` gagal: `Updates were rejected`
+
+**Sebab:** ada yang mendorong ke `main` selagi run berjalan.
+
+**Perbaikan:** jalankan ulang run-nya. Rebase otomatis sengaja tidak
+dilakukan — ia akan menarik perubahan yang belum lewat `npm test` di run ini
+ke dalam APK yang dibangun.
 
 ### `Permission denied` saat `./gradlew`
 

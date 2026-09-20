@@ -39,7 +39,7 @@ export const sizing = StyleSheet.create({
   sizeFull: { width: "100%", height: "100%" },
 });
 
-/** Width/height dengan token spacing — w-4, h-8, size-12 */
+/** Width/height from spacing tokens — w-4, h-8, size-12 */
 export const fixedSize = StyleSheet.create(
   Object.fromEntries(
     Object.entries(spacing).flatMap(([key, value]) => [

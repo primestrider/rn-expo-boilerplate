@@ -27,7 +27,7 @@ const BUILD_GRADLE = `android {
 }`;
 
 describe("addReleaseSigningConfig", () => {
-  it("menambahkan signingConfig release yang membaca env", () => {
+  it("adds a release signingConfig that reads env", () => {
     const result = addReleaseSigningConfig(BUILD_GRADLE);
 
     expect(result).toContain(
@@ -42,7 +42,7 @@ describe("addReleaseSigningConfig", () => {
     );
   });
 
-  it("membuat buildTypes.release memilih signing config secara kondisional", () => {
+  it("makes buildTypes.release pick its signing config conditionally", () => {
     const result = addReleaseSigningConfig(BUILD_GRADLE);
 
     expect(result).toContain(
@@ -50,7 +50,7 @@ describe("addReleaseSigningConfig", () => {
     );
   });
 
-  it("tidak menyentuh buildTypes.debug", () => {
+  it("leaves buildTypes.debug untouched", () => {
     const result = addReleaseSigningConfig(BUILD_GRADLE);
 
     expect(result).toContain(`        debug {
@@ -58,32 +58,32 @@ describe("addReleaseSigningConfig", () => {
         }`);
   });
 
-  it("idempoten — transformasi kedua tidak mengubah apa pun", () => {
+  it("is idempotent — a second transform changes nothing", () => {
     const once = addReleaseSigningConfig(BUILD_GRADLE);
     const twice = addReleaseSigningConfig(once);
 
     expect(twice).toBe(once);
   });
 
-  it("melempar kalau blok signingConfigs.debug tidak ditemukan", () => {
+  it("throws when the signingConfigs.debug block is missing", () => {
     const withoutDebugBlock = BUILD_GRADLE.replace(
       "storeFile file('debug.keystore')",
       "storeFile file('other.keystore')",
     );
 
     expect(() => addReleaseSigningConfig(withoutDebugBlock)).toThrow(
-      /signingConfigs.*debug.*tidak ditemukan/i,
+      /signingConfigs.*debug.*not found/i,
     );
   });
 
-  it("melempar kalau baris signing di buildTypes.release tidak ditemukan", () => {
+  it("throws when the signing line in buildTypes.release is missing", () => {
     const withoutReleaseAnchor = BUILD_GRADLE.replace(
       "            def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'",
       "            def somethingElse = true",
     );
 
     expect(() => addReleaseSigningConfig(withoutReleaseAnchor)).toThrow(
-      /buildTypes.*release.*tidak ditemukan/i,
+      /buildTypes.*release.*not found/i,
     );
   });
 });
