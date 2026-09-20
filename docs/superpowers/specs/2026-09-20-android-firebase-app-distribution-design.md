@@ -230,9 +230,15 @@ Repository variables (bukan secrets, tidak perlu digerbangi environment):
 
 | Nama | Isi |
 | --- | --- |
-| `FIREBASE_ANDROID_APP_ID` | app ID Firebase, format `1:123:android:abc` |
-| `FIREBASE_TESTER_GROUPS` | alias grup tester, dipisah koma |
-| `EXPO_PUBLIC_APP_NAME`, `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_APP_SCHEME` | sesuai `.env.example` |
+| `FIREBASE_ANDROID_APP_ID` | app ID Firebase, format `1:123:android:abc` — wajib |
+| `FIREBASE_TESTER_GROUPS` | alias grup tester, dipisah koma — wajib |
+| `EXPO_PUBLIC_APP_NAME` | opsional; `app.config.ts:11` sudah punya fallback `?? packageJson.name` |
+| `EXPO_PUBLIC_API_URL` | opsional; mengisi `baseURL` di `src/plugins/axios/index.ts:10`. Fitur example sengaja menulis host per request (lihat `src/features/example/services/api.ts:14`) sehingga build dan app tetap jalan tanpa ini |
+
+`EXPO_PUBLIC_APP_SCHEME` ada di `.env.example` tapi **tidak dibaca kode mana
+pun** — `app.config.ts:16` menulis `scheme: "rnexpoboilerplate"` hardcoded.
+Karena itu ia tidak dimasukkan sebagai variable di sini. Ketidaksesuaian
+`.env.example` itu masalah tersendiri, di luar lingkup pekerjaan ini.
 
 `EXPO_PUBLIC_*` sengaja ditaruh sebagai Variables, bukan Secrets. Prefix
 `EXPO_PUBLIC_` berarti nilainya di-inline ke dalam JS bundle dan bisa dibaca
