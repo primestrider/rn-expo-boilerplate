@@ -392,7 +392,19 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
+
+      # Jangan pakai `cache: gradle` di setup-java: ia mencari **/*.gradle*
+      # saat checkout, sementara android/ di-gitignore dan baru ada setelah
+      # prebuild — hasilnya job gagal sebelum sempat apa pun.
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
       - name: Install dependencies
         run: npm ci
