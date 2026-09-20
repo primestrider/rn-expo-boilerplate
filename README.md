@@ -299,6 +299,46 @@ npm run android:release
 
 ## Firebase App Distribution
 
+### Automatic distribution on merge to `main`
+
+Merging to `main` triggers `.github/workflows/deploy-android.yml`, which runs the test suite, prebuilds the Android project, builds a signed release APK, verifies it was signed with the release key, and uploads it to Firebase App Distribution. It can also be run manually from **Actions → Distribute Android → Run workflow**.
+
+Release signing is injected by `configs/signing.config.ts`, not by `android/app/build.gradle`. The `android/` directory is gitignored and regenerated on every prebuild, so edits made there do not survive. When the keystore environment variables are absent the build falls back to the debug key, which keeps a local `npm run android:release` working without any keystore.
+
+#### One-time configuration
+
+Environment secrets, in an environment named `app-distribution`:
+
+| Secret                         | Value                                                        |
+| ------------------------------ | ------------------------------------------------------------ |
+| `ANDROID_KEYSTORE_BASE64`      | Release keystore, base64-encoded                             |
+| `ANDROID_KEYSTORE_PASSWORD`    | Keystore password                                            |
+| `ANDROID_KEY_ALIAS`            | Key alias                                                    |
+| `ANDROID_KEY_PASSWORD`         | Key password                                                 |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Service account holding the Firebase App Distribution Admin role |
+
+Repository variables:
+
+| Variable                  | Required | Value                                                     |
+| ------------------------- | -------- | --------------------------------------------------------- |
+| `FIREBASE_ANDROID_APP_ID` | Yes      | Firebase app ID, shaped like `1:123:android:abc`           |
+| `FIREBASE_TESTER_GROUPS`  | Yes      | Comma-separated tester group aliases                      |
+| `EXPO_PUBLIC_APP_NAME`    | No       | Falls back to the `package.json` name                     |
+| `EXPO_PUBLIC_API_URL`     | No       | Axios `baseURL`; the example features work without it     |
+
+The job declares `environment: app-distribution`. Without that line the environment secrets are invisible and every value reads as empty, which fails in a way that does not mention access at all. Restrict the environment's deployment branches to `main`.
+
+#### Creating the release keystore
+
+Create it in a directory outside the repository, and back it up somewhere other than GitHub — a lost keystore means testers must uninstall before they can receive updates again.
+
+```bash
+keytool -genkeypair -v -keystore release.keystore -alias upload \
+  -keyalg RSA -keysize 2048 -validity 10000 -storetype PKCS12
+```
+
+### Manual upload
+
 The generated release APK can be uploaded to Firebase App Distribution:
 
 ```text

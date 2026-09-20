@@ -1,0 +1,112 @@
+name: Distribute Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: android-distribution
+  cancel-in-progress: false
+
+jobs:
+  distribute:
+    runs-on: ubuntu-latest
+    environment: app-distribution
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Build Android makan belasan menit, jadi suite dijalankan lebih dulu:
+      # mendistribusikan build yang tesnya merah jauh lebih mahal.
+      - name: Run tests
+        run: npm test
+
+      - name: Decode release keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          # Path absolut: file() di build.gradle me-resolve path relatif
+          # terhadap android/app, bukan root repo.
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+
+      - name: Write Firebase service account
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+
+      # android/ di-gitignore, jadi native project dibangun ulang setiap run.
+      # --no-install karena npm ci di atas sudah memasang dependensi.
+      - name: Prebuild Android project
+        env:
+          EXPO_PUBLIC_APP_NAME: ${{ vars.EXPO_PUBLIC_APP_NAME }}
+          EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Build release APK
+        working-directory: android
+        env:
+          NODE_ENV: production
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          EXPO_PUBLIC_APP_NAME: ${{ vars.EXPO_PUBLIC_APP_NAME }}
+          EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+        run: |
+          # Bit executable pada gradlew hasil ekstraksi template tidak dijamin;
+          # tanpa ini step gagal dengan "Permission denied" yang menyesatkan.
+          chmod +x gradlew
+          ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+
+      # Pilihan signing config terjadi di runtime Gradle, jadi hanya pemeriksaan
+      # runtime yang bisa membuktikan keystore release benar-benar terpakai.
+      # Tanpa step ini, APK debug-signed bisa terkirim ke tester tanpa gejala.
+      - name: Verify APK is signed with the release key
+        run: |
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -r | head -1)"
+          "$APKSIGNER" verify --print-certs \
+            android/app/build/outputs/apk/release/app-release.apk \
+            | tee "$RUNNER_TEMP/certs.txt"
+          if grep -qi "CN=Android Debug" "$RUNNER_TEMP/certs.txt"; then
+            echo "::error::APK tersigning debug key, bukan release key."
+            exit 1
+          fi
+
+      # Diunggah sebelum step Firebase supaya APK tetap bisa diambil manual
+      # kalau upload ke App Distribution gagal.
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+
+      - name: Distribute to Firebase App Distribution
+        env:
+          FIREBASE_ANDROID_APP_ID: ${{ vars.FIREBASE_ANDROID_APP_ID }}
+          FIREBASE_TESTER_GROUPS: ${{ vars.FIREBASE_TESTER_GROUPS }}
+        run: |
+          RELEASE_NOTES="$(git log -1 --pretty=%s) (#${{ github.run_number }} ${GITHUB_SHA::7})"
+          npx --yes firebase-tools@15 appdistribution:distribute \
+            android/app/build/outputs/apk/release/app-release.apk \
+            --app "$FIREBASE_ANDROID_APP_ID" \
+            --groups "$FIREBASE_TESTER_GROUPS" \
+            --release-notes "$RELEASE_NOTES"
