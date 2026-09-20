@@ -32,9 +32,10 @@ const config: ExpoConfig = {
 };
 
 /**
- * Plugin diterapkan langsung ke config, bukan lewat array `plugins`:
- * `ExpoConfig["plugins"]` bertipe `(string | [] | [string] | [string, any])[]`,
- * yang tidak menerima fungsi — itu sebabnya `plugins.config.ts` harus menulis
- * `fontPlugin as [string, any]`. Bentuk ini lolos type-check tanpa cast.
+ * The plugin is applied to the config directly instead of through the
+ * `plugins` array: `ExpoConfig["plugins"]` is typed
+ * `(string | [] | [string] | [string, any])[]`, which does not accept a
+ * function — which is why `plugins.config.ts` has to write
+ * `fontPlugin as [string, any]`. This form type-checks without a cast.
  */
 export default withReleaseSigning(config);

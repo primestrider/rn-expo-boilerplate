@@ -21,7 +21,7 @@ const run = (command, options = {}) => {
   });
 };
 
-// Jalankan prebuild hanya jika diminta
+// Only prebuild when asked for
 if (shouldPrebuild) {
   console.log(
     isCleanBuild

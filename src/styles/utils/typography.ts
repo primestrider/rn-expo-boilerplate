@@ -51,7 +51,7 @@ export const typography = StyleSheet.create({
   capitalize: { textTransform: "capitalize" },
   normalCase: { textTransform: "none" },
 
-  // Vertical Align (untuk Text inline)
+  // Vertical Align (for inline Text)
   alignTop: { verticalAlign: "top" },
   alignMiddle: { verticalAlign: "middle" },
   alignBottom: { verticalAlign: "bottom" },
