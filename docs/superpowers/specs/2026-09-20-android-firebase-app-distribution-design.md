@@ -137,6 +137,11 @@ on:
 concurrency:
   group: android-distribution
   cancel-in-progress: false
+
+jobs:
+  distribute:
+    runs-on: ubuntu-latest
+    environment: app-distribution
 ```
 
 `workflow_dispatch` ada supaya workflow bisa diuji dari branch sebelum
@@ -189,7 +194,24 @@ kalau upload Firebase gagal, hasil build tetap bisa diambil manual.
 
 ### Komponen 4 — Konfigurasi GitHub
 
-Secrets:
+Secrets disimpan sebagai **environment secrets** di environment bernama
+`app-distribution`, bukan repository secrets. Repo ini public, jadi
+protection rules environment tersedia tanpa biaya.
+
+Alasannya keystore: ia secret paling bernilai di repo ini dan kebocorannya
+tidak bisa dicabut — semua tester harus uninstall. Environment memberi
+**deployment branch rules** (hanya branch tertentu boleh memakainya) plus
+riwayat di tab Deployments. Repository secrets bisa dibaca workflow dari
+branch mana pun yang punya akses push. Risiko dari fork sudah tertutup
+secara default, karena GitHub tidak memberikan secrets ke workflow yang
+dipicu `pull_request` dari fork; environment menutup risiko yang berbeda,
+yaitu akses push ke repo ini sendiri.
+
+Konsekuensinya di workflow: job wajib mendeklarasikan
+`environment: app-distribution`. Tanpa baris itu, environment secrets tidak
+terlihat sama sekali oleh job.
+
+Environment secrets di `app-distribution`:
 
 | Nama | Isi |
 | --- | --- |
@@ -199,7 +221,12 @@ Secrets:
 | `ANDROID_KEY_PASSWORD` | password key |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | service account dengan role Firebase App Distribution Admin |
 
-Variables (bukan secrets):
+Deployment branch rules environment: *Selected branches and tags*. Selama
+masa setup berisi `main` **dan** `feat/auto-deploy`; setelah merge,
+`feat/auto-deploy` dihapus sehingga tinggal `main`. Alasannya ada di bagian
+Strategi verifikasi.
+
+Repository variables (bukan secrets, tidak perlu digerbangi environment):
 
 | Nama | Isi |
 | --- | --- |
@@ -235,6 +262,13 @@ Tiga lapis, dari murah ke mahal:
 
 Bukti dari lapis 3 adalah syarat sebelum branch ini di-merge.
 
+Lapis 3 punya prasyarat yang mudah terlewat: deployment branch rules
+environment `app-distribution` harus memasukkan `feat/auto-deploy` selama
+pengujian. Kalau rule dikunci ke `main` saja sejak awal, run percobaan gagal
+dengan gejala yang menyesatkan — secrets terbaca kosong, bukan error "akses
+ditolak" — sehingga waktu terbuang mencari masalah di tempat yang salah.
+Setelah merge, branch itu dihapus dari rule.
+
 ## Di luar lingkup
 
 - iOS. Butuh Apple Developer account, signing cert, dan runner macOS.
@@ -259,22 +293,37 @@ Bukti dari lapis 3 adalah syarat sebelum branch ini di-merge.
 
 Tidak bisa diotomatiskan dari sisi kode:
 
-1. Buat project Firebase dan aktifkan App Distribution, catat app ID Android.
-2. Buat service account dengan role Firebase App Distribution Admin, unduh
-   JSON-nya.
-3. Buat grup tester di App Distribution, catat aliasnya.
-4. Generate keystore release:
+1. Buat project Firebase, lalu daftarkan app Android dengan package name
+   **persis** `com.primestrider.rnexpoboilerplate` (nilai ini
+   case-sensitive dan tidak bisa diubah setelah app terdaftar). Catat App
+   ID-nya dari General Settings. Tawaran download `google-services.json` dan
+   pemasangan SDK bisa dilewati — upload ke App Distribution tidak
+   memerlukan keduanya.
+2. Aktifkan App Distribution di konsol. Enable "Firebase App Distribution
+   API" di Google APIs console **tidak** perlu dilakukan untuk app yang
+   dibuat setelah 20 September 2019.
+3. Buat service account dengan role Firebase App Distribution Admin, unduh
+   JSON-nya. Role menempel pada service account, bukan pada file kunci, jadi
+   role yang ditambahkan setelah kunci dibuat tetap berlaku tanpa perlu
+   generate kunci baru.
+4. Buat grup tester di App Distribution, catat aliasnya.
+5. Generate keystore release **di folder di luar repo** — `.gitignore` saat
+   ini memblokir `*.jks` tapi tidak `*.keystore`, jadi menyimpannya di luar
+   repo menghilangkan risiko ter-commit sepenuhnya:
 
    ```
    keytool -genkeypair -v -keystore release.keystore -alias upload \
-     -keyalg RSA -keysize 2048 -validity 10000
+     -keyalg RSA -keysize 2048 -validity 10000 -storetype PKCS12
    ```
 
-   lalu base64-kan (PowerShell, karena pemilik repo di Windows):
+   lalu base64-kan langsung ke clipboard (PowerShell, karena pemilik repo di
+   Windows) sehingga tidak ada file perantara yang tertinggal di disk:
 
    ```powershell
-   [Convert]::ToBase64String([IO.File]::ReadAllBytes("release.keystore")) |
-     Set-Content release.keystore.base64
+   [Convert]::ToBase64String([IO.File]::ReadAllBytes("$HOME\keystores\release.keystore")) |
+     Set-Clipboard
    ```
 
-5. Isi semua Secrets dan Variables di tabel Komponen 4.
+6. Buat environment `app-distribution` di GitHub, isi environment secrets dan
+   repository variables sesuai tabel Komponen 4, dan set deployment branch
+   rules ke `main` + `feat/auto-deploy`.
