@@ -543,9 +543,11 @@ Tidak ada kode di task ini. Isinya bukti bahwa pipeline-nya benar-benar jalan �
 
 - [ ] **Step 1: Pastikan branch rule mengizinkan branch ini**
 
-Settings → Environments → `app-distribution` → Deployment branches and tags → *Selected branches and tags* harus memuat `main` **dan** `feat/auto-deploy`.
+Settings → Environments → `app-distribution` → Deployment branches and tags. Kalau sudah diset ke *Selected branches and tags*, daftarnya harus memuat `main` **dan** `feat/auto-deploy`. Kalau masih pada default *All branches*, biarkan — tidak ada yang perlu diubah sampai merge selesai.
 
-Kalau rule dikunci ke `main` saja, run percobaan gagal dengan secrets terbaca kosong — bukan error akses — sehingga waktu terbuang mencari masalah di tempat yang salah.
+Deployment branches adalah protection rule, dan menurut dokumentasi GitHub "the job won't start until all of the environment's protection rules pass". Jadi branch yang tidak diizinkan membuat job tidak jalan sama sekali — terhalang secara kasat mata, bukan gagal senyap.
+
+Kegagalan senyap yang justru perlu diwaspadai: nama environment di GitHub harus persis `app-distribution`. Salah tulis satu huruf, atau job yang lupa mendeklarasikan `environment:`, membuat setiap secret terbaca sebagai string kosong tanpa peringatan apa pun.
 
 - [ ] **Step 2: Push branch**
 

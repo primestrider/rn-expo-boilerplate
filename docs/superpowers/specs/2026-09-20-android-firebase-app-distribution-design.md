@@ -268,12 +268,20 @@ Tiga lapis, dari murah ke mahal:
 
 Bukti dari lapis 3 adalah syarat sebelum branch ini di-merge.
 
-Lapis 3 punya prasyarat yang mudah terlewat: deployment branch rules
-environment `app-distribution` harus memasukkan `feat/auto-deploy` selama
-pengujian. Kalau rule dikunci ke `main` saja sejak awal, run percobaan gagal
-dengan gejala yang menyesatkan — secrets terbaca kosong, bukan error "akses
-ditolak" — sehingga waktu terbuang mencari masalah di tempat yang salah.
-Setelah merge, branch itu dihapus dari rule.
+Lapis 3 punya prasyarat: selama pengujian, deployment branch rules environment
+`app-distribution` harus mengizinkan `feat/auto-deploy` — atau dibiarkan pada
+default "All branches" sampai merge selesai. Deployment branches adalah
+*protection rule*, dan dokumentasi GitHub menyatakan "the job won't start until
+all of the environment's protection rules pass", jadi branch yang tidak
+diizinkan membuat job-nya tidak jalan — terhalang secara kasat mata, bukan
+gagal senyap. Setelah merge, rule diperketat ke `main` saja.
+
+Kegagalan senyap yang sebenarnya perlu diwaspadai berbeda: job yang lupa
+menulis `environment: app-distribution`, nama environment yang salah tulis,
+atau secret yang belum dibuat. Ketiganya menghasilkan string kosong tanpa
+peringatan apa pun — "If a secret has not been set, the return value of an
+expression referencing the secret will be an empty string." Karena itu nama
+environment di GitHub harus persis `app-distribution`.
 
 ## Di luar lingkup
 
