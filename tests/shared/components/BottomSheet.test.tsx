@@ -1,21 +1,13 @@
-import { act, fireEvent, render, screen } from "@testing-library/react-native";
+import { BottomSheet as NativeBottomSheet } from "@expo/ui";
+import { act, render, screen } from "@testing-library/react-native";
 import { ScrollView, StyleSheet, Text } from "react-native";
 
 import { BottomSheet } from "@/shared/components/BottomSheet";
 import { useThemeStore } from "@/styles";
-import { colors, darkColors, radii, spacing } from "@/styles/tokens";
+import { colors, darkColors, spacing } from "@/styles/tokens";
 
-function sheetStyle() {
-  return StyleSheet.flatten(screen.getByTestId("bottom-sheet").props.style);
-}
-
-/**
- * The sheet is marked `accessibilityViewIsModal`, which by definition hides its
- * siblings — the scrim included — from assistive technology. It is still a
- * touch target, so it has to be queried past that filter.
- */
-function backdrop() {
-  return screen.getByTestId("overlay-backdrop", { includeHiddenElements: true });
+function nativeSheet() {
+  return screen.UNSAFE_getByType(NativeBottomSheet);
 }
 
 beforeEach(() => {
@@ -30,6 +22,7 @@ describe("BottomSheet", () => {
       </BottomSheet>,
     );
 
+    expect(nativeSheet().props.isPresented).toBe(false);
     expect(screen.queryByText("Sort by")).toBeNull();
   });
 
@@ -40,6 +33,7 @@ describe("BottomSheet", () => {
       </BottomSheet>,
     );
 
+    expect(nativeSheet().props.isPresented).toBe(true);
     expect(screen.getByText("Newest first")).toBeOnTheScreen();
   });
 
@@ -53,17 +47,7 @@ describe("BottomSheet", () => {
     expect(screen.getByText("Sort by")).toBeOnTheScreen();
   });
 
-  it("shows a drag handle", () => {
-    render(
-      <BottomSheet visible onClose={jest.fn()}>
-        <Text>Newest first</Text>
-      </BottomSheet>,
-    );
-
-    expect(screen.getByTestId("bottom-sheet-handle")).toBeOnTheScreen();
-  });
-
-  it("closes when the scrim is tapped", () => {
+  it("closes when the native sheet is dismissed", () => {
     const onClose = jest.fn();
     render(
       <BottomSheet visible onClose={onClose}>
@@ -71,35 +55,34 @@ describe("BottomSheet", () => {
       </BottomSheet>,
     );
 
-    fireEvent.press(backdrop());
+    act(() => nativeSheet().props.onDismiss());
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("offers no scrim target when it cannot be dismissed", () => {
-    render(
-      <BottomSheet visible dismissable={false} onClose={jest.fn()}>
-        <Text>Newest first</Text>
-      </BottomSheet>,
-    );
-
-    expect(
-      screen.queryByTestId("overlay-backdrop", { includeHiddenElements: true }),
-    ).toBeNull();
-  });
-
-  it("rounds only its top corners", () => {
+  it("lets the platform dismiss it by default", () => {
     render(
       <BottomSheet visible onClose={jest.fn()}>
         <Text>Newest first</Text>
       </BottomSheet>,
     );
 
-    const style = sheetStyle();
+    expect(nativeSheet().props.shouldDismissOnClickOutside).toBe(true);
+    expect(nativeSheet().props.shouldDismissOnBackPress).toBe(true);
+    expect(nativeSheet().props.modifiers).toBeUndefined();
+  });
 
-    expect(style.borderTopLeftRadius).toBe(radii["2xl"]);
-    expect(style.borderTopRightRadius).toBe(radii["2xl"]);
-    expect(style.borderBottomLeftRadius).toBeUndefined();
+  it("locks the scrim, back press and swipe when it cannot be dismissed", () => {
+    render(
+      <BottomSheet visible dismissable={false} onClose={jest.fn()}>
+        <Text>Newest first</Text>
+      </BottomSheet>,
+    );
+
+    expect(nativeSheet().props.shouldDismissOnClickOutside).toBe(false);
+    expect(nativeSheet().props.shouldDismissOnBackPress).toBe(false);
+    // Jest runs the iOS build, where the swipe is locked by a modifier.
+    expect(nativeSheet().props.modifiers).toHaveLength(1);
   });
 
   it("scrolls content rather than letting it run off the screen", () => {
@@ -126,6 +109,7 @@ describe("BottomSheet", () => {
       screen.UNSAFE_getByType(ScrollView).props.contentContainerStyle,
     );
 
+    expect(nativeSheet().props.contentPadding).toBe(0);
     expect(content.paddingHorizontal).toBe(spacing[4]);
   });
 
@@ -150,10 +134,16 @@ describe("BottomSheet", () => {
       </BottomSheet>,
     );
 
-    expect(sheetStyle().backgroundColor).toBe(colors.card);
+    const surface = () =>
+      StyleSheet.flatten(screen.getByTestId("bottom-sheet").props.style)
+        .backgroundColor;
+
+    expect(nativeSheet().props.containerColor).toBe(colors.card);
+    expect(surface()).toBe(colors.card);
 
     act(() => useThemeStore.getState().setMode("dark"));
 
-    expect(sheetStyle().backgroundColor).toBe(darkColors.card);
+    expect(nativeSheet().props.containerColor).toBe(darkColors.card);
+    expect(surface()).toBe(darkColors.card);
   });
 });

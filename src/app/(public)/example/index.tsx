@@ -11,7 +11,7 @@ export default function ExampleIndex() {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Style Examples" }} />
+      <Stack.Screen options={{ title: "Styling" }} />
       <Screen contentContainerStyle={styles.gap3}>
         <AppText variant="h2">Utility Styling</AppText>
         <AppText variant="caption" color="muted" style={styles.mb3}>

@@ -1,6 +1,8 @@
+import { BottomSheet as NativeBottomSheet } from "@expo/ui";
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import { StyleSheet } from "react-native";
 
+import { ListItem } from "@/shared/components/ListItem";
 import {
   SELECT_CHECK_TEST_ID,
   SELECT_CHEVRON_TEST_ID,
@@ -30,6 +32,19 @@ function textStyleOf(content: string) {
 
 function openSheet() {
   fireEvent.press(screen.getByTestId("select"));
+}
+
+/**
+ * Taps one row in the sheet. Rendered inline, the native sheet sits under a
+ * `pointerEvents="none"` host (on device it is presented in its own layer),
+ * so the row's handler is called directly rather than through `fireEvent`.
+ */
+function pressOption(value: string) {
+  const row = screen
+    .UNSAFE_getAllByType(ListItem)
+    .find((item) => item.props.testID === selectOptionTestID(value));
+
+  act(() => row!.props.onPress());
 }
 
 /** Drains the sheet's enter/exit animation so nothing outlives the test. */
@@ -178,14 +193,18 @@ describe("Select", () => {
     render(<Select testID="select" options={options} onChange={onChange} />);
 
     openSheet();
-    fireEvent.press(screen.getByTestId(selectOptionTestID("weekly")));
+    pressOption("weekly");
 
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith("weekly");
 
     settle();
 
-    expect(screen.queryByTestId("bottom-sheet")).toBeNull();
+    // The native sheet unmounts its content only once its own dismiss
+    // animation reports back, which Jest never does — the request is what counts.
+    expect(screen.UNSAFE_getByType(NativeBottomSheet).props.isPresented).toBe(
+      false,
+    );
   });
 
   it("refuses to select a disabled option", () => {
@@ -193,7 +212,7 @@ describe("Select", () => {
     render(<Select testID="select" options={options} onChange={onChange} />);
 
     openSheet();
-    fireEvent.press(screen.getByTestId(selectOptionTestID("monthly")));
+    pressOption("monthly");
 
     expect(onChange).not.toHaveBeenCalled();
     expect(screen.getByTestId("bottom-sheet")).toBeOnTheScreen();

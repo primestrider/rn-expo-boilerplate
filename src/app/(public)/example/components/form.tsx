@@ -192,8 +192,8 @@ export default function FormComponents() {
 
         <Section
           title="Switch"
-          description="Custom-drawn on the platform's own control metrics"
-          utilities={["value", "onValueChange", "label", "sm", "md"]}
+          description="Native control via @expo/ui, tinted with the theme"
+          utilities={["value", "onValueChange", "label", "description"]}
         >
           <Card variant="outlined">
             <View style={view(styles.gap4)}>
@@ -203,7 +203,7 @@ export default function FormComponents() {
                 label="Notifications"
                 description="Push alerts for new messages"
               />
-              <Switch value={false} onValueChange={() => {}} label="Small" size="sm" />
+              <Switch value={false} onValueChange={() => {}} label="Off" />
               <Switch value disabled onValueChange={() => {}} label="Disabled" />
             </View>
           </Card>

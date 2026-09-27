@@ -2,5 +2,7 @@ export { DemoBox } from "./DemoBox";
 export { ExampleScreen } from "./ExampleScreen";
 export { ProductCard } from "./ProductCard";
 export type { ProductCardProps } from "./ProductCard";
+export { NavSection } from "./NavSection";
+export type { NavSectionItem } from "./NavSection";
 export { Section } from "./Section";
 export { UtilityChip } from "./UtilityChip";
