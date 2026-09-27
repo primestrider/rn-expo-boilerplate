@@ -8,6 +8,7 @@ import {
   exampleScreens,
   featureScreens,
   nativeComponentGroups,
+  sdkScreens,
 } from "@/features/example/routes";
 import { AppText, Screen } from "@/shared/components";
 import { useStyles } from "@/styles";
@@ -57,6 +58,17 @@ export default function Index() {
           title: group.title,
           subtitle: group.description,
           onPress: () => router.push(group.href),
+        }))}
+      />
+
+      <NavSection
+        title="Expo SDK"
+        description="Device APIs driven by @expo/ui controls"
+        items={sdkScreens.map((screen) => ({
+          key: screen.title,
+          title: screen.title,
+          subtitle: screen.description,
+          onPress: () => router.push(screen.href),
         }))}
       />
 

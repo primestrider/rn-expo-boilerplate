@@ -1,8 +1,11 @@
 export { DemoBox } from "./DemoBox";
 export { ExampleScreen } from "./ExampleScreen";
+export { InfoRows } from "./InfoRows";
+export { PermissionGate } from "./PermissionGate";
 export { ProductCard } from "./ProductCard";
 export type { ProductCardProps } from "./ProductCard";
 export { NavSection } from "./NavSection";
 export type { NavSectionItem } from "./NavSection";
 export { Section } from "./Section";
+export { TransactionHistory } from "./TransactionHistory";
 export { UtilityChip } from "./UtilityChip";

@@ -27,6 +27,7 @@ export enum ExamplePageName {
   PRODUCT_DETAIL = "ExampleProductDetail",
   TODOS = "ExampleTodos",
   SETTINGS = "ExampleSettings",
+  SDK = "ExampleSdk",
 }
 
 /**

@@ -28,4 +28,9 @@ export const androidConfig: ExpoConfig["android"] = {
   },
 
   predictiveBackGestureEnabled: false,
+
+  // expo-brightness's plugin is applied automatically and requests
+  // WRITE_SETTINGS, which only *system* brightness needs. The app only changes
+  // its own window brightness, so the permission is stripped from the build.
+  blockedPermissions: ["android.permission.WRITE_SETTINGS"],
 };

@@ -10,6 +10,7 @@ import {
   SessionExpiryToast,
   useSessionStore,
 } from "@/features/auth";
+import "@/features/example/tasks/sync.task";
 import "@/plugins/auth";
 import { appFonts } from "@/plugins/fonts";
 import { AppProvider } from "@/providers/AppProvider";
