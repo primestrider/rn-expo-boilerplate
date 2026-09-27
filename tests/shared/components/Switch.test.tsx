@@ -1,13 +1,9 @@
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
-import { StyleSheet } from "react-native";
+import { Host, Switch as NativeSwitch } from "@expo/ui";
 
 import { Switch } from "@/shared/components/Switch";
 import { useThemeStore } from "@/styles";
-import { palette, radii } from "@/styles/tokens";
-
-function styleOf(testID: string) {
-  return StyleSheet.flatten(screen.getByTestId(testID).props.style);
-}
+import { colors, darkColors } from "@/styles/tokens";
 
 beforeEach(() => {
   act(() => useThemeStore.getState().setMode("light"));
@@ -69,7 +65,6 @@ describe("Switch", () => {
     fireEvent.press(screen.getByTestId("switch"));
 
     expect(onValueChange).not.toHaveBeenCalled();
-    expect(styleOf("switch").opacity).toBe(0.5);
   });
 
   it("renders a label and description", () => {
@@ -86,41 +81,36 @@ describe("Switch", () => {
     expect(screen.getByText("Push alerts for new messages")).toBeOnTheScreen();
   });
 
-  it("uses the platform's own control metrics per size", () => {
-    const { rerender } = render(
-      <Switch value onValueChange={jest.fn()} size="md" />,
-    );
-
-    expect(styleOf("switch-track")).toEqual(
-      expect.objectContaining({ width: 51, height: 31 }),
-    );
-    expect(styleOf("switch-thumb")).toEqual(
-      expect.objectContaining({ width: 27, height: 27 }),
-    );
-
-    rerender(<Switch value onValueChange={jest.fn()} size="sm" />);
-
-    expect(styleOf("switch-track")).toEqual(
-      expect.objectContaining({ width: 40, height: 24 }),
-    );
-  });
-
-  it("rounds the track and thumb fully", () => {
+  it("renders the platform's own control, tinted with the theme", () => {
     render(<Switch value onValueChange={jest.fn()} />);
 
-    expect(styleOf("switch-track").borderRadius).toBe(radii.full);
-    expect(styleOf("switch-thumb").borderRadius).toBe(radii.full);
+    const control = screen.UNSAFE_getByType(NativeSwitch);
+    const host = screen.UNSAFE_getByType(Host);
+
+    expect(control.props.value).toBe(true);
+    expect(host.props.seedColor).toBe(colors.primary);
+    expect(host.props.colorScheme).toBe("light");
+
+    act(() => useThemeStore.getState().setMode("dark"));
+
+    expect(screen.UNSAFE_getByType(Host).props.seedColor).toBe(
+      darkColors.primary,
+    );
+    expect(screen.UNSAFE_getByType(Host).props.colorScheme).toBe("dark");
   });
 
-  it("keeps the thumb white so it reads on either track color", () => {
-    render(<Switch value onValueChange={jest.fn()} />);
+  it("reports a toggle made on the native control", () => {
+    const onValueChange = jest.fn();
+    render(<Switch value={false} onValueChange={onValueChange} />);
 
-    expect(styleOf("switch-thumb").backgroundColor).toBe(palette.white);
+    act(() => screen.UNSAFE_getByType(NativeSwitch).props.onValueChange(true));
+
+    expect(onValueChange).toHaveBeenCalledWith(true);
   });
 
-  it("lifts the thumb with a shadow", () => {
-    render(<Switch value onValueChange={jest.fn()} />);
+  it("disables the native control too", () => {
+    render(<Switch value disabled onValueChange={jest.fn()} />);
 
-    expect(styleOf("switch-thumb").elevation).toBeGreaterThan(0);
+    expect(screen.UNSAFE_getByType(NativeSwitch).props.disabled).toBe(true);
   });
 });

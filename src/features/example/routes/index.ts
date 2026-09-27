@@ -33,6 +33,8 @@ export const examplePaths = {
   componentsDisplay: href("/example/components/display"),
   componentsForm: href("/example/components/form"),
   componentsOverlay: href("/example/components/overlay"),
+  componentsNativeUniversal: href("/example/components/native-universal"),
+  componentsNativeAndroid: href("/example/components/native-android"),
 
   features: href("/example/features"),
   signIn: href("/sign-in"),
@@ -107,28 +109,6 @@ export const exampleScreens: ExampleNavItem[] = [
     description: "Dark mode with a persisted System / Light / Dark preference",
     utilities: ["useTheme()", "useStyles()", "ThemeToggle"],
   },
-  {
-    name: ExamplePageName.FORM,
-    href: examplePaths.form,
-    title: "Form",
-    description: "React Hook Form with shared Input and Button components",
-    utilities: ["useForm", "Controller", "Button", "Input"],
-  },
-  {
-    name: ExamplePageName.COMPONENTS,
-    href: examplePaths.components,
-    title: "Components",
-    description:
-      "The shared component library — surfaces, overlays, and form controls",
-    utilities: ["Card", "Dialog", "BottomSheet", "Toast", "ListItem"],
-  },
-  {
-    name: ExamplePageName.FEATURES,
-    href: examplePaths.features,
-    title: "Features",
-    description: "Whole screens wired to the plugins: API, storage, i18n, forms",
-    utilities: ["React Query", "Axios", "Zustand", "MMKV", "Zod"],
-  },
 ];
 
 /** The component-library showcase, grouped by what each component is for. */
@@ -184,6 +164,65 @@ export const componentGroups: ComponentGroup[] = [
     title: "Overlays & Feedback",
     description: "Dialogs, bottom sheets, toasts, and inline alerts",
     components: ["Dialog", "BottomSheet", "Toast", "Alert"],
+  },
+  {
+    name: ExamplePageName.FORM,
+    href: examplePaths.form,
+    title: "Form Example",
+    description: "React Hook Form wired to the shared Input and Button",
+    components: ["useForm", "Controller", "Input", "Button"],
+  },
+];
+
+/**
+ * Native UI from `@expo/ui`, kept apart from the component library: these
+ * render the platform's own controls rather than the app's themed ones.
+ */
+export const nativeComponentGroups: ComponentGroup[] = [
+  {
+    name: ExamplePageName.COMPONENTS,
+    href: examplePaths.componentsNativeUniversal,
+    title: "Universal",
+    description:
+      "@expo/ui on SwiftUI, Jetpack Compose and web from one tree",
+    components: [
+      "NativeHost",
+      "Column",
+      "Row",
+      "Text",
+      "Button",
+      "Switch",
+      "Checkbox",
+      "Slider",
+      "Picker",
+      "TextInput",
+      "Collapsible",
+      "BottomSheet",
+      "List",
+      "FieldGroup",
+      "Icon",
+      "RNHostView",
+    ],
+  },
+  {
+    name: ExamplePageName.COMPONENTS,
+    href: examplePaths.componentsNativeAndroid,
+    title: "Android (Jetpack Compose)",
+    description: "Material 3 components from @expo/ui/jetpack-compose",
+    components: [
+      "Buttons",
+      "FAB",
+      "Chips",
+      "Selection",
+      "TextField",
+      "Menus",
+      "Cards",
+      "Badges",
+      "Progress",
+      "Carousel",
+      "AlertDialog",
+      "Material colors",
+    ],
   },
 ];
 

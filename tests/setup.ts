@@ -43,3 +43,43 @@ jest.mock("react-native-mmkv", () => {
     },
   };
 });
+
+// `useNativeState` builds its value on a native `ExpoUI.ObservableState`
+// SharedObject, which Jest has no native side for. jest-expo rebuilds each
+// native module from `globalThis.expo.modules` on every lookup, so the
+// stand-in is registered there: it holds the value in memory behind the same
+// get/set/onChange surface.
+const expoModules = (globalThis as { expo?: { modules?: Record<string, any> } })
+  .expo?.modules;
+
+if (expoModules) {
+  expoModules.ExpoUI ??= {};
+  expoModules.ExpoUI.ObservableState = class ObservableState {
+    private current: unknown;
+    private listener: ((value: unknown) => void) | null = null;
+
+    constructor({ value }: { value: unknown }) {
+      this.current = value;
+    }
+
+    getValue() {
+      return this.current;
+    }
+
+    setValue({ value }: { value: unknown }) {
+      this.current = value;
+      this.listener?.(value);
+    }
+
+    setOnChange(callback: ((value: unknown) => void) | null) {
+      this.listener = callback;
+    }
+
+    release() {}
+  };
+
+  // Android derives a Material 3 palette natively. Every role resolves to one
+  // fixed color here, which is enough for a tree that reads it to render.
+  expoModules.ExpoUI.getMaterialColors = () =>
+    new Proxy({}, { get: () => "#6750A4FF" });
+}

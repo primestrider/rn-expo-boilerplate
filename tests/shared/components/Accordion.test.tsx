@@ -1,12 +1,10 @@
-import { act, fireEvent, render, screen } from "@testing-library/react-native";
-import { StyleSheet, Text } from "react-native";
+import { Collapsible, Host } from "@expo/ui";
+import { act, render, screen } from "@testing-library/react-native";
+import { Text } from "react-native";
 
 import {
   Accordion,
-  accordionChevronTestID,
-  accordionContentTestID,
-  accordionHeaderTestID,
-  accordionPanelTestID,
+  accordionItemTestID,
   type AccordionItem,
 } from "@/shared/components/Accordion";
 import { useThemeStore } from "@/styles";
@@ -17,36 +15,33 @@ const items: AccordionItem[] = [
   { key: "privacy", title: "Privacy", content: <Text>Data sharing</Text> },
 ];
 
-function headerOf(key: string) {
-  return screen.getByTestId(accordionHeaderTestID(key));
+/** The native section for one item, reached through its React props. */
+function section(key: string) {
+  const index = items.findIndex((item) => item.key === key);
+  return screen.UNSAFE_getAllByType(Collapsible)[index];
 }
 
 function isExpanded(key: string) {
-  return headerOf(key).props.accessibilityState.expanded;
+  return section(key).props.isOpen;
 }
 
+/** Stands in for the user tapping the native header. */
 function press(key: string) {
-  fireEvent.press(headerOf(key));
-  // Drains the height/rotation timing so no animation frame outlives the test.
-  act(() => jest.runOnlyPendingTimers());
+  act(() => section(key).props.onOpenChange(!isExpanded(key)));
 }
 
 beforeEach(() => {
-  jest.useFakeTimers();
   act(() => useThemeStore.getState().setMode("light"));
 });
 
-afterEach(() => {
-  act(() => jest.runOnlyPendingTimers());
-  jest.useRealTimers();
-});
-
 describe("Accordion", () => {
-  it("renders a header per item", () => {
+  it("renders a native section per item, titled by the item", () => {
     render(<Accordion items={items} />);
 
-    expect(screen.getByText("Billing")).toBeOnTheScreen();
-    expect(screen.getByText("Privacy")).toBeOnTheScreen();
+    const sections = screen.UNSAFE_getAllByType(Collapsible);
+
+    expect(sections).toHaveLength(items.length);
+    expect(sections.map((s) => s.props.label)).toEqual(["Billing", "Privacy"]);
   });
 
   it("starts with everything collapsed", () => {
@@ -93,39 +88,6 @@ describe("Accordion", () => {
     expect(isExpanded("privacy")).toBe(true);
   });
 
-  it("exposes each header as a button", () => {
-    render(<Accordion items={items} />);
-
-    expect(screen.getAllByRole("button")).toHaveLength(items.length);
-  });
-
-  it("blocks touches on collapsed content and lets them through when open", () => {
-    render(<Accordion items={items} />);
-
-    const panel = () => screen.getByTestId(accordionPanelTestID("billing"));
-
-    expect(panel().props.pointerEvents).toBe("none");
-
-    press("billing");
-
-    expect(panel().props.pointerEvents).toBe("auto");
-  });
-
-  it("measures its content so the height animation has a target", () => {
-    render(<Accordion items={items} />);
-
-    const content = screen.getByTestId(accordionContentTestID("billing"));
-
-    expect(typeof content.props.onLayout).toBe("function");
-    expect(() =>
-      act(() =>
-        fireEvent(content, "layout", {
-          nativeEvent: { layout: { height: 120 } },
-        }),
-      ),
-    ).not.toThrow();
-  });
-
   it("renders the content of every item", () => {
     render(<Accordion items={items} />);
 
@@ -133,25 +95,26 @@ describe("Accordion", () => {
     expect(screen.getByText("Data sharing")).toBeOnTheScreen();
   });
 
+  it("exposes a stable hook per item", () => {
+    render(<Accordion items={items} />);
+
+    expect(screen.getByTestId(accordionItemTestID("billing"))).toBeOnTheScreen();
+  });
+
   it("follows the active color scheme", () => {
     render(<Accordion items={items} />);
 
-    const chevronColor = () =>
-      StyleSheet.flatten(
-        screen.getByTestId(accordionChevronTestID("billing")).props.style,
-      ).borderColor;
-
-    expect(chevronColor()).toBe(colors.mutedForeground);
-    expect(
-      StyleSheet.flatten(screen.getByText("Billing").props.style).color,
-    ).toBe(colors.foreground);
+    expect(section("billing").props.labelStyle.color).toBe(colors.foreground);
+    expect(screen.UNSAFE_getAllByType(Host)[0].props.seedColor).toBe(
+      colors.primary,
+    );
 
     act(() => useThemeStore.getState().setMode("dark"));
 
-    expect(chevronColor()).toBe(darkColors.mutedForeground);
-    expect(
-      StyleSheet.flatten(screen.getByText("Billing").props.style).color,
-    ).toBe(darkColors.foreground);
+    expect(section("billing").props.labelStyle.color).toBe(
+      darkColors.foreground,
+    );
+    expect(screen.UNSAFE_getAllByType(Host)[0].props.colorScheme).toBe("dark");
   });
 
   it("forwards props to the underlying view", () => {

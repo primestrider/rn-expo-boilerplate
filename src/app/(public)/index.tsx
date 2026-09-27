@@ -1,43 +1,75 @@
 import { useRouter } from "expo-router";
-import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
-import { examplePaths } from "@/features/example/routes";
-import { AppText, Button, Screen } from "@/shared/components";
-import { useStyles, view } from "@/styles";
+import { NavSection } from "@/features/example/components";
+import { useFeatureHref } from "@/features/example/hooks/useFeatureHref";
+import {
+  componentGroups,
+  exampleScreens,
+  featureScreens,
+  nativeComponentGroups,
+} from "@/features/example/routes";
+import { AppText, Screen } from "@/shared/components";
+import { useStyles } from "@/styles";
 
+/**
+ * The example directory: every example, grouped by what it demonstrates, one
+ * tap away. Feature screens come first — they are what a new reader of the
+ * boilerplate wants to see working.
+ */
 export default function Index() {
   const styles = useStyles();
   const router = useRouter();
+  const { t } = useTranslation();
+  const featureHref = useFeatureHref();
 
   return (
-    <Screen scroll={false} padded={false}>
-      <View style={view(styles.flex1, styles.p6, styles.center, styles.gap3)}>
-        <AppText variant="h1" align="center">
-          RN Expo Boilerplate
-        </AppText>
-        <AppText variant="caption" color="muted" align="center" style={styles.mb6}>
-          Tailwind-like utility styling with React Native&apos;s built-in
-          StyleSheet
-        </AppText>
+    <Screen contentContainerStyle={styles.gap6}>
+      <AppText variant="h1">RN Expo Boilerplate</AppText>
 
-        <Button
-          title="Open Style Examples"
-          block
-          onPress={() => router.push(examplePaths.index)}
-        />
-        <Button
-          title="Open Components"
-          variant="secondary"
-          block
-          onPress={() => router.push(examplePaths.components)}
-        />
-        <Button
-          title="Open Form Example"
-          variant="outline"
-          block
-          onPress={() => router.push(examplePaths.form)}
-        />
-      </View>
+      <NavSection
+        title={t("features.example.title")}
+        description={t("features.example.subtitle")}
+        items={featureScreens.map((screen) => ({
+          key: screen.name,
+          title: t(screen.titleKey),
+          subtitle: t(screen.descriptionKey),
+          onPress: () => router.push(featureHref(screen)),
+        }))}
+      />
+
+      <NavSection
+        title="Components"
+        description="The shared, themed component library"
+        items={componentGroups.map((group) => ({
+          key: group.title,
+          title: group.title,
+          subtitle: group.description,
+          onPress: () => router.push(group.href),
+        }))}
+      />
+
+      <NavSection
+        title="Native UI"
+        description="Platform controls from @expo/ui"
+        items={nativeComponentGroups.map((group) => ({
+          key: group.title,
+          title: group.title,
+          subtitle: group.description,
+          onPress: () => router.push(group.href),
+        }))}
+      />
+
+      <NavSection
+        title="Styling"
+        description="Tailwind-like utilities on React Native's StyleSheet"
+        items={exampleScreens.map((screen) => ({
+          key: screen.title,
+          title: screen.title,
+          subtitle: screen.description,
+          onPress: () => router.push(screen.href),
+        }))}
+      />
     </Screen>
   );
 }
