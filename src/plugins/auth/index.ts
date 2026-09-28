@@ -1,6 +1,7 @@
 import { registerAuthAdapter, sessionHandlers } from "@/features/auth";
-import { dummyJsonAuthAdapter } from "@/features/example/services/auth.adapter";
 import { registerSessionHandlers } from "@/plugins/axios/session";
+
+import { dummyJsonAuthAdapter } from "./dummyjson.adapter";
 
 /**
  * Where the app is wired to a backend. Importing this module performs the

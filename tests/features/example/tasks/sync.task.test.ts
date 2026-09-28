@@ -1,6 +1,6 @@
 import * as TaskManager from "expo-task-manager";
 
-import { mmkvStorage, storageKeys } from "@/plugins/mmkv";
+import { mmkvStorage } from "@/plugins/mmkv";
 
 jest.mock("expo-task-manager", () => ({ defineTask: jest.fn() }));
 
@@ -9,14 +9,14 @@ jest.mock("expo-background-task", () => ({
 }));
 
 // Imported after the mocks so its module-level `defineTask` call is captured.
-const { SYNC_TASK, readSyncLog, runSync } =
+const { SYNC_TASK, readSyncLog, runSync, syncStorageKeys } =
   require("@/features/example/tasks/sync.task") as typeof import("@/features/example/tasks/sync.task");
 
 const defineTask = jest.mocked(TaskManager.defineTask);
 
 beforeEach(() => {
-  mmkvStorage.remove(storageKeys.example.backgroundSyncLastRun);
-  mmkvStorage.remove(storageKeys.example.backgroundSyncRuns);
+  mmkvStorage.remove(syncStorageKeys.backgroundSyncLastRun);
+  mmkvStorage.remove(syncStorageKeys.backgroundSyncRuns);
 });
 
 describe("background sync task", () => {

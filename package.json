@@ -99,7 +99,9 @@
     "lint": "expo lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "reset-project": "node scripts/boilerplate/cli.mjs reset",
+    "add-example": "node scripts/boilerplate/cli.mjs add"
   },
   "private": true
 }

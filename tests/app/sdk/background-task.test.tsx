@@ -4,8 +4,8 @@ import * as TaskManager from "expo-task-manager";
 import type { ReactNode } from "react";
 
 import BackgroundTaskExample from "@/app/(public)/example/sdk/background-task";
-import { SYNC_TASK } from "@/features/example/tasks/sync.task";
-import { mmkvStorage, storageKeys } from "@/plugins/mmkv";
+import { SYNC_TASK, syncStorageKeys } from "@/features/example/tasks/sync.task";
+import { mmkvStorage } from "@/plugins/mmkv";
 
 import {
   infoValue,
@@ -48,8 +48,8 @@ async function renderScreen() {
 beforeEach(() => {
   jest.clearAllMocks();
   registered = false;
-  mmkvStorage.remove(storageKeys.example.backgroundSyncLastRun);
-  mmkvStorage.remove(storageKeys.example.backgroundSyncRuns);
+  mmkvStorage.remove(syncStorageKeys.backgroundSyncLastRun);
+  mmkvStorage.remove(syncStorageKeys.backgroundSyncRuns);
   tasks.isAvailableAsync.mockResolvedValue(true);
   tasks.isTaskRegisteredAsync.mockImplementation(async () => registered);
   background.getStatusAsync.mockResolvedValue(2);
@@ -105,9 +105,9 @@ describe("Background Task example", () => {
   });
 
   it("shows runs the task recorded", async () => {
-    mmkvStorage.set(storageKeys.example.backgroundSyncRuns, 3);
+    mmkvStorage.set(syncStorageKeys.backgroundSyncRuns, 3);
     mmkvStorage.set(
-      storageKeys.example.backgroundSyncLastRun,
+      syncStorageKeys.backgroundSyncLastRun,
       new Date(2026, 8, 27, 8, 15).getTime(),
     );
     await renderScreen();

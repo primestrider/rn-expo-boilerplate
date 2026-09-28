@@ -9,7 +9,7 @@ import { getAuthAdapter, useSessionStore } from "@/features/auth";
 import {
   signInSchema,
   type SignInFormValues,
-} from "@/features/example/models/form.schema";
+} from "@/features/auth/models/signIn.schema";
 import { Alert, AppText, Button, Card, Input, Screen } from "@/shared/components";
 import { useFieldError } from "@/shared/hooks";
 import type { ApiError } from "@/shared/models";
@@ -50,18 +50,18 @@ export default function SignInScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: t("features.example.signIn.title") }} />
+      <Stack.Screen options={{ title: t("features.auth.signIn.title") }} />
       <Screen keyboardAvoiding>
-        <AppText variant="h2">{t("features.example.signIn.title")}</AppText>
+        <AppText variant="h2">{t("features.auth.signIn.title")}</AppText>
         <AppText variant="caption" color="muted" style={styles.mb6}>
-          {t("features.example.signIn.subtitle")}
+          {t("features.auth.signIn.subtitle")}
         </AppText>
 
         <View testID="sign-in-form" style={view(styles.gap4)}>
           <Card variant="filled">
             <Card.Header
-              title={t("features.example.signIn.demo.title")}
-              subtitle={t("features.example.signIn.demo.description")}
+              title={t("features.auth.signIn.demo.title")}
+              subtitle={t("features.auth.signIn.demo.description")}
             />
             <Card.Body>
               <AppText variant="mono" color="muted">
@@ -70,7 +70,7 @@ export default function SignInScreen() {
             </Card.Body>
             <Card.Footer style={styles.mt3}>
               <Button
-                title={t("features.example.signIn.demo.fill")}
+                title={t("features.auth.signIn.demo.fill")}
                 variant="ghost"
                 size="sm"
                 onPress={() => {
@@ -84,7 +84,7 @@ export default function SignInScreen() {
           {apiError ? (
             <Alert
               variant="error"
-              title={t("features.example.signIn.error.title")}
+              title={t("features.auth.signIn.error.title")}
               description={
                 apiError.isNetworkError
                   ? t("utils.error.network")
@@ -98,8 +98,8 @@ export default function SignInScreen() {
             name="username"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label={t("features.example.signIn.field.username.label")}
-                placeholder={t("features.example.signIn.field.username.placeholder")}
+                label={t("features.auth.signIn.field.username.label")}
+                placeholder={t("features.auth.signIn.field.username.placeholder")}
                 autoCapitalize="none"
                 value={value}
                 onChangeText={onChange}
@@ -114,8 +114,8 @@ export default function SignInScreen() {
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label={t("features.example.signIn.field.password.label")}
-                placeholder={t("features.example.signIn.field.password.placeholder")}
+                label={t("features.auth.signIn.field.password.label")}
+                placeholder={t("features.auth.signIn.field.password.placeholder")}
                 type="password"
                 value={value}
                 onChangeText={onChange}
@@ -126,7 +126,7 @@ export default function SignInScreen() {
           />
 
           <Button
-            title={t("features.example.signIn.action.signIn")}
+            title={t("features.auth.signIn.action.signIn")}
             size="lg"
             block
             loading={isSigningIn}

@@ -1,19 +1,27 @@
 import { ExpoConfig } from "expo/config";
 
+import packageJson from "../package.json";
 import { fontPlugin } from "./font.config";
 import { localesPlugin } from "./locales.config";
 
-export const plugins: NonNullable<ExpoConfig["plugins"]> = [
-  "expo-router",
+type PluginEntry = NonNullable<ExpoConfig["plugins"]>[number];
 
-  // Required as of SDK 57 — these packages ship config plugins that must be
-  // registered explicitly for native autolinking.
-  "expo-image",
-  "expo-status-bar",
-  "expo-web-browser",
+const installed = new Set(Object.keys(packageJson.dependencies));
 
-  // SDK examples — each plugin writes the permission strings iOS requires
-  // and the matching Android manifest permissions.
+const pluginName = (entry: PluginEntry) =>
+  Array.isArray(entry) ? (entry as unknown[])[0] : entry;
+
+/**
+ * Plugins for the SDK examples — each writes the permission strings iOS
+ * requires and the matching Android manifest permissions.
+ *
+ * Each applies only while its package is a dependency: `npm run reset-project`
+ * uninstalls these packages and `npm run add-example` installs them again, and
+ * Expo fails to resolve a plugin whose package is missing. Filtered on
+ * `package.json` rather than `node_modules` so the native config follows what
+ * the project declares, not whatever happens to be installed locally.
+ */
+const sdkPlugins: PluginEntry[] = [
   [
     "expo-camera",
     {
@@ -66,6 +74,18 @@ export const plugins: NonNullable<ExpoConfig["plugins"]> = [
   ],
   // expo-brightness is not listed: Expo applies its plugin automatically, and
   // the WRITE_SETTINGS permission it adds is blocked in android.config.ts.
+];
+
+export const plugins: NonNullable<ExpoConfig["plugins"]> = [
+  "expo-router",
+
+  // Required as of SDK 57 — these packages ship config plugins that must be
+  // registered explicitly for native autolinking.
+  "expo-image",
+  "expo-status-bar",
+  "expo-web-browser",
+
+  ...sdkPlugins.filter((entry) => installed.has(String(pluginName(entry)))),
 
   [
     "expo-splash-screen",

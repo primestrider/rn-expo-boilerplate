@@ -7,5 +7,4 @@ export type { ProductCardProps } from "./ProductCard";
 export { NavSection } from "./NavSection";
 export type { NavSectionItem } from "./NavSection";
 export { Section } from "./Section";
-export { TransactionHistory } from "./TransactionHistory";
 export { UtilityChip } from "./UtilityChip";

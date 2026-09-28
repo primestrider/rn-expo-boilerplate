@@ -6,8 +6,9 @@ module.exports = defineConfig([
   expoConfig,
   {
     // `.agents` and `.opencode` hold agent tooling scripts, not app source —
-    // they follow their own conventions and are not ours to lint.
-    ignores: ["dist/*", ".agents/**", ".opencode/**"],
+    // they follow their own conventions and are not ours to lint. `.examples`
+    // holds the examples `npm run reset-project` moved out of the app.
+    ignores: ["dist/*", ".agents/**", ".opencode/**", ".examples/**"],
   },
   {
     files: ["tests/**"],

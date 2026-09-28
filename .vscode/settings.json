@@ -3,5 +3,12 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
-  }
+  },
+  "i18n-ally.localesPaths": [
+    "src/locales",
+    "src/plugins/i18n",
+    "src/shared/languages",
+    "src/features/auth/languages",
+    "src/features/example/languages"
+  ]
 }

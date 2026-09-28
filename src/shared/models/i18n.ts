@@ -21,7 +21,7 @@ export type TranslationKey = ParseKeys;
  * module that validates a form.
  *
  * @example
- * z.string().min(3, translationKey("features.example.signIn.validation.usernameMin"))
+ * z.string().min(3, translationKey("features.auth.signIn.validation.usernameMin"))
  */
 export function translationKey(key: TranslationKey): TranslationKey {
   return key;

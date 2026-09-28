@@ -7,8 +7,4 @@ export const storageKeys = {
     theme: "settings.theme",
     language: "settings.language",
   },
-  example: {
-    backgroundSyncLastRun: "example.backgroundSync.lastRun",
-    backgroundSyncRuns: "example.backgroundSync.runs",
-  },
 } as const;
