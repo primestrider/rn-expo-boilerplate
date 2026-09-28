@@ -1,6 +1,7 @@
 import { getLocales } from "expo-localization";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { Platform } from "react-native";
 
 import {
   defaultNamespace,
@@ -14,12 +15,20 @@ import { setActiveLanguage } from "@/shared/helpers/locale";
 import { mmkvStorage, storageKeys } from "@/plugins/mmkv";
 
 /**
+ * Web static rendering evaluates this module on the server, where MMKV's
+ * localStorage backend does not exist and every access throws.
+ */
+const canUseStorage = Platform.OS !== "web" || typeof window !== "undefined";
+
+/**
  * Resolves the language to start with: an explicit user choice wins,
  * then the device language, then the fallback.
  */
 function resolveInitialLanguage(): SupportedLanguage {
-  const stored = mmkvStorage.getString(storageKeys.app.language);
-  if (isSupportedLanguage(stored)) return stored;
+  if (canUseStorage) {
+    const stored = mmkvStorage.getString(storageKeys.app.language);
+    if (isSupportedLanguage(stored)) return stored;
+  }
 
   const deviceLanguage = getLocales()[0]?.languageCode;
   if (isSupportedLanguage(deviceLanguage)) return deviceLanguage;
@@ -49,7 +58,7 @@ setActiveLanguage(initialLanguage);
 i18n.on("languageChanged", (language) => {
   if (!isSupportedLanguage(language)) return;
 
-  mmkvStorage.set(storageKeys.app.language, language);
+  if (canUseStorage) mmkvStorage.set(storageKeys.app.language, language);
   setActiveLanguage(language);
 });
 
