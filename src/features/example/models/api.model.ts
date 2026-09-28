@@ -35,27 +35,3 @@ export type DummyProductListResponse = {
   skip: number;
   limit: number;
 };
-
-export type DummyLoginRequest = {
-  username: string;
-  password: string;
-  expiresInMins?: number;
-};
-
-export type DummyLoginResponse = {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  image: string;
-  accessToken: string;
-  refreshToken: string;
-};
-
-/** What DummyJSON answers when a refresh token is exchanged. */
-export type DummyRefreshResponse = {
-  accessToken: string;
-  refreshToken: string;
-};

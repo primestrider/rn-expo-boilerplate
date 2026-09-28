@@ -50,3 +50,6 @@ yarn-error.*
 !.env.example
 
 .opencode
+
+# examples moved out by `npm run reset-project` (restore: `npm run add-example`)
+.examples/

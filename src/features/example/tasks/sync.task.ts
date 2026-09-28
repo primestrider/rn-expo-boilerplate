@@ -1,11 +1,21 @@
 import * as BackgroundTask from "expo-background-task";
 import * as TaskManager from "expo-task-manager";
 
-import { mmkvStorage, storageKeys } from "@/plugins/mmkv";
+import { mmkvStorage } from "@/plugins/mmkv";
 
 export const SYNC_TASK = "example-background-sync";
 
-const { backgroundSyncLastRun, backgroundSyncRuns } = storageKeys.example;
+/**
+ * Kept with the task rather than in `@/plugins/mmkv/keys`: this example can be
+ * removed and re-added (`npm run reset-project` / `add-example`), and its keys
+ * travel with it.
+ */
+export const syncStorageKeys = {
+  backgroundSyncLastRun: "example.backgroundSync.lastRun",
+  backgroundSyncRuns: "example.backgroundSync.runs",
+} as const;
+
+const { backgroundSyncLastRun, backgroundSyncRuns } = syncStorageKeys;
 
 export type SyncLog = { lastRun: number | null; runs: number };
 

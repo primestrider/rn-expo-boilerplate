@@ -457,8 +457,8 @@ export const featureScreens: FeatureNavItem[] = [
   {
     name: ExamplePageName.SIGN_IN,
     href: examplePaths.signIn,
-    titleKey: "features.example.signIn.title",
-    descriptionKey: "features.example.signIn.subtitle",
+    titleKey: "features.auth.signIn.title",
+    descriptionKey: "features.auth.signIn.subtitle",
     plugins: ["react-hook-form", "zod", "axios", "mmkv", "zustand", "expo-router"],
   },
   {

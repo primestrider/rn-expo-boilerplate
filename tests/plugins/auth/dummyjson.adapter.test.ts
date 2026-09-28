@@ -1,7 +1,7 @@
-import { dummyJsonAuthAdapter } from "@/features/example/services/auth.adapter";
-import { login, refreshSession } from "@/features/example/services/api";
+import { dummyJsonAuthAdapter } from "@/plugins/auth/dummyjson.adapter";
+import { login, refreshSession } from "@/plugins/auth/dummyjson.api";
 
-jest.mock("@/features/example/services/api", () => ({
+jest.mock("@/plugins/auth/dummyjson.api", () => ({
   login: jest.fn(),
   refreshSession: jest.fn(),
 }));

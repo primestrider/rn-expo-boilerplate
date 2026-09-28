@@ -2,11 +2,8 @@ import axiosInstance from "@/plugins/axios";
 import type { CustomAxiosRequestConfig } from "@/shared/models";
 
 import type {
-  DummyLoginRequest,
-  DummyLoginResponse,
   DummyProduct,
   DummyProductListResponse,
-  DummyRefreshResponse,
 } from "../models/api.model";
 
 /**
@@ -81,52 +78,5 @@ export const fetchProductById = async (id: number): Promise<DummyProduct> => {
   };
 
   const { data } = await axiosInstance.request<DummyProduct>(config);
-  return data;
-};
-
-/**
- * Exchange credentials for a token pair.
- *
- * Endpoint:
- * POST /auth/login
- *
- * Opted out of auth explicitly: sending a stale token to the endpoint that
- * issues tokens is how you get a confusing 401 on a valid password.
- */
-export const login = async (
-  payload: DummyLoginRequest,
-): Promise<DummyLoginResponse> => {
-  const config: CustomAxiosRequestConfig<DummyLoginRequest> = {
-    url: `${HOST}/auth/login`,
-    method: "POST",
-    data: payload,
-    meta: anonymous,
-  };
-
-  const { data } = await axiosInstance.request<DummyLoginResponse>(config);
-  return data;
-};
-
-/**
- * Exchange a refresh token for a new pair.
- *
- * Endpoint:
- * POST /auth/refresh
- *
- * Opted out of auth: the access token this is meant to replace is, by
- * definition, the one that just stopped working. Opting out is also what keeps
- * a failure here from recursing back into the refresh flow.
- */
-export const refreshSession = async (
-  refreshToken: string,
-): Promise<DummyRefreshResponse> => {
-  const config: CustomAxiosRequestConfig<{ refreshToken: string }> = {
-    url: `${HOST}/auth/refresh`,
-    method: "POST",
-    data: { refreshToken },
-    meta: anonymous,
-  };
-
-  const { data } = await axiosInstance.request<DummyRefreshResponse>(config);
   return data;
 };

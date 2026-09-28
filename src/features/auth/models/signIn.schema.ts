@@ -15,13 +15,13 @@ import { translationKey } from "@/shared/models/i18n";
  * literal: zod types its message slot as `string`, so a typo would otherwise
  * reach the screen.
  */
-
-export const todoSchema = z.object({
-  title: z
+export const signInSchema = z.object({
+  username: z
     .string()
-    .trim()
-    .min(3, translationKey("features.example.todos.validation.titleMin"))
-    .max(100, translationKey("features.example.todos.validation.titleMax")),
+    .min(3, translationKey("features.auth.signIn.validation.usernameMin")),
+  password: z
+    .string()
+    .min(6, translationKey("features.auth.signIn.validation.passwordMin")),
 });
 
-export type TodoFormValues = z.infer<typeof todoSchema>;
+export type SignInFormValues = z.infer<typeof signInSchema>;

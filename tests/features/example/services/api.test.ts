@@ -1,7 +1,6 @@
 import {
   fetchProductById,
   fetchProducts,
-  login,
   searchProducts,
 } from "@/features/example/services/api";
 import axiosInstance from "@/plugins/axios";
@@ -93,43 +92,5 @@ describe("fetchProductById", () => {
 
     expect(sentConfig().url).toBe("https://dummyjson.com/products/42");
     expect(result).toEqual({ id: 42, title: "Thing" });
-  });
-});
-
-describe("login", () => {
-  it("posts the credentials", async () => {
-    resolveWith({ id: 1, username: "emilys", accessToken: "t" });
-
-    await login({ username: "emilys", password: "emilyspass" });
-
-    expect(sentConfig()).toEqual(
-      expect.objectContaining({
-        url: "https://dummyjson.com/auth/login",
-        method: "POST",
-        data: { username: "emilys", password: "emilyspass" },
-      }),
-    );
-  });
-
-  it("opts out of auth, so a stale token cannot break a valid password", async () => {
-    resolveWith({ id: 1, username: "emilys", accessToken: "t" });
-
-    await login({ username: "emilys", password: "emilyspass" });
-
-    expect(sentConfig().meta).toEqual({ requiresAuth: false });
-  });
-
-  it("lets an API error reach the caller", async () => {
-    request.mockRejectedValueOnce({
-      message: "Invalid credentials",
-      status: 400,
-      isNetworkError: false,
-    });
-
-    await expect(
-      login({ username: "emilys", password: "wrong" }),
-    ).rejects.toEqual(
-      expect.objectContaining({ message: "Invalid credentials", status: 400 }),
-    );
   });
 });

@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 
-import { Section, TransactionHistory } from "@/features/example/components";
+import { Section } from "@/features/example/components";
+import { TransactionHistory } from "@/features/example/components/TransactionHistory";
 import { Screen } from "@/shared/components";
 
 /**

@@ -165,7 +165,44 @@ npm run web
 | `npm test`                      | Runs the Jest unit test suite                                                |
 | `npm run test:watch`            | Runs the tests in watch mode                                                 |
 | `npm run test:coverage`         | Runs the tests and reports coverage                                          |
-| `npm run reset-project`         | Runs the project reset script                                                |
+| `npm run reset-project`         | Moves every example into `.examples/` and uninstalls their packages          |
+| `npm run add-example`           | Lists the examples; `npm run add-example -- <name>` restores one             |
+
+## Starting a New App
+
+The boilerplate ships with examples: a styling and component showcase, feature
+screens (products, todos, settings) and one screen per Expo SDK module. Strip
+them before building your own app:
+
+```bash
+npm run reset-project
+```
+
+This moves every example file into `.examples/` (git-ignored), replaces the
+home screen with a blank one, and uninstalls the packages only the examples
+used — their config plugins in `configs/plugins.config.ts` switch off with them.
+Auth (sign-in, account, the guard) is core and stays; it signs in against the
+DummyJSON demo until you register your own adapter in `src/plugins/auth`.
+The working tree must be clean, so the reset can be undone with git.
+
+Bring an example back — its files, the packages it needs, and its native
+config — whenever you need it as a reference:
+
+```bash
+npm run add-example                          # list the examples
+npm run add-example -- camera location       # restore some
+npm run add-example -- all                   # restore everything
+```
+
+Restored screens live under `/example/...`. Existing files you have changed
+are never overwritten. If `.examples/` is gone (a fresh clone), examples are
+restored from the commit recorded in `scripts/boilerplate/source.json`.
+Pass `--skip-install` to either command to edit `package.json` without
+installing. What each example owns is declared in
+`scripts/boilerplate/modules.mjs`.
+
+After either command, run `npx expo prebuild --clean` before the next native
+build, since native permissions and modules change.
 
 ## Android Release Build
 

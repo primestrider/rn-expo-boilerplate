@@ -23,14 +23,14 @@ export default function AccountScreen() {
   return (
     <>
       <Stack.Screen
-        options={{ title: t("features.example.signIn.account.title") }}
+        options={{ title: t("features.auth.signIn.account.title") }}
       />
       <Screen>
         <AppText variant="h2">
-          {t("features.example.signIn.account.title")}
+          {t("features.auth.signIn.account.title")}
         </AppText>
         <AppText variant="caption" color="muted" style={styles.mb6}>
-          {t("features.example.signIn.account.subtitle")}
+          {t("features.auth.signIn.account.subtitle")}
         </AppText>
 
         {user ? (
@@ -39,7 +39,7 @@ export default function AccountScreen() {
               <Avatar source={user.image} name={fullName} size="lg" status="online" />
               <View style={view(styles.flex1, styles.gap1, { minWidth: 0 })}>
                 <AppText variant="caption" color="muted">
-                  {t("features.example.signIn.session.title")}
+                  {t("features.auth.signIn.session.title")}
                 </AppText>
                 <AppText variant="title" numberOfLines={1}>
                   {fullName}
@@ -52,14 +52,14 @@ export default function AccountScreen() {
 
             <Card.Footer style={styles.mt4}>
               <Button
-                title={t("features.example.signIn.action.signOut")}
+                title={t("features.auth.signIn.action.signOut")}
                 variant="outline"
                 onPress={() => signOut("user")}
               />
             </Card.Footer>
 
             <AppText variant="caption" color="muted" style={styles.mt3}>
-              {t("features.example.signIn.session.tokenNote")}
+              {t("features.auth.signIn.session.tokenNote")}
             </AppText>
           </Card>
         ) : null}

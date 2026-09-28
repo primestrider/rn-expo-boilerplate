@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react-native";
 import type { SQLiteDatabase } from "expo-sqlite";
 
-import { TransactionHistory } from "@/features/example/components";
+import { TransactionHistory } from "@/features/example/components/TransactionHistory";
 import {
   migrate,
   type TransactionRow,
