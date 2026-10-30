@@ -6,7 +6,7 @@ import "@/plugins/i18n";
 import { mmkvStorage } from "@/plugins/mmkv";
 import { ToastProvider } from "@/shared/components";
 
-function renderWatcher() {
+async function renderWatcher() {
   return render(
     <ToastProvider>
       <SessionExpiryToast />
@@ -14,10 +14,10 @@ function renderWatcher() {
   );
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.useFakeTimers();
   mmkvStorage.clearAll();
-  act(() =>
+  await act(() =>
     useSessionStore.setState({ user: null, tokens: null, signOutReason: null }),
   );
 });
@@ -27,16 +27,16 @@ afterEach(() => {
 });
 
 describe("SessionExpiryToast", () => {
-  it("stays quiet while the session is fine", () => {
-    renderWatcher();
+  it("stays quiet while the session is fine", async () => {
+    await renderWatcher();
 
     expect(screen.queryByTestId("toast-container")).not.toBeOnTheScreen();
   });
 
-  it("announces a session that expired", () => {
-    renderWatcher();
+  it("announces a session that expired", async () => {
+    await renderWatcher();
 
-    act(() => useSessionStore.getState().signOut("expired"));
+    await act(() => useSessionStore.getState().signOut("expired"));
 
     expect(screen.getByTestId("toast-container")).toBeOnTheScreen();
     expect(
@@ -44,18 +44,18 @@ describe("SessionExpiryToast", () => {
     ).toBeOnTheScreen();
   });
 
-  it("says nothing when the user signed out deliberately", () => {
-    renderWatcher();
+  it("says nothing when the user signed out deliberately", async () => {
+    await renderWatcher();
 
-    act(() => useSessionStore.getState().signOut("user"));
+    await act(() => useSessionStore.getState().signOut("user"));
 
     expect(screen.queryByTestId("toast-container")).not.toBeOnTheScreen();
   });
 
-  it("clears the reason so it is announced only once", () => {
-    renderWatcher();
+  it("clears the reason so it is announced only once", async () => {
+    await renderWatcher();
 
-    act(() => useSessionStore.getState().signOut("expired"));
+    await act(() => useSessionStore.getState().signOut("expired"));
 
     expect(useSessionStore.getState().signOutReason).toBeNull();
   });

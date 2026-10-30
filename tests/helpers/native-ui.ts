@@ -6,6 +6,7 @@ import {
   TextInput,
 } from "@expo/ui";
 import { act, screen } from "@testing-library/react-native";
+import { getAllByComponent, queryAllByComponent } from "./host";
 
 /**
  * `@expo/ui` controls render native views with no host text or press target
@@ -25,17 +26,16 @@ function byLabel<T extends { props: { label?: string } }>(
 }
 
 export function nativeButton(label: string) {
-  return byLabel(screen.UNSAFE_getAllByType(Button), label, "Button");
+  return byLabel(getAllByComponent(Button), label, "Button");
 }
 
 export function queryNativeButton(label: string) {
-  return screen
-    .UNSAFE_queryAllByType(Button)
+  return queryAllByComponent(Button)
     .find((button) => button.props.label === label);
 }
 
 export function nativeSwitch(label: string) {
-  return byLabel(screen.UNSAFE_getAllByType(Switch), label, "Switch");
+  return byLabel(getAllByComponent(Switch), label, "Switch");
 }
 
 /** Presses a native button and waits for the async work it starts. */
@@ -54,21 +54,20 @@ export async function toggleNative(label: string, value: boolean) {
 /** Picks a value in the `index`-th native Picker on screen. */
 export async function pickNative(value: string, index = 0) {
   await act(async () => {
-    await screen.UNSAFE_getAllByType(Picker)[index].props.onValueChange(value);
+    await getAllByComponent(Picker)[index].props.onValueChange(value);
   });
 }
 
 /** Types into the `index`-th native TextInput on screen. */
 export async function typeNative(text: string, index = 0) {
   await act(async () => {
-    await screen.UNSAFE_getAllByType(TextInput)[index].props.onChangeText?.(text);
+    await getAllByComponent(TextInput)[index].props.onChangeText?.(text);
   });
 }
 
 /** Every string rendered through a native `Text`, in tree order. */
 export function nativeTexts(): string[] {
-  return screen
-    .UNSAFE_queryAllByType(Text)
+  return queryAllByComponent(Text)
     .map((node) => [node.props.children].flat().join(""));
 }
 

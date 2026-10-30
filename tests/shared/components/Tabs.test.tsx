@@ -40,25 +40,25 @@ function indicatorStyle() {
   );
 }
 
-function measure(label: string, x: number, width: number) {
-  fireEvent(screen.getByLabelText(label), "layout", {
+async function measure(label: string, x: number, width: number) {
+  await fireEvent(screen.getByLabelText(label), "layout", {
     nativeEvent: { layout: { x, y: 0, width, height: spacing[10] } },
   });
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.useFakeTimers();
-  act(() => useThemeStore.getState().setMode("light"));
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
-afterEach(() => {
-  act(() => jest.runOnlyPendingTimers());
+afterEach(async () => {
+  await act(() => jest.runOnlyPendingTimers());
   jest.useRealTimers();
 });
 
 describe("Tabs", () => {
-  it("renders a tab per item", () => {
-    render(
+  it("renders a tab per item", async () => {
+    await render(
       <Tabs testID="tabs" items={items} value="week" onChange={jest.fn()} />,
     );
 
@@ -67,8 +67,8 @@ describe("Tabs", () => {
     expect(screen.getByLabelText("Year")).toBeOnTheScreen();
   });
 
-  it("exposes the strip and its tabs to assistive technology", () => {
-    render(
+  it("exposes the strip and its tabs to assistive technology", async () => {
+    await render(
       <Tabs testID="tabs" items={items} value="week" onChange={jest.fn()} />,
     );
 
@@ -76,8 +76,8 @@ describe("Tabs", () => {
     expect(screen.getByLabelText("Week").props.accessibilityRole).toBe("tab");
   });
 
-  it("marks exactly one tab as selected", () => {
-    render(
+  it("marks exactly one tab as selected", async () => {
+    await render(
       <Tabs testID="tabs" items={items} value="month" onChange={jest.fn()} />,
     );
 
@@ -88,46 +88,46 @@ describe("Tabs", () => {
     expect(selected).toEqual(["Month"]);
   });
 
-  it("calls onChange with the tapped item's value", () => {
+  it("calls onChange with the tapped item's value", async () => {
     const onChange = jest.fn();
-    render(
+    await render(
       <Tabs testID="tabs" items={items} value="week" onChange={onChange} />,
     );
 
-    fireEvent.press(screen.getByLabelText("Year"));
+    await fireEvent.press(screen.getByLabelText("Year"));
 
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith("year");
   });
 
-  it("stays quiet when the already-active tab is tapped", () => {
+  it("stays quiet when the already-active tab is tapped", async () => {
     const onChange = jest.fn();
-    render(
+    await render(
       <Tabs testID="tabs" items={items} value="week" onChange={onChange} />,
     );
 
-    fireEvent.press(screen.getByLabelText("Week"));
+    await fireEvent.press(screen.getByLabelText("Week"));
 
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it("is controlled — the selection does not move on its own", () => {
-    render(
+  it("is controlled — the selection does not move on its own", async () => {
+    await render(
       <Tabs testID="tabs" items={items} value="week" onChange={jest.fn()} />,
     );
 
-    fireEvent.press(screen.getByLabelText("Month"));
+    await fireEvent.press(screen.getByLabelText("Month"));
 
     expect(isSelected("Week")).toBe(true);
     expect(isSelected("Month")).toBe(false);
   });
 
-  it("moves the selection when the value prop changes", () => {
-    const { rerender } = render(
+  it("moves the selection when the value prop changes", async () => {
+    const { rerender } = await render(
       <Tabs testID="tabs" items={items} value="week" onChange={jest.fn()} />,
     );
 
-    rerender(
+    await rerender(
       <Tabs testID="tabs" items={items} value="month" onChange={jest.fn()} />,
     );
 
@@ -136,8 +136,8 @@ describe("Tabs", () => {
   });
 
   describe("segmented", () => {
-    it("lays the tabs on a fully rounded secondary track", () => {
-      render(
+    it("lays the tabs on a fully rounded secondary track", async () => {
+      await render(
         <Tabs testID="tabs" items={items} value="week" onChange={jest.fn()} />,
       );
 
@@ -151,8 +151,8 @@ describe("Tabs", () => {
       );
     });
 
-    it("raises the active tab onto a fully rounded card thumb", () => {
-      render(
+    it("raises the active tab onto a fully rounded card thumb", async () => {
+      await render(
         <Tabs testID="tabs" items={items} value="week" onChange={jest.fn()} />,
       );
 
@@ -166,16 +166,16 @@ describe("Tabs", () => {
       expect(styleOf("Month").backgroundColor).toBeUndefined();
     });
 
-    it("has no indicator bar", () => {
-      render(
+    it("has no indicator bar", async () => {
+      await render(
         <Tabs testID="tabs" items={items} value="week" onChange={jest.fn()} />,
       );
 
       expect(screen.queryByTestId(TABS_INDICATOR_TEST_ID)).toBeNull();
     });
 
-    it("tightens its padding at the sm size", () => {
-      render(
+    it("tightens its padding at the sm size", async () => {
+      await render(
         <Tabs
           testID="tabs"
           size="sm"
@@ -189,15 +189,15 @@ describe("Tabs", () => {
       expect(styleOf("Week").paddingHorizontal).toBe(spacing[2.5]);
     });
 
-    it("follows the active color scheme", () => {
-      render(
+    it("follows the active color scheme", async () => {
+      await render(
         <Tabs testID="tabs" items={items} value="week" onChange={jest.fn()} />,
       );
 
       expect(trackStyle().backgroundColor).toBe(colors.secondary);
       expect(styleOf("Week").backgroundColor).toBe(colors.card);
 
-      act(() => useThemeStore.getState().setMode("dark"));
+      await act(() => useThemeStore.getState().setMode("dark"));
 
       expect(trackStyle().backgroundColor).toBe(darkColors.secondary);
       expect(styleOf("Week").backgroundColor).toBe(darkColors.card);
@@ -205,8 +205,8 @@ describe("Tabs", () => {
   });
 
   describe("underline", () => {
-    it("drops the track and draws a primary indicator instead", () => {
-      render(
+    it("drops the track and draws a primary indicator instead", async () => {
+      await render(
         <Tabs
           testID="tabs"
           variant="underline"
@@ -228,8 +228,8 @@ describe("Tabs", () => {
       );
     });
 
-    it("places the indicator on the measured active tab", () => {
-      render(
+    it("places the indicator on the measured active tab", async () => {
+      await render(
         <Tabs
           testID="tabs"
           variant="underline"
@@ -239,14 +239,14 @@ describe("Tabs", () => {
         />,
       );
 
-      measure("Week", spacing[0], spacing[20]);
+      await measure("Week", spacing[0], spacing[20]);
 
       expect(indicatorStyle().left).toBe(spacing[0]);
       expect(indicatorStyle().width).toBe(spacing[20]);
     });
 
-    it("animates the indicator across when the active tab changes", () => {
-      const { rerender } = render(
+    it("animates the indicator across when the active tab changes", async () => {
+      const { rerender } = await render(
         <Tabs
           testID="tabs"
           variant="underline"
@@ -256,10 +256,10 @@ describe("Tabs", () => {
         />,
       );
 
-      measure("Week", spacing[0], spacing[20]);
-      measure("Month", spacing[20], spacing[24]);
+      await measure("Week", spacing[0], spacing[20]);
+      await measure("Month", spacing[20], spacing[24]);
 
-      rerender(
+      await rerender(
         <Tabs
           testID="tabs"
           variant="underline"
@@ -269,14 +269,14 @@ describe("Tabs", () => {
         />,
       );
 
-      act(() => jest.advanceTimersByTime(400));
+      await act(() => jest.advanceTimersByTime(400));
 
       expect(indicatorStyle().left).toBe(spacing[20]);
       expect(indicatorStyle().width).toBe(spacing[24]);
     });
 
-    it("still reports tab roles and selection", () => {
-      render(
+    it("still reports tab roles and selection", async () => {
+      await render(
         <Tabs
           testID="tabs"
           variant="underline"
@@ -291,8 +291,8 @@ describe("Tabs", () => {
       expect(isSelected("Year")).toBe(true);
     });
 
-    it("follows the active color scheme", () => {
-      render(
+    it("follows the active color scheme", async () => {
+      await render(
         <Tabs
           testID="tabs"
           variant="underline"
@@ -304,7 +304,7 @@ describe("Tabs", () => {
 
       expect(indicatorStyle().backgroundColor).toBe(colors.primary);
 
-      act(() => useThemeStore.getState().setMode("dark"));
+      await act(() => useThemeStore.getState().setMode("dark"));
 
       expect(indicatorStyle().backgroundColor).toBe(darkColors.primary);
     });

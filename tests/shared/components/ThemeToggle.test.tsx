@@ -11,22 +11,22 @@ const mockedUseColorScheme = useColorScheme as jest.MockedFunction<
   typeof useColorScheme
 >;
 
-beforeEach(() => {
+beforeEach(async () => {
   mockedUseColorScheme.mockReturnValue("light");
-  act(() => useThemeStore.getState().setMode("system"));
+  await act(() => useThemeStore.getState().setMode("system"));
 });
 
 describe("ThemeToggle", () => {
-  it("renders every mode", () => {
-    render(<ThemeToggle />);
+  it("renders every mode", async () => {
+    await render(<ThemeToggle />);
 
     expect(screen.getByLabelText("System")).toBeOnTheScreen();
     expect(screen.getByLabelText("Light")).toBeOnTheScreen();
     expect(screen.getByLabelText("Dark")).toBeOnTheScreen();
   });
 
-  it("marks only the active mode as selected", () => {
-    render(<ThemeToggle />);
+  it("marks only the active mode as selected", async () => {
+    await render(<ThemeToggle />);
 
     expect(screen.getByLabelText("System").props.accessibilityState).toEqual(
       expect.objectContaining({ selected: true }),
@@ -36,19 +36,19 @@ describe("ThemeToggle", () => {
     );
   });
 
-  it("exposes the group to assistive technology", () => {
-    render(<ThemeToggle />);
+  it("exposes the group to assistive technology", async () => {
+    await render(<ThemeToggle />);
 
     expect(screen.getByLabelText("Color scheme")).toBeOnTheScreen();
   });
 
   it.each(["light", "dark", "system"] as const)(
     "switches the stored mode to %s",
-    (mode) => {
-      act(() => useThemeStore.getState().setMode("light"));
-      render(<ThemeToggle />);
+    async (mode) => {
+      await act(() => useThemeStore.getState().setMode("light"));
+      await render(<ThemeToggle />);
 
-      fireEvent.press(
+      await fireEvent.press(
         screen.getByLabelText(mode.charAt(0).toUpperCase() + mode.slice(1)),
       );
 
@@ -56,10 +56,10 @@ describe("ThemeToggle", () => {
     },
   );
 
-  it("moves the selection when a mode is pressed", () => {
-    render(<ThemeToggle />);
+  it("moves the selection when a mode is pressed", async () => {
+    await render(<ThemeToggle />);
 
-    fireEvent.press(screen.getByLabelText("Dark"));
+    await fireEvent.press(screen.getByLabelText("Dark"));
 
     expect(screen.getByLabelText("Dark").props.accessibilityState).toEqual(
       expect.objectContaining({ selected: true }),
@@ -69,15 +69,15 @@ describe("ThemeToggle", () => {
     );
   });
 
-  it("repaints itself in the scheme it switches to", () => {
-    render(<ThemeToggle />);
+  it("repaints itself in the scheme it switches to", async () => {
+    await render(<ThemeToggle />);
 
     const lightLabel = StyleSheet.flatten(
       screen.getByText("System").props.style,
     );
     expect(lightLabel.color).toBe(colors.foreground);
 
-    fireEvent.press(screen.getByLabelText("Dark"));
+    await fireEvent.press(screen.getByLabelText("Dark"));
 
     const darkLabel = StyleSheet.flatten(screen.getByText("Dark").props.style);
     expect(darkLabel.color).toBe(darkColors.foreground);

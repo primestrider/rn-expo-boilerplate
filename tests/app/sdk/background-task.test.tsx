@@ -41,7 +41,7 @@ const background = jest.mocked(BackgroundTask);
 let registered = false;
 
 async function renderScreen() {
-  render(<BackgroundTaskExample />);
+  await render(<BackgroundTaskExample />);
   await act(async () => {});
 }
 

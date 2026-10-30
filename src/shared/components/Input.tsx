@@ -14,6 +14,7 @@ import {
   View,
   type KeyboardTypeOptions,
   type StyleProp,
+  type TextInputInstance,
   type TextInputProps,
   type ViewStyle,
 } from "react-native";
@@ -45,7 +46,7 @@ export type InputProps = Omit<TextInputProps, "type"> & {
   containerStyle?: StyleProp<ViewStyle>;
 };
 
-export const Input = forwardRef<TextInput, InputProps>(
+export const Input = forwardRef<TextInputInstance, InputProps>(
   (
     {
       label,
@@ -64,7 +65,7 @@ export const Input = forwardRef<TextInput, InputProps>(
       editable = true,
       ...rest
     }: InputProps,
-    ref: Ref<TextInput>,
+    ref: Ref<TextInputInstance>,
   ) => {
     useResizeMode();
 

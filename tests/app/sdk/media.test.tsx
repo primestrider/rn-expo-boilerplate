@@ -66,7 +66,7 @@ const audio = jest.mocked(Audio);
 const granted = { granted: true, canAskAgain: true, status: "granted", expires: "never" };
 
 async function renderScreen() {
-  const view = render(<MediaExample />);
+  const view = await render(<MediaExample />);
   await act(async () => {});
   return view;
 }
@@ -159,7 +159,7 @@ describe("Audio & Video example", () => {
     await pressNative("Play video");
     expect(mockVideo.play).toHaveBeenCalled();
 
-    act(() => mockVideo.listener?.({ isPlaying: true }));
+    await act(() => mockVideo.listener?.({ isPlaying: true }));
     await pressNative("Pause video");
     expect(mockVideo.pause).toHaveBeenCalled();
   });

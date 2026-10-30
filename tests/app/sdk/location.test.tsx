@@ -45,7 +45,7 @@ beforeEach(() => {
 describe("Location example", () => {
   it("asks for foreground location access first", async () => {
     mockPermission = { granted: false, canAskAgain: true };
-    render(<LocationExample />);
+    await render(<LocationExample />);
 
     await pressNative("Grant access");
 
@@ -58,7 +58,7 @@ describe("Location example", () => {
     reverseGeocode.mockResolvedValue([
       { city: "Jakarta", country: "Indonesia", street: "Jl. Thamrin" } as never,
     ]);
-    render(<LocationExample />);
+    await render(<LocationExample />);
 
     await pickNative("high");
     await pressNative("Get current location");
@@ -76,7 +76,7 @@ describe("Location example", () => {
 
   it("shows the error when no location can be obtained", async () => {
     currentPosition.mockRejectedValue(new Error("Location services are disabled"));
-    render(<LocationExample />);
+    await render(<LocationExample />);
 
     await pressNative("Get current location");
 
@@ -90,7 +90,7 @@ describe("Location example", () => {
       update = callback;
       return { remove };
     });
-    render(<LocationExample />);
+    await render(<LocationExample />);
 
     await toggleNative("Watch position", true);
 
@@ -100,7 +100,7 @@ describe("Location example", () => {
       expect.any(Function),
     );
 
-    act(() => update(fix(1.5, 2.5)));
+    await act(() => update(fix(1.5, 2.5)));
     expect(infoValue("Latitude")).toBe("1.500000");
 
     await toggleNative("Watch position", false);
@@ -111,10 +111,10 @@ describe("Location example", () => {
   it("stops watching when the screen unmounts", async () => {
     const remove = jest.fn();
     watchPosition.mockResolvedValue({ remove });
-    const { unmount } = render(<LocationExample />);
+    const { unmount } = await render(<LocationExample />);
 
     await toggleNative("Watch position", true);
-    unmount();
+    await unmount();
 
     expect(remove).toHaveBeenCalledTimes(1);
   });

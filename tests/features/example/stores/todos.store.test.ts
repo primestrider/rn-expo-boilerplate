@@ -16,9 +16,9 @@ function titles(): string[] {
   return todos().map((todo) => todo.title);
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   mmkvStorage.clearAll();
-  act(() => useTodosStore.setState({ todos: [] }));
+  await act(() => useTodosStore.setState({ todos: [] }));
 });
 
 describe("useTodosStore", () => {
@@ -26,8 +26,8 @@ describe("useTodosStore", () => {
     expect(todos()).toEqual([]);
   });
 
-  it("adds a todo as not done", () => {
-    act(() => useTodosStore.getState().add("Buy milk"));
+  it("adds a todo as not done", async () => {
+    await act(() => useTodosStore.getState().add("Buy milk"));
 
     expect(todos()).toHaveLength(1);
     expect(todos()[0]).toEqual(
@@ -35,8 +35,8 @@ describe("useTodosStore", () => {
     );
   });
 
-  it("puts the newest todo first", () => {
-    act(() => {
+  it("puts the newest todo first", async () => {
+    await act(() => {
       useTodosStore.getState().add("First");
       useTodosStore.getState().add("Second");
     });
@@ -44,14 +44,14 @@ describe("useTodosStore", () => {
     expect(titles()).toEqual(["Second", "First"]);
   });
 
-  it("trims the title", () => {
-    act(() => useTodosStore.getState().add("   Buy milk   "));
+  it("trims the title", async () => {
+    await act(() => useTodosStore.getState().add("   Buy milk   "));
 
     expect(titles()).toEqual(["Buy milk"]);
   });
 
-  it("gives every todo a distinct id, even within one millisecond", () => {
-    act(() => {
+  it("gives every todo a distinct id, even within one millisecond", async () => {
+    await act(() => {
       useTodosStore.getState().add("One");
       useTodosStore.getState().add("Two");
       useTodosStore.getState().add("Three");
@@ -62,64 +62,64 @@ describe("useTodosStore", () => {
     expect(new Set(ids).size).toBe(3);
   });
 
-  it("toggles a todo without touching the others", () => {
-    act(() => {
+  it("toggles a todo without touching the others", async () => {
+    await act(() => {
       useTodosStore.getState().add("Keep");
       useTodosStore.getState().add("Flip");
     });
 
     const target = todos().find((todo) => todo.title === "Flip")!;
-    act(() => useTodosStore.getState().toggle(target.id));
+    await act(() => useTodosStore.getState().toggle(target.id));
 
     expect(todos().find((todo) => todo.title === "Flip")?.done).toBe(true);
     expect(todos().find((todo) => todo.title === "Keep")?.done).toBe(false);
   });
 
-  it("toggles back", () => {
-    act(() => useTodosStore.getState().add("Flip"));
+  it("toggles back", async () => {
+    await act(() => useTodosStore.getState().add("Flip"));
     const { id } = todos()[0];
 
-    act(() => useTodosStore.getState().toggle(id));
-    act(() => useTodosStore.getState().toggle(id));
+    await act(() => useTodosStore.getState().toggle(id));
+    await act(() => useTodosStore.getState().toggle(id));
 
     expect(todos()[0].done).toBe(false);
   });
 
-  it("ignores a toggle for an unknown id", () => {
-    act(() => useTodosStore.getState().add("Keep"));
+  it("ignores a toggle for an unknown id", async () => {
+    await act(() => useTodosStore.getState().add("Keep"));
 
-    act(() => useTodosStore.getState().toggle("does-not-exist"));
+    await act(() => useTodosStore.getState().toggle("does-not-exist"));
 
     expect(todos()[0].done).toBe(false);
   });
 
-  it("removes only the named todo", () => {
-    act(() => {
+  it("removes only the named todo", async () => {
+    await act(() => {
       useTodosStore.getState().add("Keep");
       useTodosStore.getState().add("Drop");
     });
 
     const target = todos().find((todo) => todo.title === "Drop")!;
-    act(() => useTodosStore.getState().remove(target.id));
+    await act(() => useTodosStore.getState().remove(target.id));
 
     expect(titles()).toEqual(["Keep"]);
   });
 
-  it("clears completed todos and keeps the rest", () => {
-    act(() => {
+  it("clears completed todos and keeps the rest", async () => {
+    await act(() => {
       useTodosStore.getState().add("Active");
       useTodosStore.getState().add("Done");
     });
 
     const done = todos().find((todo) => todo.title === "Done")!;
-    act(() => useTodosStore.getState().toggle(done.id));
-    act(() => useTodosStore.getState().clearCompleted());
+    await act(() => useTodosStore.getState().toggle(done.id));
+    await act(() => useTodosStore.getState().clearCompleted());
 
     expect(titles()).toEqual(["Active"]);
   });
 
-  it("persists to storage so a restart keeps the list", () => {
-    act(() => useTodosStore.getState().add("Survives"));
+  it("persists to storage so a restart keeps the list", async () => {
+    await act(() => useTodosStore.getState().add("Survives"));
 
     const persisted = mmkvStorage.getString("example.todos");
 

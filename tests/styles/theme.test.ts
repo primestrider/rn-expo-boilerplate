@@ -21,19 +21,19 @@ function setSystemScheme(scheme: unknown) {
   );
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   setSystemScheme("light");
-  act(() => useThemeStore.getState().setMode("system"));
+  await act(() => useThemeStore.getState().setMode("system"));
 });
 
 describe("scheme resolution", () => {
   it.each([
     ["light", "light"],
     ["dark", "dark"],
-  ] as const)("follows the OS when mode is system (%s)", (system, expected) => {
+  ] as const)("follows the OS when mode is system (%s)", async (system, expected) => {
     setSystemScheme(system);
 
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     expect(result.current.mode).toBe("system");
     expect(result.current.scheme).toBe(expected);
@@ -43,41 +43,41 @@ describe("scheme resolution", () => {
     ["null", null],
     ["undefined", undefined],
     ["unspecified", "unspecified"],
-  ])("falls back to light when the OS reports %s", (_label, system) => {
+  ])("falls back to light when the OS reports %s", async (_label, system) => {
     setSystemScheme(system);
 
-    expect(renderHook(() => useTheme()).result.current.scheme).toBe("light");
+    expect((await renderHook(() => useTheme())).result.current.scheme).toBe("light");
   });
 
   it.each(["light", "dark"] as const)(
     "ignores the OS when pinned to %s",
-    (mode) => {
+    async (mode) => {
       setSystemScheme(mode === "light" ? "dark" : "light");
-      act(() => useThemeStore.getState().setMode(mode));
+      await act(() => useThemeStore.getState().setMode(mode));
 
-      const { result } = renderHook(() => useTheme());
+      const { result } = await renderHook(() => useTheme());
 
       expect(result.current.scheme).toBe(mode);
       expect(result.current.isDark).toBe(mode === "dark");
     },
   );
 
-  it("exposes the matching semantic palette", () => {
+  it("exposes the matching semantic palette", async () => {
     setSystemScheme("dark");
 
-    expect(renderHook(() => useTheme()).result.current.colors).toBe(darkColors);
+    expect((await renderHook(() => useTheme())).result.current.colors).toBe(darkColors);
 
     setSystemScheme("light");
 
-    expect(renderHook(() => useTheme()).result.current.colors).toBe(colors);
+    expect((await renderHook(() => useTheme())).result.current.colors).toBe(colors);
   });
 
-  it("reacts to a mode change without remounting", () => {
-    const { result } = renderHook(() => useTheme());
+  it("reacts to a mode change without remounting", async () => {
+    const { result } = await renderHook(() => useTheme());
 
     expect(result.current.isDark).toBe(false);
 
-    act(() => result.current.setMode("dark"));
+    await act(() => result.current.setMode("dark"));
 
     expect(result.current.scheme).toBe("dark");
     expect(result.current.isDark).toBe(true);
@@ -85,8 +85,8 @@ describe("scheme resolution", () => {
 });
 
 describe("persistence", () => {
-  it("writes the preference under the shared storage key", () => {
-    act(() => useThemeStore.getState().setMode("dark"));
+  it("writes the preference under the shared storage key", async () => {
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     const stored = mmkvStorage.getString(storageKeys.app.theme);
 
@@ -96,14 +96,14 @@ describe("persistence", () => {
 });
 
 describe("useStyles", () => {
-  it("resolves semantic colors for the active scheme", () => {
+  it("resolves semantic colors for the active scheme", async () => {
     setSystemScheme("light");
-    expect(renderHook(() => useStyles()).result.current.bgBackground).toEqual({
+    expect((await renderHook(() => useStyles())).result.current.bgBackground).toEqual({
       backgroundColor: colors.background,
     });
 
     setSystemScheme("dark");
-    expect(renderHook(() => useStyles()).result.current.bgBackground).toEqual({
+    expect((await renderHook(() => useStyles())).result.current.bgBackground).toEqual({
       backgroundColor: darkColors.background,
     });
   });
@@ -112,15 +112,15 @@ describe("useStyles", () => {
     ["textForeground", "color"],
     ["borderBorder", "borderColor"],
     ["bgCard", "backgroundColor"],
-  ] as const)("gives %s a different value per scheme", (key, property) => {
+  ] as const)("gives %s a different value per scheme", async (key, property) => {
     setSystemScheme("light");
-    const light = renderHook(() => useStyles()).result.current[key] as Record<
+    const light = (await renderHook(() => useStyles())).result.current[key] as Record<
       string,
       string
     >;
 
     setSystemScheme("dark");
-    const dark = renderHook(() => useStyles()).result.current[key] as Record<
+    const dark = (await renderHook(() => useStyles())).result.current[key] as Record<
       string,
       string
     >;
@@ -128,12 +128,12 @@ describe("useStyles", () => {
     expect(light[property]).not.toBe(dark[property]);
   });
 
-  it("shares theme-neutral utilities between both schemes", () => {
+  it("shares theme-neutral utilities between both schemes", async () => {
     setSystemScheme("light");
-    const light = renderHook(() => useStyles()).result.current;
+    const light = (await renderHook(() => useStyles())).result.current;
 
     setSystemScheme("dark");
-    const dark = renderHook(() => useStyles()).result.current;
+    const dark = (await renderHook(() => useStyles())).result.current;
 
     // Same object identity — layout never gets rebuilt when the theme changes.
     expect(light.p4).toBe(dark.p4);
@@ -141,11 +141,11 @@ describe("useStyles", () => {
     expect(light.bgGray100).toBe(dark.bgGray100);
   });
 
-  it("returns one cached object per scheme", () => {
+  it("returns one cached object per scheme", async () => {
     setSystemScheme("dark");
 
-    expect(renderHook(() => useStyles()).result.current).toBe(
-      renderHook(() => useStyles()).result.current,
+    expect((await renderHook(() => useStyles())).result.current).toBe(
+      (await renderHook(() => useStyles())).result.current,
     );
   });
 });

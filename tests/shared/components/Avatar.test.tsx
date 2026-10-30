@@ -1,9 +1,11 @@
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
-import { StyleSheet, Text, type StyleProp, type ViewStyle } from "react-native";
+import { StyleSheet, type StyleProp, type ViewStyle } from "react-native";
 
 import { Avatar } from "@/shared/components/Avatar";
 import { useThemeStore } from "@/styles";
 import { colors, darkColors, fontSize, radii, spacing } from "@/styles/tokens";
+
+import { queryByHostType } from "../../helpers/host";
 
 // `expo-image` is a native view with no JS implementation under Jest. This
 // stand-in keeps only the props the component actually depends on, so the
@@ -26,63 +28,63 @@ function statusStyleOf(status: string) {
   return StyleSheet.flatten(screen.getByLabelText(status).props.style);
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("Avatar", () => {
   describe("initials", () => {
-    it("takes one letter from each of the first two words", () => {
-      render(<Avatar name="Ada Lovelace" />);
+    it("takes one letter from each of the first two words", async () => {
+      await render(<Avatar name="Ada Lovelace" />);
 
       expect(screen.getByText("AL")).toBeOnTheScreen();
     });
 
-    it("takes a single letter from a one-word name", () => {
-      render(<Avatar name="Ada" />);
+    it("takes a single letter from a one-word name", async () => {
+      await render(<Avatar name="Ada" />);
 
       expect(screen.getByText("A")).toBeOnTheScreen();
     });
 
-    it("uppercases a lowercase name", () => {
-      render(<Avatar name="ada lovelace" />);
+    it("uppercases a lowercase name", async () => {
+      await render(<Avatar name="ada lovelace" />);
 
       expect(screen.getByText("AL")).toBeOnTheScreen();
     });
 
-    it("stops at two letters for a longer name", () => {
-      render(<Avatar name="Ada Byron Lovelace" />);
+    it("stops at two letters for a longer name", async () => {
+      await render(<Avatar name="Ada Byron Lovelace" />);
 
       expect(screen.getByText("AB")).toBeOnTheScreen();
     });
 
-    it("renders a bare placeholder with no name and no source", () => {
-      render(<Avatar testID="avatar" />);
+    it("renders a bare placeholder with no name and no source", async () => {
+      await render(<Avatar testID="avatar" />);
 
-      expect(screen.UNSAFE_queryByType(Text)).toBeNull();
+      expect(queryByHostType("Text")).toBeNull();
       expect(screen.queryByTestId("avatar-image")).toBeNull();
       expect(styleOf("avatar").backgroundColor).toBe(colors.secondary);
     });
 
-    it("renders a bare placeholder for a blank name", () => {
-      render(<Avatar name="   " testID="avatar" />);
+    it("renders a bare placeholder for a blank name", async () => {
+      await render(<Avatar name="   " testID="avatar" />);
 
-      expect(screen.UNSAFE_queryByType(Text)).toBeNull();
+      expect(queryByHostType("Text")).toBeNull();
     });
   });
 
   describe("image", () => {
-    it("shows the image instead of the initials", () => {
-      render(<Avatar source="https://example.com/ada.png" name="Ada Lovelace" />);
+    it("shows the image instead of the initials", async () => {
+      await render(<Avatar source="https://example.com/ada.png" name="Ada Lovelace" />);
 
       expect(screen.getByTestId("avatar-image")).toBeOnTheScreen();
       expect(screen.queryByText("AL")).toBeNull();
     });
 
-    it("falls back to the initials when the image fails", () => {
-      render(<Avatar source="https://example.com/ada.png" name="Ada Lovelace" />);
+    it("falls back to the initials when the image fails", async () => {
+      await render(<Avatar source="https://example.com/ada.png" name="Ada Lovelace" />);
 
-      fireEvent(screen.getByTestId("avatar-image"), "error");
+      await fireEvent(screen.getByTestId("avatar-image"), "error");
 
       expect(screen.queryByTestId("avatar-image")).toBeNull();
       expect(screen.getByText("AL")).toBeOnTheScreen();
@@ -96,8 +98,8 @@ describe("Avatar", () => {
       ["md", spacing[10]],
       ["lg", spacing[14]],
       ["xl", spacing[20]],
-    ] as const)("%s is a %ipx square", (size, box) => {
-      render(<Avatar name="Ada" size={size} testID="avatar" />);
+    ] as const)("%s is a %ipx square", async (size, box) => {
+      await render(<Avatar name="Ada" size={size} testID="avatar" />);
 
       const style = styleOf("avatar");
 
@@ -105,36 +107,36 @@ describe("Avatar", () => {
       expect(style.height).toBe(box);
     });
 
-    it("defaults to md", () => {
-      render(<Avatar name="Ada" testID="avatar" />);
+    it("defaults to md", async () => {
+      await render(<Avatar name="Ada" testID="avatar" />);
 
       expect(styleOf("avatar").width).toBe(spacing[10]);
     });
   });
 
   describe("shape", () => {
-    it("is a circle by default", () => {
-      render(<Avatar name="Ada" testID="avatar" />);
+    it("is a circle by default", async () => {
+      await render(<Avatar name="Ada" testID="avatar" />);
 
       expect(styleOf("avatar").borderRadius).toBe(radii.full);
     });
 
-    it("uses the 2xl radius when rounded", () => {
-      render(<Avatar name="Ada" shape="rounded" testID="avatar" />);
+    it("uses the 2xl radius when rounded", async () => {
+      await render(<Avatar name="Ada" shape="rounded" testID="avatar" />);
 
       expect(styleOf("avatar").borderRadius).toBe(radii["2xl"]);
     });
 
-    it("clips the image to the same shape", () => {
-      render(<Avatar source="https://example.com/ada.png" shape="rounded" />);
+    it("clips the image to the same shape", async () => {
+      await render(<Avatar source="https://example.com/ada.png" shape="rounded" />);
 
       expect(styleOf("avatar-image").borderRadius).toBe(radii["2xl"]);
     });
   });
 
   describe("status", () => {
-    it("is absent unless a status is given", () => {
-      render(<Avatar name="Ada" />);
+    it("is absent unless a status is given", async () => {
+      await render(<Avatar name="Ada" />);
 
       expect(screen.queryByLabelText("online")).toBeNull();
     });
@@ -144,14 +146,14 @@ describe("Avatar", () => {
       ["busy", colors.destructive],
       ["away", colors.warning],
       ["offline", colors.muted],
-    ] as const)("%s shows a %s dot", (status, expected) => {
-      render(<Avatar name="Ada" status={status} />);
+    ] as const)("%s shows a %s dot", async (status, expected) => {
+      await render(<Avatar name="Ada" status={status} />);
 
       expect(statusStyleOf(status).backgroundColor).toBe(expected);
     });
 
-    it("rings the dot in the page background", () => {
-      render(<Avatar name="Ada" status="online" />);
+    it("rings the dot in the page background", async () => {
+      await render(<Avatar name="Ada" status="online" />);
 
       const style = statusStyleOf("online");
 
@@ -161,13 +163,13 @@ describe("Avatar", () => {
     });
   });
 
-  it("follows the active color scheme", () => {
-    render(<Avatar name="Ada" status="online" testID="avatar" />);
+  it("follows the active color scheme", async () => {
+    await render(<Avatar name="Ada" status="online" testID="avatar" />);
 
     expect(styleOf("avatar").backgroundColor).toBe(colors.secondary);
     expect(statusStyleOf("online").borderColor).toBe(colors.background);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(styleOf("avatar").backgroundColor).toBe(darkColors.secondary);
     expect(statusStyleOf("online").borderColor).toBe(darkColors.background);
@@ -176,14 +178,14 @@ describe("Avatar", () => {
     ).toBe(darkColors.secondaryForeground);
   });
 
-  it("lets an external style win", () => {
-    render(<Avatar name="Ada" style={{ borderRadius: 2 }} testID="avatar" />);
+  it("lets an external style win", async () => {
+    await render(<Avatar name="Ada" style={{ borderRadius: 2 }} testID="avatar" />);
 
     expect(styleOf("avatar").borderRadius).toBe(2);
   });
 
-  it("forwards props to the underlying View", () => {
-    render(<Avatar name="Ada" accessibilityLabel="Ada Lovelace" testID="avatar" />);
+  it("forwards props to the underlying View", async () => {
+    await render(<Avatar name="Ada" accessibilityLabel="Ada Lovelace" testID="avatar" />);
 
     expect(screen.getByTestId("avatar").props.accessibilityLabel).toBe(
       "Ada Lovelace",
@@ -192,8 +194,8 @@ describe("Avatar", () => {
 });
 
 describe("Avatar.Group", () => {
-  it("renders every child when no max is set", () => {
-    render(
+  it("renders every child when no max is set", async () => {
+    await render(
       <Avatar.Group>
         <Avatar name="Ada" testID="a" />
         <Avatar name="Grace Hopper" testID="b" />
@@ -205,8 +207,8 @@ describe("Avatar.Group", () => {
     expect(screen.queryByText(/^\+/)).toBeNull();
   });
 
-  it("collapses the overflow into a +N tile", () => {
-    render(
+  it("collapses the overflow into a +N tile", async () => {
+    await render(
       <Avatar.Group max={2}>
         <Avatar name="Ada" testID="a" />
         <Avatar name="Grace Hopper" testID="b" />
@@ -221,8 +223,8 @@ describe("Avatar.Group", () => {
     expect(screen.getByText("+2")).toBeOnTheScreen();
   });
 
-  it("shows no tile when the count matches max exactly", () => {
-    render(
+  it("shows no tile when the count matches max exactly", async () => {
+    await render(
       <Avatar.Group max={2}>
         <Avatar name="Ada" />
         <Avatar name="Grace Hopper" />
@@ -232,8 +234,8 @@ describe("Avatar.Group", () => {
     expect(screen.queryByText(/^\+/)).toBeNull();
   });
 
-  it("overlaps every child but the first", () => {
-    render(
+  it("overlaps every child but the first", async () => {
+    await render(
       <Avatar.Group spacing={spacing[3]} testID="group">
         <Avatar name="Ada" testID="a" />
         <Avatar name="Grace Hopper" testID="b" />
@@ -250,8 +252,8 @@ describe("Avatar.Group", () => {
     );
   });
 
-  it("matches the overflow tile to the size of its siblings", () => {
-    render(
+  it("matches the overflow tile to the size of its siblings", async () => {
+    await render(
       <Avatar.Group max={1}>
         <Avatar name="Ada" size="xl" />
         <Avatar name="Grace Hopper" size="xl" />

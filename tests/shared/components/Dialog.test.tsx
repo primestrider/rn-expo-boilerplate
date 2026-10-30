@@ -18,13 +18,13 @@ function backdrop() {
   return screen.getByTestId("overlay-backdrop", { includeHiddenElements: true });
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("Dialog", () => {
-  it("renders nothing while closed", () => {
-    render(
+  it("renders nothing while closed", async () => {
+    await render(
       <Dialog visible={false} onClose={jest.fn()}>
         <Dialog.Title>Delete item?</Dialog.Title>
       </Dialog>,
@@ -33,8 +33,8 @@ describe("Dialog", () => {
     expect(screen.queryByText("Delete item?")).toBeNull();
   });
 
-  it("renders its content while open", () => {
-    render(
+  it("renders its content while open", async () => {
+    await render(
       <Dialog visible onClose={jest.fn()}>
         <Dialog.Title>Delete item?</Dialog.Title>
         <Dialog.Body>This cannot be undone.</Dialog.Body>
@@ -45,8 +45,8 @@ describe("Dialog", () => {
     expect(screen.getByText("This cannot be undone.")).toBeOnTheScreen();
   });
 
-  it("renders action children", () => {
-    render(
+  it("renders action children", async () => {
+    await render(
       <Dialog visible onClose={jest.fn()}>
         <Dialog.Actions>
           <Dialog.Title>Cancel</Dialog.Title>
@@ -57,21 +57,21 @@ describe("Dialog", () => {
     expect(screen.getByText("Cancel")).toBeOnTheScreen();
   });
 
-  it("closes when the scrim is tapped", () => {
+  it("closes when the scrim is tapped", async () => {
     const onClose = jest.fn();
-    render(
+    await render(
       <Dialog visible onClose={onClose}>
         <Dialog.Title>Delete item?</Dialog.Title>
       </Dialog>,
     );
 
-    fireEvent.press(backdrop());
+    await fireEvent.press(backdrop());
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("offers no scrim target when it cannot be dismissed", () => {
-    render(
+  it("offers no scrim target when it cannot be dismissed", async () => {
+    await render(
       <Dialog visible dismissable={false} onClose={jest.fn()}>
         <Dialog.Title>Delete item?</Dialog.Title>
       </Dialog>,
@@ -82,8 +82,8 @@ describe("Dialog", () => {
     ).toBeNull();
   });
 
-  it("rounds the card to the 2xl radius", () => {
-    render(
+  it("rounds the card to the 2xl radius", async () => {
+    await render(
       <Dialog visible onClose={jest.fn()}>
         <Dialog.Title>Delete item?</Dialog.Title>
       </Dialog>,
@@ -92,8 +92,8 @@ describe("Dialog", () => {
     expect(cardStyle().borderRadius).toBe(radii["2xl"]);
   });
 
-  it("follows the active color scheme", () => {
-    render(
+  it("follows the active color scheme", async () => {
+    await render(
       <Dialog visible onClose={jest.fn()}>
         <Dialog.Title>Delete item?</Dialog.Title>
       </Dialog>,
@@ -101,7 +101,7 @@ describe("Dialog", () => {
 
     expect(cardStyle().backgroundColor).toBe(colors.card);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(cardStyle().backgroundColor).toBe(darkColors.card);
   });

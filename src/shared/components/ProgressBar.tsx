@@ -142,18 +142,22 @@ export function ProgressBar({
       >
         {indeterminate ? (
           <Animated.View
-            style={view(styles.absolute, styles.hFull, styles.roundedFull, {
-              width: CHIP_WIDTH,
-              left: chipOffset,
-              backgroundColor: variantStyles.fill,
-            })}
+            style={[
+              view(styles.absolute, styles.hFull, styles.roundedFull, {
+                width: CHIP_WIDTH,
+                backgroundColor: variantStyles.fill,
+              }),
+              { left: chipOffset },
+            ]}
           />
         ) : (
           <Animated.View
-            style={view(styles.hFull, styles.roundedFull, {
-              width: fillWidth,
-              backgroundColor: variantStyles.fill,
-            })}
+            style={[
+              view(styles.hFull, styles.roundedFull, {
+                backgroundColor: variantStyles.fill,
+              }),
+              { width: fillWidth },
+            ]}
           />
         )}
       </View>

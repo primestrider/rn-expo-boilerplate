@@ -30,7 +30,7 @@ jest.mock("expo-store-review", () => ({
 const review = jest.mocked(StoreReview);
 
 async function renderScreen() {
-  render(<AppInfoExample />);
+  await render(<AppInfoExample />);
   await act(async () => {});
 }
 
@@ -81,7 +81,7 @@ describe("App Info & Store Review example", () => {
   });
 
   it("opens the store page as a fallback", async () => {
-    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
     await renderScreen();
 
     await pressNative("Open store page");

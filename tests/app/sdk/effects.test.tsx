@@ -30,7 +30,7 @@ const point = (value: number) => expect.closeTo(value, 5);
 
 describe("Blur & Gradients example", () => {
   it("draws the card gradient at the chosen colors and angle", async () => {
-    render(<EffectsExample />);
+    await render(<EffectsExample />);
     const card = () => screen.getByTestId("card-gradient");
 
     expect(card().props.colors).toEqual(["#0EA5E9", "#6366F1"]);
@@ -44,7 +44,7 @@ describe("Blur & Gradients example", () => {
   });
 
   it("blurs the balance until it is revealed", async () => {
-    render(<EffectsExample />);
+    await render(<EffectsExample />);
 
     const blur = screen.getByTestId("balance-blur");
     expect(blur.props.intensity).toBe(60);
@@ -61,7 +61,7 @@ describe("Blur & Gradients example", () => {
   });
 
   it("lays out a 3×3 mesh with the middle point in the center", async () => {
-    render(<EffectsExample />);
+    await render(<EffectsExample />);
     const mesh = () => screen.getByTestId("mesh");
 
     expect(mesh().props.columns).toBe(3);

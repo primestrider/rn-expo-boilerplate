@@ -33,7 +33,7 @@ const details = (id: string, fullName: string, phone?: string) => ({
 });
 
 async function renderScreen() {
-  render(<ContactsExample />);
+  await render(<ContactsExample />);
   await act(async () => {});
 }
 

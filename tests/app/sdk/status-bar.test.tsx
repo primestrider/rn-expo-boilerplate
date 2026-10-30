@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import StatusBarExample from "@/app/(public)/example/sdk/status-bar";
 
 import { pickNative, toggleNative } from "../../helpers/native-ui";
+import { getByComponent } from "../../helpers/host";
 
 jest.mock("expo-router", () => ({
   Stack: { Screen: () => null },
@@ -13,11 +14,11 @@ jest.mock("expo-router", () => ({
 
 jest.mock("expo-status-bar", () => ({ StatusBar: jest.fn(() => null) }));
 
-const bar = () => screen.UNSAFE_getByType(StatusBar).props;
+const bar = () => getByComponent(StatusBar).props;
 
 describe("Status Bar example", () => {
-  it("starts from the theme-following style, visible and animated", () => {
-    render(<StatusBarExample />);
+  it("starts from the theme-following style, visible and animated", async () => {
+    await render(<StatusBarExample />);
 
     expect(bar()).toEqual(
       expect.objectContaining({
@@ -30,7 +31,7 @@ describe("Status Bar example", () => {
   });
 
   it("applies the chosen style, visibility and hide animation", async () => {
-    render(<StatusBarExample />);
+    await render(<StatusBarExample />);
 
     await pickNative("light", 0);
     await toggleNative("Hidden", true);

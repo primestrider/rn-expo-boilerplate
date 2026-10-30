@@ -55,7 +55,7 @@ jest.mock("@/features/example/services/api", () => ({
   login: jest.fn(),
 }));
 
-function renderScreen(Component: ComponentType) {
+async function renderScreen(Component: ComponentType) {
   // Retries would keep a failed query pending past the end of the test.
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -70,16 +70,16 @@ function renderScreen(Component: ComponentType) {
   );
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   mmkvStorage.clearAll();
-  act(() => {
+  await act(() => {
     useTodosStore.setState({ todos: [] });
   });
 });
 
 describe("feature example screens", () => {
-  it("renders the feature index with every feature listed", () => {
-    renderScreen(FeaturesIndex);
+  it("renders the feature index with every feature listed", async () => {
+    await renderScreen(FeaturesIndex);
 
     expect(screen.getByText("Sign in")).toBeOnTheScreen();
     expect(screen.getByText("Products")).toBeOnTheScreen();
@@ -87,8 +87,8 @@ describe("feature example screens", () => {
     expect(screen.getByText("Settings")).toBeOnTheScreen();
   });
 
-  it("renders the products screen", () => {
-    renderScreen(ProductsScreen);
+  it("renders the products screen", async () => {
+    await renderScreen(ProductsScreen);
 
     expect(screen.getByText("Products")).toBeOnTheScreen();
     expect(
@@ -96,30 +96,30 @@ describe("feature example screens", () => {
     ).toBeOnTheScreen();
   });
 
-  it("shows a skeleton before the product arrives", () => {
-    renderScreen(ProductDetailScreen);
+  it("shows a skeleton before the product arrives", async () => {
+    await renderScreen(ProductDetailScreen);
 
     // The tabs belong to the loaded product, so their absence is the proof.
     expect(screen.queryByText("Overview")).toBeNull();
   });
 
   it("renders the product detail screen once the query resolves", async () => {
-    renderScreen(ProductDetailScreen);
+    await renderScreen(ProductDetailScreen);
 
     expect(await screen.findByText("Overview")).toBeOnTheScreen();
     expect(screen.getByText("Specs")).toBeOnTheScreen();
     expect(screen.getByText("Test Product")).toBeOnTheScreen();
   });
 
-  it("renders the todos screen with its empty state", () => {
-    renderScreen(TodosScreen);
+  it("renders the todos screen with its empty state", async () => {
+    await renderScreen(TodosScreen);
 
     expect(screen.getByText("Nothing to do")).toBeOnTheScreen();
     expect(screen.getByText("Add")).toBeOnTheScreen();
   });
 
-  it("lists a persisted todo", () => {
-    act(() =>
+  it("lists a persisted todo", async () => {
+    await act(() =>
       useTodosStore.setState({
         todos: [
           {
@@ -132,13 +132,13 @@ describe("feature example screens", () => {
       }),
     );
 
-    renderScreen(TodosScreen);
+    await renderScreen(TodosScreen);
 
     expect(screen.getByText("Persisted task")).toBeOnTheScreen();
   });
 
-  it("renders the settings screen with its formatting preview", () => {
-    renderScreen(SettingsScreen);
+  it("renders the settings screen with its formatting preview", async () => {
+    await renderScreen(SettingsScreen);
 
     expect(screen.getByText("Notifications")).toBeOnTheScreen();
     expect(screen.getByText("Formatting preview")).toBeOnTheScreen();

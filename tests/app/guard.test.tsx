@@ -109,7 +109,7 @@ const tokens: AuthTokens = { accessToken: "access-1", refreshToken: "refresh-1" 
 // `SignInScreen` calls `useMutation`, which needs a `QueryClientProvider`
 // somewhere above it. The real app gets one from `AppProvider`; this harness
 // stands one up directly rather than pulling in the rest of `AppProvider`.
-function renderScreen(Component: () => ReactNode) {
+async function renderScreen(Component: () => ReactNode) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
@@ -123,11 +123,11 @@ function renderScreen(Component: () => ReactNode) {
   );
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   mmkvStorage.clearAll();
   mockGuardLog.length = 0;
   mockScreenLog.length = 0;
-  act(() =>
+  await act(() =>
     useSessionStore.setState({ user: null, tokens: null, signOutReason: null }),
   );
 });
@@ -139,8 +139,8 @@ describe("guard wiring", () => {
    * what it wired up, rather than re-deriving the same expression the layout
    * uses and asserting it against itself.
    */
-  it("opens sign-in and closes (protected) while signed out", () => {
-    render(<RootLayout />);
+  it("opens sign-in and closes (protected) while signed out", async () => {
+    await render(<RootLayout />);
 
     expect(mockScreenLog).toContain("(public)");
     expect(mockGuardLog).toEqual(
@@ -154,10 +154,10 @@ describe("guard wiring", () => {
     );
   });
 
-  it("closes sign-in and opens (protected) once signed in", () => {
-    act(() => useSessionStore.getState().signIn({ user, tokens }));
+  it("closes sign-in and opens (protected) once signed in", async () => {
+    await act(() => useSessionStore.getState().signIn({ user, tokens }));
 
-    render(<RootLayout />);
+    await render(<RootLayout />);
 
     expect(mockScreenLog).toContain("(public)");
     expect(mockGuardLog).toEqual(
@@ -173,24 +173,24 @@ describe("guard wiring", () => {
 });
 
 describe("sign-in screen", () => {
-  it("renders the form when signed out", () => {
-    renderScreen(SignInScreen);
+  it("renders the form when signed out", async () => {
+    await renderScreen(SignInScreen);
 
     expect(screen.getByTestId("sign-in-form")).toBeOnTheScreen();
   });
 });
 
 describe("account screen", () => {
-  it("shows the signed-in profile", () => {
-    act(() => useSessionStore.getState().signIn({ user, tokens }));
+  it("shows the signed-in profile", async () => {
+    await act(() => useSessionStore.getState().signIn({ user, tokens }));
 
-    renderScreen(AccountScreen);
+    await renderScreen(AccountScreen);
 
     expect(screen.getByText("Emily Johnson")).toBeOnTheScreen();
   });
 
-  it("renders nothing to identify when there is no session", () => {
-    renderScreen(AccountScreen);
+  it("renders nothing to identify when there is no session", async () => {
+    await renderScreen(AccountScreen);
 
     expect(screen.queryByText("Emily Johnson")).not.toBeOnTheScreen();
   });
@@ -202,16 +202,16 @@ describe("the public group", () => {
    * the `(public)` group would have made it vanish the moment someone signed
    * in — the mistake this pair of assertions exists to catch.
    */
-  it("renders while signed out", () => {
-    renderScreen(HomeScreen);
+  it("renders while signed out", async () => {
+    await renderScreen(HomeScreen);
 
     expect(screen.getByText("RN Expo Boilerplate")).toBeOnTheScreen();
   });
 
-  it("still renders while signed in", () => {
-    act(() => useSessionStore.getState().signIn({ user, tokens }));
+  it("still renders while signed in", async () => {
+    await act(() => useSessionStore.getState().signIn({ user, tokens }));
 
-    renderScreen(HomeScreen);
+    await renderScreen(HomeScreen);
 
     expect(screen.getByText("RN Expo Boilerplate")).toBeOnTheScreen();
   });

@@ -62,15 +62,17 @@ export function Dialog({
           accessibilityViewIsModal
           accessibilityRole="alert"
           testID="dialog-card"
-          style={view(
-            styles.wFull,
-            styles.bgCard,
-            styles.rounded2xl,
-            styles.p6,
-            styles.gap2,
-            styles.shadowLg,
+          style={[
+            view(
+              styles.wFull,
+              styles.bgCard,
+              styles.rounded2xl,
+              styles.p6,
+              styles.gap2,
+              styles.shadowLg,
+              { maxWidth: MAX_WIDTH },
+            ),
             {
-              maxWidth: MAX_WIDTH,
               opacity: progress,
               transform: [
                 {
@@ -83,7 +85,7 @@ export function Dialog({
                 },
               ],
             },
-          )}
+          ]}
         >
           {children}
         </Animated.View>

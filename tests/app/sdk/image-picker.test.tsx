@@ -12,6 +12,7 @@ import {
   pressNative,
   toggleNative,
 } from "../../helpers/native-ui";
+import { getByComponent, queryByComponent } from "../../helpers/host";
 
 jest.mock("expo-router", () => ({
   Stack: { Screen: () => null },
@@ -49,7 +50,7 @@ beforeEach(() => {
 describe("Image picker example", () => {
   it("opens the library with square crop and 0.8 quality by default", async () => {
     library.mockResolvedValue({ canceled: false, assets: [photo] });
-    render(<PickerExample />);
+    await render(<PickerExample />);
 
     await pressNative("Library");
 
@@ -60,14 +61,14 @@ describe("Image picker example", () => {
       aspect: [1, 1],
       quality: 0.8,
     });
-    expect(screen.UNSAFE_getByType(Image).props.source).toBe("file:///a.jpg");
+    expect(getByComponent(Image).props.source).toBe("file:///a.jpg");
     expect(infoValue("Size")).toBe("640 × 480");
     expect(infoValue("File")).toBe("2.0 KB");
   });
 
   it("turns cropping off for multiple selection, which cannot crop", async () => {
     library.mockResolvedValue({ canceled: true, assets: null });
-    render(<PickerExample />);
+    await render(<PickerExample />);
 
     await toggleNative("Multiple selection", true);
     await pickNative("videos", 0);
@@ -84,17 +85,17 @@ describe("Image picker example", () => {
 
   it("keeps the previous result when the picker is cancelled", async () => {
     library.mockResolvedValue({ canceled: true, assets: null });
-    render(<PickerExample />);
+    await render(<PickerExample />);
 
     await pressNative("Library");
 
-    expect(screen.UNSAFE_queryByType(Image)).toBeNull();
+    expect(queryByComponent(Image)).toBeNull();
   });
 
   it("asks for camera permission before launching the camera", async () => {
     cameraPermission.mockResolvedValue({ granted: true } as never);
     cameraLaunch.mockResolvedValue({ canceled: false, assets: [photo] });
-    render(<PickerExample />);
+    await render(<PickerExample />);
 
     await pressNative("Camera");
 
@@ -104,7 +105,7 @@ describe("Image picker example", () => {
 
   it("explains a denied camera permission instead of launching", async () => {
     cameraPermission.mockResolvedValue({ granted: false } as never);
-    render(<PickerExample />);
+    await render(<PickerExample />);
 
     await pressNative("Camera");
 
@@ -120,7 +121,7 @@ describe("Image picker example", () => {
       ],
       output: null,
     } as never);
-    render(<PickerExample />);
+    await render(<PickerExample />);
 
     await pickNative("application/pdf", 1);
     await pressNative("Choose files");

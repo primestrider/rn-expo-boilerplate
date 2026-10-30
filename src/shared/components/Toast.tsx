@@ -174,17 +174,20 @@ function ToastItem({ toast, onDismiss }: Readonly<ToastItemProps>) {
 
   return (
     <Animated.View
-      style={view(styles.flexRow, styles.itemsCenter, styles.gap3, styles.bgCard, styles.rounded2xl, styles.p4, styles.shadowLg, {
-        opacity: progress,
-        transform: [
-          {
-            translateY: progress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [-spacing[4], 0],
-            }),
-          },
-        ],
-      })}
+      style={[
+        view(styles.flexRow, styles.itemsCenter, styles.gap3, styles.bgCard, styles.rounded2xl, styles.p4, styles.shadowLg),
+        {
+          opacity: progress,
+          transform: [
+            {
+              translateY: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-spacing[4], 0],
+              }),
+            },
+          ],
+        },
+      ]}
     >
       <View
         // Keyed by variant, not id: the variant is what a test cares about,

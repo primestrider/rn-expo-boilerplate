@@ -35,7 +35,7 @@ describe("view", () => {
   it("lets a later style win over an earlier one", () => {
     const flattened = StyleSheet.flatten(view(styles.p2, styles.p4));
 
-    expect(flattened.padding).toBe(spacing[4]);
+    expect(flattened?.padding).toBe(spacing[4]);
   });
 });
 
@@ -47,7 +47,7 @@ describe("text", () => {
   it("lets an explicit weight override the default family", () => {
     const flattened = StyleSheet.flatten(text(styles.fontBold));
 
-    expect(flattened.fontFamily).toBe(fontFamily.bold);
+    expect(flattened?.fontFamily).toBe(fontFamily.bold);
   });
 
   it("merges the default family with other text styles", () => {

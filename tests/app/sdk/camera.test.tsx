@@ -13,6 +13,7 @@ import {
   queryNativeButton,
   toggleNative,
 } from "../../helpers/native-ui";
+import { getByComponent, queryByComponent } from "../../helpers/host";
 
 const mockTakePicture = jest.fn();
 const mockRequestPermission = jest.fn();
@@ -41,8 +42,8 @@ jest.mock("expo-camera", () => {
   };
 });
 
-const camera = () => screen.UNSAFE_getByType(CameraView);
-const sheet = () => screen.UNSAFE_getByType(BottomSheet);
+const camera = () => getByComponent(CameraView);
+const sheet = () => getByComponent(BottomSheet);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -52,17 +53,17 @@ beforeEach(() => {
 describe("Camera example", () => {
   it("asks for camera access before showing the preview", async () => {
     mockPermission = { granted: false, canAskAgain: true };
-    render(<CameraExample />);
+    await render(<CameraExample />);
 
-    expect(screen.UNSAFE_queryByType(CameraView)).toBeNull();
+    expect(queryByComponent(CameraView)).toBeNull();
 
     await pressNative("Grant access");
 
     expect(mockRequestPermission).toHaveBeenCalledTimes(1);
   });
 
-  it("starts on the back camera, scanning QR codes only", () => {
-    render(<CameraExample />);
+  it("starts on the back camera, scanning QR codes only", async () => {
+    await render(<CameraExample />);
 
     expect(camera().props.facing).toBe("back");
     expect(camera().props.barcodeScannerSettings).toEqual({ barcodeTypes: ["qr"] });
@@ -70,7 +71,7 @@ describe("Camera example", () => {
   });
 
   it("wires flip, flash, torch and zoom to the camera", async () => {
-    render(<CameraExample />);
+    await render(<CameraExample />);
 
     await pressNative("Flip");
     await pickNative("auto", 1);
@@ -84,26 +85,26 @@ describe("Camera example", () => {
     expect(camera().props.facing).toBe("back");
   });
 
-  it("shows a scanned code once, until the sheet is closed", () => {
-    render(<CameraExample />);
+  it("shows a scanned code once, until the sheet is closed", async () => {
+    await render(<CameraExample />);
 
     expect(sheet().props.visible).toBe(false);
 
-    act(() => camera().props.onBarcodeScanned({ data: "PAY:INV-001" }));
+    await act(() => camera().props.onBarcodeScanned({ data: "PAY:INV-001" }));
 
     expect(sheet().props.visible).toBe(true);
     expect(screen.getByText("PAY:INV-001")).toBeOnTheScreen();
     // Scanning pauses so the same code does not fire on every frame.
     expect(camera().props.onBarcodeScanned).toBeUndefined();
 
-    act(() => sheet().props.onClose());
+    await act(() => sheet().props.onClose());
 
     expect(sheet().props.visible).toBe(false);
     expect(camera().props.onBarcodeScanned).toEqual(expect.any(Function));
   });
 
   it("stops scanning in photo mode", async () => {
-    render(<CameraExample />);
+    await render(<CameraExample />);
 
     await pickNative("photo", 0);
 
@@ -112,7 +113,7 @@ describe("Camera example", () => {
 
   it("captures a photo once the camera is ready", async () => {
     mockTakePicture.mockResolvedValue({ uri: "file:///photo.jpg" });
-    render(<CameraExample />);
+    await render(<CameraExample />);
 
     expect(queryNativeButton("Capture")).toBeUndefined();
 
@@ -120,10 +121,10 @@ describe("Camera example", () => {
 
     expect(nativeButton("Capture").props.disabled).toBe(true);
 
-    act(() => camera().props.onCameraReady());
+    await act(() => camera().props.onCameraReady());
     await pressNative("Capture");
 
     expect(mockTakePicture).toHaveBeenCalledWith({ quality: 0.7 });
-    expect(screen.UNSAFE_getByType(Image).props.source).toBe("file:///photo.jpg");
+    expect(getByComponent(Image).props.source).toBe("file:///photo.jpg");
   });
 });

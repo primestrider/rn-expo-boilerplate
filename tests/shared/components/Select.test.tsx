@@ -12,6 +12,7 @@ import {
 } from "@/shared/components/Select";
 import { useThemeStore } from "@/styles";
 import { colors, darkColors, radii, spacing } from "@/styles/tokens";
+import { getAllByComponent, getByComponent } from "../../helpers/host";
 
 type Frequency = "daily" | "weekly" | "monthly";
 
@@ -30,8 +31,8 @@ function textStyleOf(content: string) {
   return StyleSheet.flatten(screen.getByText(content).props.style);
 }
 
-function openSheet() {
-  fireEvent.press(screen.getByTestId("select"));
+async function openSheet() {
+  await fireEvent.press(screen.getByTestId("select"));
 }
 
 /**
@@ -39,32 +40,31 @@ function openSheet() {
  * `pointerEvents="none"` host (on device it is presented in its own layer),
  * so the row's handler is called directly rather than through `fireEvent`.
  */
-function pressOption(value: string) {
-  const row = screen
-    .UNSAFE_getAllByType(ListItem)
+async function pressOption(value: string) {
+  const row = getAllByComponent(ListItem)
     .find((item) => item.props.testID === selectOptionTestID(value));
 
-  act(() => row!.props.onPress());
+  await act(() => row!.props.onPress());
 }
 
 /** Drains the sheet's enter/exit animation so nothing outlives the test. */
-function settle() {
-  act(() => jest.advanceTimersByTime(400));
+async function settle() {
+  await act(() => jest.advanceTimersByTime(400));
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.useFakeTimers();
-  act(() => useThemeStore.getState().setMode("light"));
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
-afterEach(() => {
-  act(() => jest.runOnlyPendingTimers());
+afterEach(async () => {
+  await act(() => jest.runOnlyPendingTimers());
   jest.useRealTimers();
 });
 
 describe("Select", () => {
-  it("shows the placeholder in the muted color while nothing is chosen", () => {
-    render(
+  it("shows the placeholder in the muted color while nothing is chosen", async () => {
+    await render(
       <Select
         testID="select"
         options={options}
@@ -77,8 +77,8 @@ describe("Select", () => {
     expect(textStyleOf("Pick a cadence").color).toBe(colors.mutedForeground);
   });
 
-  it("shows the selected option's label in the foreground color", () => {
-    render(
+  it("shows the selected option's label in the foreground color", async () => {
+    await render(
       <Select
         testID="select"
         options={options}
@@ -92,16 +92,16 @@ describe("Select", () => {
     expect(textStyleOf("Weekly").color).toBe(colors.foreground);
   });
 
-  it("draws its own chevron", () => {
-    render(<Select testID="select" options={options} onChange={jest.fn()} />);
+  it("draws its own chevron", async () => {
+    await render(<Select testID="select" options={options} onChange={jest.fn()} />);
 
     expect(styleOf(SELECT_CHEVRON_TEST_ID).borderColor).toBe(
       colors.mutedForeground,
     );
   });
 
-  it("matches an Input at rest: 1px border, 24px radius, 16px gutter", () => {
-    render(<Select testID="select" options={options} onChange={jest.fn()} />);
+  it("matches an Input at rest: 1px border, 24px radius, 16px gutter", async () => {
+    await render(<Select testID="select" options={options} onChange={jest.fn()} />);
 
     expect(styleOf("select")).toEqual(
       expect.objectContaining({
@@ -114,20 +114,20 @@ describe("Select", () => {
     );
   });
 
-  it("opens the sheet when the trigger is pressed", () => {
-    render(<Select testID="select" options={options} onChange={jest.fn()} />);
+  it("opens the sheet when the trigger is pressed", async () => {
+    await render(<Select testID="select" options={options} onChange={jest.fn()} />);
 
     expect(screen.queryByTestId("bottom-sheet")).toBeNull();
 
-    openSheet();
+    await openSheet();
 
     expect(screen.getByTestId("bottom-sheet")).toBeOnTheScreen();
   });
 
-  it("lists every option in the sheet", () => {
-    render(<Select testID="select" options={options} onChange={jest.fn()} />);
+  it("lists every option in the sheet", async () => {
+    await render(<Select testID="select" options={options} onChange={jest.fn()} />);
 
-    openSheet();
+    await openSheet();
 
     expect(screen.getByTestId(selectOptionTestID("daily"))).toBeOnTheScreen();
     expect(screen.getByTestId(selectOptionTestID("weekly"))).toBeOnTheScreen();
@@ -135,8 +135,8 @@ describe("Select", () => {
     expect(screen.getByText("Every Monday")).toBeOnTheScreen();
   });
 
-  it("uses an explicit title as the sheet heading", () => {
-    render(
+  it("uses an explicit title as the sheet heading", async () => {
+    await render(
       <Select
         testID="select"
         label="Frequency"
@@ -146,13 +146,13 @@ describe("Select", () => {
       />,
     );
 
-    openSheet();
+    await openSheet();
 
     expect(screen.getByText("Choose a cadence")).toBeOnTheScreen();
   });
 
-  it("falls back to the field label as the sheet heading", () => {
-    render(
+  it("falls back to the field label as the sheet heading", async () => {
+    await render(
       <Select
         testID="select"
         label="Frequency"
@@ -161,14 +161,14 @@ describe("Select", () => {
       />,
     );
 
-    openSheet();
+    await openSheet();
 
     // Once on the field, once on the sheet.
     expect(screen.getAllByText("Frequency")).toHaveLength(2);
   });
 
-  it("marks only the chosen option as selected", () => {
-    render(
+  it("marks only the chosen option as selected", async () => {
+    await render(
       <Select
         testID="select"
         options={options}
@@ -177,7 +177,7 @@ describe("Select", () => {
       />,
     );
 
-    openSheet();
+    await openSheet();
 
     expect(
       screen.getByTestId(selectOptionTestID("weekly")).props.accessibilityState,
@@ -188,49 +188,49 @@ describe("Select", () => {
     expect(styleOf(SELECT_CHECK_TEST_ID).borderColor).toBe(colors.primary);
   });
 
-  it("reports the chosen value through onChange and closes the sheet", () => {
+  it("reports the chosen value through onChange and closes the sheet", async () => {
     const onChange = jest.fn();
-    render(<Select testID="select" options={options} onChange={onChange} />);
+    await render(<Select testID="select" options={options} onChange={onChange} />);
 
-    openSheet();
-    pressOption("weekly");
+    await openSheet();
+    await pressOption("weekly");
 
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith("weekly");
 
-    settle();
+    await settle();
 
     // The native sheet unmounts its content only once its own dismiss
     // animation reports back, which Jest never does — the request is what counts.
-    expect(screen.UNSAFE_getByType(NativeBottomSheet).props.isPresented).toBe(
+    expect(getByComponent(NativeBottomSheet).props.isPresented).toBe(
       false,
     );
   });
 
-  it("refuses to select a disabled option", () => {
+  it("refuses to select a disabled option", async () => {
     const onChange = jest.fn();
-    render(<Select testID="select" options={options} onChange={onChange} />);
+    await render(<Select testID="select" options={options} onChange={onChange} />);
 
-    openSheet();
-    pressOption("monthly");
+    await openSheet();
+    await pressOption("monthly");
 
     expect(onChange).not.toHaveBeenCalled();
     expect(screen.getByTestId("bottom-sheet")).toBeOnTheScreen();
   });
 
-  it("does not open while disabled, and dims to half", () => {
-    render(
+  it("does not open while disabled, and dims to half", async () => {
+    await render(
       <Select testID="select" disabled options={options} onChange={jest.fn()} />,
     );
 
-    openSheet();
+    await openSheet();
 
     expect(screen.queryByTestId("bottom-sheet")).toBeNull();
     expect(styleOf("select").opacity).toBe(0.5);
   });
 
-  it("lets the error win over the hint", () => {
-    render(
+  it("lets the error win over the hint", async () => {
+    await render(
       <Select
         testID="select"
         options={options}
@@ -245,8 +245,8 @@ describe("Select", () => {
     expect(textStyleOf("Pick one to continue").color).toBe(colors.destructive);
   });
 
-  it("shows the hint when there is no error", () => {
-    render(
+  it("shows the hint when there is no error", async () => {
+    await render(
       <Select
         testID="select"
         options={options}
@@ -258,8 +258,8 @@ describe("Select", () => {
     expect(textStyleOf("How often we sync").color).toBe(colors.muted);
   });
 
-  it("paints the field destructive while it carries an error", () => {
-    render(
+  it("paints the field destructive while it carries an error", async () => {
+    await render(
       <Select
         testID="select"
         label="Frequency"
@@ -273,8 +273,8 @@ describe("Select", () => {
     expect(textStyleOf("Frequency").color).toBe(colors.destructive);
   });
 
-  it("names itself with both the label and the current value", () => {
-    render(
+  it("names itself with both the label and the current value", async () => {
+    await render(
       <Select
         testID="select"
         label="Frequency"
@@ -287,13 +287,13 @@ describe("Select", () => {
     expect(screen.getByLabelText("Frequency, Weekly")).toBeOnTheScreen();
   });
 
-  it("follows the active color scheme", () => {
-    render(<Select testID="select" options={options} onChange={jest.fn()} />);
+  it("follows the active color scheme", async () => {
+    await render(<Select testID="select" options={options} onChange={jest.fn()} />);
 
     expect(styleOf("select").borderColor).toBe(colors.border);
     expect(styleOf("select").backgroundColor).toBe(colors.background);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(styleOf("select").borderColor).toBe(darkColors.border);
     expect(styleOf("select").backgroundColor).toBe(darkColors.background);

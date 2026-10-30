@@ -33,14 +33,14 @@ jest.mock("expo-system-ui", () => ({
 }));
 
 describe("+not-found", () => {
-  it("explains that the route does not exist", () => {
-    render(<NotFoundScreen />);
+  it("explains that the route does not exist", async () => {
+    await render(<NotFoundScreen />);
 
     expect(screen.getByText("This screen does not exist")).toBeOnTheScreen();
   });
 
-  it("offers a way back", () => {
-    render(<NotFoundScreen />);
+  it("offers a way back", async () => {
+    await render(<NotFoundScreen />);
 
     expect(screen.getByText("Go to home")).toBeOnTheScreen();
   });
@@ -53,22 +53,22 @@ describe("AppErrorBoundary", () => {
    * throws, the fallback replaces it and every provider the layout mounts is
    * gone with it.
    */
-  it("renders without any provider in scope", () => {
-    render(<AppErrorBoundary error={new Error("boom")} retry={jest.fn()} />);
+  it("renders without any provider in scope", async () => {
+    await render(<AppErrorBoundary error={new Error("boom")} retry={jest.fn()} />);
 
     expect(screen.getByText("Something went wrong")).toBeOnTheScreen();
   });
 
-  it("offers a retry", () => {
+  it("offers a retry", async () => {
     const retry = jest.fn();
 
-    render(<AppErrorBoundary error={new Error("boom")} retry={retry} />);
+    await render(<AppErrorBoundary error={new Error("boom")} retry={retry} />);
 
     expect(screen.getByText("Try again")).toBeOnTheScreen();
   });
 
-  it("shows the real message while developing", () => {
-    render(<AppErrorBoundary error={new Error("boom")} retry={jest.fn()} />);
+  it("shows the real message while developing", async () => {
+    await render(<AppErrorBoundary error={new Error("boom")} retry={jest.fn()} />);
 
     // __DEV__ is true under Jest, which is exactly the case being asserted.
     expect(screen.getByText("boom")).toBeOnTheScreen();

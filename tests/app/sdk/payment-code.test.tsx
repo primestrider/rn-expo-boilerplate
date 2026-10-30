@@ -43,7 +43,7 @@ const capture = jest.mocked(ScreenCapture);
 const TAG = "payment-code";
 
 async function renderScreen() {
-  const view = render(<PaymentCodeExample />);
+  const view = await render(<PaymentCodeExample />);
   await act(async () => {});
   return view;
 }
@@ -73,12 +73,12 @@ describe("Payment code example", () => {
     await renderScreen();
     const first = payCode();
 
-    act(() => jest.advanceTimersByTime(1000));
+    await act(() => jest.advanceTimersByTime(1000));
     expect(screen.getByText(/Refreshes in 59s/)).toBeOnTheScreen();
     expect(payCode()).toBe(first);
 
     jest.spyOn(Math, "random").mockReturnValue(0.123456);
-    act(() => jest.advanceTimersByTime(59_000));
+    await act(() => jest.advanceTimersByTime(59_000));
 
     expect(payCode()).toBe("1234 1234 1234");
     expect(screen.getByText(/Refreshes in 60s/)).toBeOnTheScreen();
@@ -98,7 +98,7 @@ describe("Payment code example", () => {
   it("restores brightness when the screen closes", async () => {
     const { unmount } = await renderScreen();
 
-    unmount();
+    await unmount();
 
     expect(brightness.setBrightnessAsync).toHaveBeenLastCalledWith(0.4);
   });
@@ -106,7 +106,7 @@ describe("Payment code example", () => {
   it("leaves brightness alone where it cannot be changed", async () => {
     brightness.isAvailableAsync.mockResolvedValue(false);
     const { unmount } = await renderScreen();
-    unmount();
+    await unmount();
 
     expect(brightness.setBrightnessAsync).not.toHaveBeenCalled();
   });
@@ -134,7 +134,7 @@ describe("Payment code example", () => {
   it("releases every protection when the screen closes", async () => {
     const { unmount } = await renderScreen();
 
-    unmount();
+    await unmount();
 
     expect(keepAwake.deactivateKeepAwake).toHaveBeenCalledWith(TAG);
     expect(capture.allowScreenCaptureAsync).toHaveBeenCalledWith(TAG);
@@ -146,7 +146,7 @@ describe("Payment code example", () => {
 
     expect(screen.queryByText("Screenshot detected")).toBeNull();
 
-    act(() => mockScreenshotListener?.());
+    await act(() => mockScreenshotListener?.());
 
     expect(screen.getByText("Screenshot detected")).toBeOnTheScreen();
   });

@@ -41,8 +41,8 @@ beforeEach(() => {
 });
 
 describe("Device & Network example", () => {
-  it("shows the device constants", () => {
-    render(<DeviceExample />);
+  it("shows the device constants", async () => {
+    await render(<DeviceExample />);
 
     expect(infoValue("Brand")).toBe("Google");
     expect(infoValue("Model")).toBe("Pixel 8");
@@ -53,8 +53,8 @@ describe("Device & Network example", () => {
     expect(infoValue("Year class")).toBe("2023");
   });
 
-  it("shows the connection without an offline banner while online", () => {
-    render(<DeviceExample />);
+  it("shows the connection without an offline banner while online", async () => {
+    await render(<DeviceExample />);
 
     expect(infoValue("Type")).toBe("WIFI");
     expect(infoValue("Connected")).toBe("Yes");
@@ -65,16 +65,16 @@ describe("Device & Network example", () => {
   it.each([
     ["disconnected", { isConnected: false, isInternetReachable: false }],
     ["connected without internet", { isConnected: true, isInternetReachable: false }],
-  ])("shows the offline banner when %s", (_case, state) => {
+  ])("shows the offline banner when %s", async (_case, state) => {
     network.useNetworkState.mockReturnValue({ type: "WIFI", ...state } as never);
-    render(<DeviceExample />);
+    await render(<DeviceExample />);
 
     expect(screen.getByText("You're offline")).toBeOnTheScreen();
   });
 
   it("reads the IP address on demand, skipping Android-only checks on iOS", async () => {
     network.getIpAddressAsync.mockResolvedValue("192.168.1.20");
-    render(<DeviceExample />);
+    await render(<DeviceExample />);
 
     expect(infoValue("IP address")).toBe("—");
 

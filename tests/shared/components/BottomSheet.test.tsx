@@ -5,18 +5,19 @@ import { ScrollView, StyleSheet, Text } from "react-native";
 import { BottomSheet } from "@/shared/components/BottomSheet";
 import { useThemeStore } from "@/styles";
 import { colors, darkColors, spacing } from "@/styles/tokens";
+import { getByComponent } from "../../helpers/host";
 
 function nativeSheet() {
-  return screen.UNSAFE_getByType(NativeBottomSheet);
+  return getByComponent(NativeBottomSheet);
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("BottomSheet", () => {
-  it("renders nothing while closed", () => {
-    render(
+  it("renders nothing while closed", async () => {
+    await render(
       <BottomSheet visible={false} onClose={jest.fn()}>
         <Text>Sort by</Text>
       </BottomSheet>,
@@ -26,8 +27,8 @@ describe("BottomSheet", () => {
     expect(screen.queryByText("Sort by")).toBeNull();
   });
 
-  it("renders its content while open", () => {
-    render(
+  it("renders its content while open", async () => {
+    await render(
       <BottomSheet visible onClose={jest.fn()}>
         <Text>Newest first</Text>
       </BottomSheet>,
@@ -37,8 +38,8 @@ describe("BottomSheet", () => {
     expect(screen.getByText("Newest first")).toBeOnTheScreen();
   });
 
-  it("renders an optional title", () => {
-    render(
+  it("renders an optional title", async () => {
+    await render(
       <BottomSheet visible onClose={jest.fn()} title="Sort by">
         <Text>Newest first</Text>
       </BottomSheet>,
@@ -47,21 +48,21 @@ describe("BottomSheet", () => {
     expect(screen.getByText("Sort by")).toBeOnTheScreen();
   });
 
-  it("closes when the native sheet is dismissed", () => {
+  it("closes when the native sheet is dismissed", async () => {
     const onClose = jest.fn();
-    render(
+    await render(
       <BottomSheet visible onClose={onClose}>
         <Text>Newest first</Text>
       </BottomSheet>,
     );
 
-    act(() => nativeSheet().props.onDismiss());
+    await act(() => nativeSheet().props.onDismiss());
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("lets the platform dismiss it by default", () => {
-    render(
+  it("lets the platform dismiss it by default", async () => {
+    await render(
       <BottomSheet visible onClose={jest.fn()}>
         <Text>Newest first</Text>
       </BottomSheet>,
@@ -72,8 +73,8 @@ describe("BottomSheet", () => {
     expect(nativeSheet().props.modifiers).toBeUndefined();
   });
 
-  it("locks the scrim, back press and swipe when it cannot be dismissed", () => {
-    render(
+  it("locks the scrim, back press and swipe when it cannot be dismissed", async () => {
+    await render(
       <BottomSheet visible dismissable={false} onClose={jest.fn()}>
         <Text>Newest first</Text>
       </BottomSheet>,
@@ -85,50 +86,50 @@ describe("BottomSheet", () => {
     expect(nativeSheet().props.modifiers).toHaveLength(1);
   });
 
-  it("scrolls content rather than letting it run off the screen", () => {
-    render(
+  it("scrolls content rather than letting it run off the screen", async () => {
+    await render(
       <BottomSheet visible onClose={jest.fn()}>
         <Text>Newest first</Text>
       </BottomSheet>,
     );
 
-    const scroller = screen.UNSAFE_getByType(ScrollView);
+    const scroller = getByComponent(ScrollView);
     const style = StyleSheet.flatten(scroller.props.style);
 
     expect(style.maxHeight).toBeGreaterThan(0);
   });
 
-  it("applies the standard gutter by default", () => {
-    render(
+  it("applies the standard gutter by default", async () => {
+    await render(
       <BottomSheet visible onClose={jest.fn()}>
         <Text>Newest first</Text>
       </BottomSheet>,
     );
 
     const content = StyleSheet.flatten(
-      screen.UNSAFE_getByType(ScrollView).props.contentContainerStyle,
+      getByComponent(ScrollView).props.contentContainerStyle,
     );
 
     expect(nativeSheet().props.contentPadding).toBe(0);
     expect(content.paddingHorizontal).toBe(spacing[4]);
   });
 
-  it("drops the gutter for rows that carry their own", () => {
-    render(
+  it("drops the gutter for rows that carry their own", async () => {
+    await render(
       <BottomSheet visible onClose={jest.fn()} padded={false}>
         <Text>Newest first</Text>
       </BottomSheet>,
     );
 
     const content = StyleSheet.flatten(
-      screen.UNSAFE_getByType(ScrollView).props.contentContainerStyle,
+      getByComponent(ScrollView).props.contentContainerStyle,
     );
 
     expect(content?.paddingHorizontal).toBeUndefined();
   });
 
-  it("follows the active color scheme", () => {
-    render(
+  it("follows the active color scheme", async () => {
+    await render(
       <BottomSheet visible onClose={jest.fn()}>
         <Text>Newest first</Text>
       </BottomSheet>,
@@ -141,7 +142,7 @@ describe("BottomSheet", () => {
     expect(nativeSheet().props.containerColor).toBe(colors.card);
     expect(surface()).toBe(colors.card);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(nativeSheet().props.containerColor).toBe(darkColors.card);
     expect(surface()).toBe(darkColors.card);

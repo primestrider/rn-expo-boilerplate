@@ -42,7 +42,7 @@ afterEach(() => {
 describe("Calendar example", () => {
   it("asks for calendar access first", async () => {
     mockPermission = { granted: false, canAskAgain: true };
-    render(<CalendarExample />);
+    await render(<CalendarExample />);
 
     await pressNative("Grant access");
 
@@ -53,7 +53,7 @@ describe("Calendar example", () => {
     const readOnly = calendar("Holidays", false);
     const personal = calendar("Personal", true);
     getCalendars.mockResolvedValue([readOnly, personal] as never);
-    render(<CalendarExample />);
+    await render(<CalendarExample />);
 
     await pressNative("Add to calendar");
 
@@ -73,7 +73,7 @@ describe("Calendar example", () => {
   it("uses the chosen booking and day, without a reminder when off", async () => {
     const personal = calendar("Personal", true);
     getCalendars.mockResolvedValue([personal] as never);
-    render(<CalendarExample />);
+    await render(<CalendarExample />);
 
     await pickNative("doctor", 0);
     await pickNative("next-week", 1);
@@ -96,7 +96,7 @@ describe("Calendar example", () => {
       { title: "Flight CGK → DPS", startDate: new Date(2026, 8, 28, 9, 0) },
     ]);
     getCalendars.mockResolvedValue([personal] as never);
-    render(<CalendarExample />);
+    await render(<CalendarExample />);
 
     await pressNative("Add to calendar");
 
@@ -105,7 +105,7 @@ describe("Calendar example", () => {
 
   it("explains when there is no writable calendar", async () => {
     getCalendars.mockResolvedValue([calendar("Holidays", false)] as never);
-    render(<CalendarExample />);
+    await render(<CalendarExample />);
 
     await pressNative("Add to calendar");
 
@@ -116,7 +116,7 @@ describe("Calendar example", () => {
     const personal = calendar("Personal", true);
     personal.createEvent.mockRejectedValue(new Error("Calendar is read-only"));
     getCalendars.mockResolvedValue([personal] as never);
-    render(<CalendarExample />);
+    await render(<CalendarExample />);
 
     await pressNative("Add to calendar");
 

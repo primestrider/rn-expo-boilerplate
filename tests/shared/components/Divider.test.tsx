@@ -9,13 +9,13 @@ function styleOf(testID: string) {
   return StyleSheet.flatten(screen.getByTestId(testID).props.style);
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("Divider", () => {
-  it("draws a hairline-tall rule by default", () => {
-    render(<Divider testID="divider" />);
+  it("draws a hairline-tall rule by default", async () => {
+    await render(<Divider testID="divider" />);
 
     const style = styleOf("divider");
 
@@ -24,8 +24,8 @@ describe("Divider", () => {
     expect(style.backgroundColor).toBe(colors.border);
   });
 
-  it("draws a hairline-wide rule when vertical", () => {
-    render(<Divider orientation="vertical" testID="divider" />);
+  it("draws a hairline-wide rule when vertical", async () => {
+    await render(<Divider orientation="vertical" testID="divider" />);
 
     const style = styleOf("divider");
 
@@ -33,8 +33,8 @@ describe("Divider", () => {
     expect(style.height).toBeUndefined();
   });
 
-  it("stretches to the container so an inset shortens it", () => {
-    render(<Divider inset={16} testID="divider" />);
+  it("stretches to the container so an inset shortens it", async () => {
+    await render(<Divider inset={16} testID="divider" />);
 
     const style = styleOf("divider");
 
@@ -42,30 +42,30 @@ describe("Divider", () => {
     expect(style.marginHorizontal).toBe(16);
   });
 
-  it("insets a vertical rule along its own axis", () => {
-    render(<Divider orientation="vertical" inset={8} testID="divider" />);
+  it("insets a vertical rule along its own axis", async () => {
+    await render(<Divider orientation="vertical" inset={8} testID="divider" />);
 
     expect(styleOf("divider").marginVertical).toBe(8);
   });
 
-  it("follows the active color scheme", () => {
-    render(<Divider testID="divider" />);
+  it("follows the active color scheme", async () => {
+    await render(<Divider testID="divider" />);
 
     expect(styleOf("divider").backgroundColor).toBe(colors.border);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(styleOf("divider").backgroundColor).toBe(darkColors.border);
   });
 
-  it("centers a label between two rules", () => {
-    render(<Divider label="or" />);
+  it("centers a label between two rules", async () => {
+    await render(<Divider label="or" />);
 
     expect(screen.getByText("or")).toBeOnTheScreen();
   });
 
-  it("ignores a label when vertical", () => {
-    render(<Divider orientation="vertical" label="or" />);
+  it("ignores a label when vertical", async () => {
+    await render(<Divider orientation="vertical" label="or" />);
 
     expect(screen.queryByText("or")).toBeNull();
   });

@@ -1,9 +1,11 @@
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
-import { ActivityIndicator, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 
 import { IconButton } from "@/shared/components/IconButton";
 import { useThemeStore } from "@/styles";
 import { colors, darkColors, palette, radii, spacing } from "@/styles/tokens";
+
+import { queryByHostType } from "../../helpers/host";
 
 function styleOf(testID: string) {
   return StyleSheet.flatten(screen.getByTestId(testID).props.style);
@@ -11,19 +13,19 @@ function styleOf(testID: string) {
 
 const icon = <Text>icon</Text>;
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("IconButton", () => {
-  it("renders its icon", () => {
-    render(<IconButton icon={icon} accessibilityLabel="Search" />);
+  it("renders its icon", async () => {
+    await render(<IconButton icon={icon} accessibilityLabel="Search" />);
 
     expect(screen.getByText("icon")).toBeOnTheScreen();
   });
 
-  it("puts the required label on the host element", () => {
-    render(
+  it("puts the required label on the host element", async () => {
+    await render(
       <IconButton icon={icon} accessibilityLabel="Search" testID="button" />,
     );
 
@@ -34,9 +36,9 @@ describe("IconButton", () => {
     expect(screen.getByLabelText("Search")).toBeOnTheScreen();
   });
 
-  it("calls onPress when tapped", () => {
+  it("calls onPress when tapped", async () => {
     const onPress = jest.fn();
-    render(
+    await render(
       <IconButton
         icon={icon}
         accessibilityLabel="Search"
@@ -45,14 +47,14 @@ describe("IconButton", () => {
       />,
     );
 
-    fireEvent.press(screen.getByTestId("button"));
+    await fireEvent.press(screen.getByTestId("button"));
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it("does not call onPress while disabled", () => {
+  it("does not call onPress while disabled", async () => {
     const onPress = jest.fn();
-    render(
+    await render(
       <IconButton
         icon={icon}
         accessibilityLabel="Search"
@@ -62,15 +64,15 @@ describe("IconButton", () => {
       />,
     );
 
-    fireEvent.press(screen.getByTestId("button"));
+    await fireEvent.press(screen.getByTestId("button"));
 
     expect(onPress).not.toHaveBeenCalled();
     expect(styleOf("button").opacity).toBe(0.5);
   });
 
-  it("swaps the icon for a spinner while loading and blocks the press", () => {
+  it("swaps the icon for a spinner while loading and blocks the press", async () => {
     const onPress = jest.fn();
-    render(
+    await render(
       <IconButton
         icon={icon}
         accessibilityLabel="Search"
@@ -80,21 +82,21 @@ describe("IconButton", () => {
       />,
     );
 
-    fireEvent.press(screen.getByTestId("button"));
+    await fireEvent.press(screen.getByTestId("button"));
 
     expect(onPress).not.toHaveBeenCalled();
     expect(screen.queryByText("icon")).toBeNull();
-    expect(screen.UNSAFE_queryByType(ActivityIndicator)).not.toBeNull();
+    expect(queryByHostType("ActivityIndicator")).not.toBeNull();
   });
 
-  it("shows no spinner when idle", () => {
-    render(<IconButton icon={icon} accessibilityLabel="Search" />);
+  it("shows no spinner when idle", async () => {
+    await render(<IconButton icon={icon} accessibilityLabel="Search" />);
 
-    expect(screen.UNSAFE_queryByType(ActivityIndicator)).toBeNull();
+    expect(queryByHostType("ActivityIndicator")).toBeNull();
   });
 
-  it("is fully rounded", () => {
-    render(
+  it("is fully rounded", async () => {
+    await render(
       <IconButton icon={icon} accessibilityLabel="Search" testID="button" />,
     );
 
@@ -106,8 +108,8 @@ describe("IconButton", () => {
       ["primary", colors.primary],
       ["secondary", colors.secondary],
       ["destructive", colors.destructive],
-    ] as const)("%s paints its themed background", (variant, background) => {
-      render(
+    ] as const)("%s paints its themed background", async (variant, background) => {
+      await render(
         <IconButton
           icon={icon}
           accessibilityLabel="Search"
@@ -119,8 +121,8 @@ describe("IconButton", () => {
       expect(styleOf("button").backgroundColor).toBe(background);
     });
 
-    it("ghost stays transparent", () => {
-      render(
+    it("ghost stays transparent", async () => {
+      await render(
         <IconButton
           icon={icon}
           accessibilityLabel="Search"
@@ -132,14 +134,14 @@ describe("IconButton", () => {
       expect(styleOf("button").backgroundColor).toBe(palette.transparent);
     });
 
-    it("follows the active color scheme", () => {
-      render(
+    it("follows the active color scheme", async () => {
+      await render(
         <IconButton icon={icon} accessibilityLabel="Search" testID="button" />,
       );
 
       expect(styleOf("button").backgroundColor).toBe(colors.primary);
 
-      act(() => useThemeStore.getState().setMode("dark"));
+      await act(() => useThemeStore.getState().setMode("dark"));
 
       expect(styleOf("button").backgroundColor).toBe(darkColors.primary);
     });
@@ -150,8 +152,8 @@ describe("IconButton", () => {
       ["sm", spacing[8]],
       ["md", spacing[10]],
       ["lg", spacing[12]],
-    ] as const)("%s stays square on the spacing scale", (size, expected) => {
-      render(
+    ] as const)("%s stays square on the spacing scale", async (size, expected) => {
+      await render(
         <IconButton
           icon={icon}
           accessibilityLabel="Search"
@@ -167,8 +169,8 @@ describe("IconButton", () => {
     });
   });
 
-  it("merges a caller-provided style", () => {
-    render(
+  it("merges a caller-provided style", async () => {
+    await render(
       <IconButton
         icon={icon}
         accessibilityLabel="Search"

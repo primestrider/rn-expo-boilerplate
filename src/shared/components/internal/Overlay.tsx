@@ -85,13 +85,17 @@ export function Backdrop({ progress, onPress }: Readonly<BackdropProps>) {
       */}
       <Animated.View
         pointerEvents="none"
-        style={view(styles.absolute, styles.inset0, {
-          backgroundColor: palette.black,
-          opacity: progress.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, SCRIM_OPACITY],
+        style={[
+          view(styles.absolute, styles.inset0, {
+            backgroundColor: palette.black,
           }),
-        })}
+          {
+            opacity: progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, SCRIM_OPACITY],
+            }),
+          },
+        ]}
       />
 
       {onPress ? (

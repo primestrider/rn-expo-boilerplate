@@ -19,7 +19,7 @@ function Harness() {
   );
 }
 
-function renderWithProvider() {
+async function renderWithProvider() {
   return render(
     <ToastProvider>
       <Harness />
@@ -27,8 +27,8 @@ function renderWithProvider() {
   );
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
   jest.useFakeTimers();
 });
 
@@ -37,36 +37,36 @@ afterEach(() => {
 });
 
 describe("Toast", () => {
-  it("refuses to work outside a provider", () => {
+  it("refuses to work outside a provider", async () => {
     // The thrown error is the point of the test; keep it out of the output.
     const spy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-    expect(() => render(<Harness />)).toThrow(
+    await expect(render(<Harness />)).rejects.toThrow(
       "useToast must be used within a ToastProvider",
     );
 
     spy.mockRestore();
   });
 
-  it("renders nothing until something is raised", () => {
-    renderWithProvider();
+  it("renders nothing until something is raised", async () => {
+    await renderWithProvider();
 
     expect(screen.queryByTestId("toast-container")).toBeNull();
   });
 
-  it("shows a toast with its title and description", () => {
-    renderWithProvider();
+  it("shows a toast with its title and description", async () => {
+    await renderWithProvider();
 
-    fireEvent.press(screen.getByText("Raise"));
+    await fireEvent.press(screen.getByText("Raise"));
 
     expect(screen.getByText("Saved")).toBeOnTheScreen();
     expect(screen.getByText("All good")).toBeOnTheScreen();
   });
 
-  it("accents a toast with its variant color", () => {
-    renderWithProvider();
+  it("accents a toast with its variant color", async () => {
+    await renderWithProvider();
 
-    fireEvent.press(screen.getByText("Raise"));
+    await fireEvent.press(screen.getByText("Raise"));
 
     const accent = StyleSheet.flatten(
       screen.getByTestId("toast-accent-success").props.style,
@@ -75,45 +75,45 @@ describe("Toast", () => {
     expect(accent.backgroundColor).toBe(colors.success);
   });
 
-  it("stacks several toasts", () => {
-    renderWithProvider();
+  it("stacks several toasts", async () => {
+    await renderWithProvider();
 
-    fireEvent.press(screen.getByText("Raise"));
-    fireEvent.press(screen.getByText("Raise error"));
+    await fireEvent.press(screen.getByText("Raise"));
+    await fireEvent.press(screen.getByText("Raise error"));
 
     expect(screen.getByText("Saved")).toBeOnTheScreen();
     expect(screen.getByText("Failed")).toBeOnTheScreen();
   });
 
-  it("dismisses itself once its duration elapses", () => {
-    renderWithProvider();
+  it("dismisses itself once its duration elapses", async () => {
+    await renderWithProvider();
 
-    fireEvent.press(screen.getByText("Raise"));
+    await fireEvent.press(screen.getByText("Raise"));
 
     expect(screen.getByText("Saved")).toBeOnTheScreen();
 
-    act(() => {
+    await act(() => {
       jest.advanceTimersByTime(5000);
     });
 
     expect(screen.queryByText("Saved")).toBeNull();
   });
 
-  it("dismisses when the close affordance is pressed", () => {
-    renderWithProvider();
+  it("dismisses when the close affordance is pressed", async () => {
+    await renderWithProvider();
 
-    fireEvent.press(screen.getByText("Raise"));
-    fireEvent.press(screen.getByLabelText("Dismiss"));
+    await fireEvent.press(screen.getByText("Raise"));
+    await fireEvent.press(screen.getByLabelText("Dismiss"));
 
     expect(screen.queryByText("Saved")).toBeNull();
   });
 
-  it("clears every toast at once", () => {
-    renderWithProvider();
+  it("clears every toast at once", async () => {
+    await renderWithProvider();
 
-    fireEvent.press(screen.getByText("Raise"));
-    fireEvent.press(screen.getByText("Raise error"));
-    fireEvent.press(screen.getByText("Raise all"));
+    await fireEvent.press(screen.getByText("Raise"));
+    await fireEvent.press(screen.getByText("Raise error"));
+    await fireEvent.press(screen.getByText("Raise all"));
 
     expect(screen.queryByText("Saved")).toBeNull();
     expect(screen.queryByText("Failed")).toBeNull();

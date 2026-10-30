@@ -38,9 +38,9 @@ beforeEach(() => {
 });
 
 describe("Live Photo example", () => {
-  it("explains that Live Photos are iOS-only elsewhere", () => {
+  it("explains that Live Photos are iOS-only elsewhere", async () => {
     mockAvailable = false;
-    render(<LivePhotoExample />);
+    await render(<LivePhotoExample />);
 
     expect(screen.getByText("Live Photos are an iOS feature")).toBeOnTheScreen();
   });
@@ -55,7 +55,7 @@ describe("Live Photo example", () => {
         },
       ],
     } as never);
-    render(<LivePhotoExample />);
+    await render(<LivePhotoExample />);
 
     expect(nativeButton("Play").props.disabled).toBe(true);
 
@@ -82,7 +82,7 @@ describe("Live Photo example", () => {
       canceled: false,
       assets: [{ uri: "file:///still.jpg", pairedVideoAsset: null }],
     } as never);
-    render(<LivePhotoExample />);
+    await render(<LivePhotoExample />);
 
     await pressNative("Pick Live Photo");
 
@@ -95,13 +95,13 @@ describe("Live Photo example", () => {
       canceled: false,
       assets: [{ uri: "file:///p.heic", pairedVideoAsset: { uri: "file:///p.mov" } }],
     } as never);
-    render(<LivePhotoExample />);
+    await render(<LivePhotoExample />);
     await pressNative("Pick Live Photo");
 
-    act(() => screen.getByTestId("live-photo").props.onPlaybackStart());
+    await act(() => screen.getByTestId("live-photo").props.onPlaybackStart());
     expect(infoValue("Playback")).toBe("Playing");
 
-    act(() => screen.getByTestId("live-photo").props.onPlaybackStop());
+    await act(() => screen.getByTestId("live-photo").props.onPlaybackStop());
     expect(infoValue("Playback")).toBe("Stopped");
   });
 });

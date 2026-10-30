@@ -90,7 +90,7 @@ export default function TodosScreen() {
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
-                onSubmitEditing={handleAdd}
+                onSubmitEditing={() => handleAdd()}
                 returnKeyType="done"
                 error={fieldError(errors.title?.message)}
               />
@@ -100,7 +100,7 @@ export default function TodosScreen() {
           <Button
             title={t("features.example.todos.action.add")}
             block
-            onPress={handleAdd}
+            onPress={() => handleAdd()}
           />
 
           {todos.length > 0 ? (

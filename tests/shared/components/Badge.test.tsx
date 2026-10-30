@@ -20,26 +20,26 @@ function textStyleOf(content: string) {
   return StyleSheet.flatten(screen.getByText(content).props.style);
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("Badge", () => {
-  it("renders its label", () => {
-    render(<Badge label="New" />);
+  it("renders its label", async () => {
+    await render(<Badge label="New" />);
 
     expect(screen.getByText("New")).toBeOnTheScreen();
   });
 
-  it("prefers children over the label", () => {
-    render(<Badge label="New">3 open</Badge>);
+  it("prefers children over the label", async () => {
+    await render(<Badge label="New">3 open</Badge>);
 
     expect(screen.getByText("3 open")).toBeOnTheScreen();
     expect(screen.queryByText("New")).toBeNull();
   });
 
-  it("renders element children untouched", () => {
-    render(
+  it("renders element children untouched", async () => {
+    await render(
       <Badge>
         <Text>icon</Text>
       </Badge>,
@@ -48,8 +48,8 @@ describe("Badge", () => {
     expect(screen.getByText("icon")).toBeOnTheScreen();
   });
 
-  it("renders nothing readable without a label or children", () => {
-    render(<Badge testID="badge" />);
+  it("renders nothing readable without a label or children", async () => {
+    await render(<Badge testID="badge" />);
 
     expect(screen.getByTestId("badge")).toBeOnTheScreen();
   });
@@ -64,16 +64,16 @@ describe("Badge", () => {
       ["info", colors.info, palette.white],
     ] as const)(
       "%s fills with its themed color and a readable foreground",
-      (variant, background, foreground) => {
-        render(<Badge label="New" variant={variant} testID="badge" />);
+      async (variant, background, foreground) => {
+        await render(<Badge label="New" variant={variant} testID="badge" />);
 
         expect(styleOf("badge").backgroundColor).toBe(background);
         expect(textStyleOf("New").color).toBe(foreground);
       },
     );
 
-    it("outlines rather than fills", () => {
-      render(<Badge label="New" variant="outline" testID="badge" />);
+    it("outlines rather than fills", async () => {
+      await render(<Badge label="New" variant="outline" testID="badge" />);
 
       const style = styleOf("badge");
 
@@ -83,16 +83,16 @@ describe("Badge", () => {
       expect(textStyleOf("New").color).toBe(colors.foreground);
     });
 
-    it("gives filled variants no border", () => {
-      render(<Badge label="New" variant="primary" testID="badge" />);
+    it("gives filled variants no border", async () => {
+      await render(<Badge label="New" variant="primary" testID="badge" />);
 
       expect(styleOf("badge").borderWidth).toBe(0);
     });
   });
 
   describe("sizes", () => {
-    it("pads and sizes text tightly when small", () => {
-      render(<Badge label="New" size="sm" testID="badge" />);
+    it("pads and sizes text tightly when small", async () => {
+      await render(<Badge label="New" size="sm" testID="badge" />);
 
       const style = styleOf("badge");
 
@@ -101,8 +101,8 @@ describe("Badge", () => {
       expect(textStyleOf("New").fontSize).toBe(fontSize.xs);
     });
 
-    it("defaults to the medium size", () => {
-      render(<Badge label="New" testID="badge" />);
+    it("defaults to the medium size", async () => {
+      await render(<Badge label="New" testID="badge" />);
 
       const style = styleOf("badge");
 
@@ -112,31 +112,31 @@ describe("Badge", () => {
     });
   });
 
-  it("is always fully rounded", () => {
-    render(<Badge label="New" testID="badge" />);
+  it("is always fully rounded", async () => {
+    await render(<Badge label="New" testID="badge" />);
 
     expect(styleOf("badge").borderRadius).toBe(radii.full);
   });
 
-  it("follows the active color scheme", () => {
-    render(<Badge label="New" variant="primary" testID="badge" />);
+  it("follows the active color scheme", async () => {
+    await render(<Badge label="New" variant="primary" testID="badge" />);
 
     expect(styleOf("badge").backgroundColor).toBe(colors.primary);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(styleOf("badge").backgroundColor).toBe(darkColors.primary);
     expect(textStyleOf("New").color).toBe(darkColors.primaryForeground);
   });
 
-  it("lets an external style win", () => {
-    render(<Badge label="New" style={{ borderRadius: 2 }} testID="badge" />);
+  it("lets an external style win", async () => {
+    await render(<Badge label="New" style={{ borderRadius: 2 }} testID="badge" />);
 
     expect(styleOf("badge").borderRadius).toBe(2);
   });
 
-  it("forwards props to the underlying View", () => {
-    render(<Badge label="New" accessibilityLabel="status" testID="badge" />);
+  it("forwards props to the underlying View", async () => {
+    await render(<Badge label="New" accessibilityLabel="status" testID="badge" />);
 
     expect(screen.getByTestId("badge").props.accessibilityLabel).toBe("status");
   });

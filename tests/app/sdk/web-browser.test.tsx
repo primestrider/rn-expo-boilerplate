@@ -31,7 +31,7 @@ beforeEach(() => {
 
 describe("Web Browser & Linking example", () => {
   it("opens the chosen page in a browser themed like the app", async () => {
-    render(<WebBrowserExample />);
+    await render(<WebBrowserExample />);
 
     await pickNative("privacy", 0);
     await pressNative("Open page");
@@ -45,7 +45,7 @@ describe("Web Browser & Linking example", () => {
   });
 
   it("hands off to WhatsApp through a wa.me link by default", async () => {
-    render(<WebBrowserExample />);
+    await render(<WebBrowserExample />);
 
     await pressNative("Open");
 
@@ -55,7 +55,7 @@ describe("Web Browser & Linking example", () => {
   });
 
   it("opens the dialer for Call", async () => {
-    render(<WebBrowserExample />);
+    await render(<WebBrowserExample />);
 
     await pickNative("Call", 1);
     await pressNative("Open");
@@ -65,7 +65,7 @@ describe("Web Browser & Linking example", () => {
 
   it("says so when no app can handle the link", async () => {
     linking.openURL.mockRejectedValue(new Error("No activity found"));
-    render(<WebBrowserExample />);
+    await render(<WebBrowserExample />);
 
     await pickNative("Email", 1);
     await pressNative("Open");
@@ -73,8 +73,8 @@ describe("Web Browser & Linking example", () => {
     expect(screen.getByText("No app on this device can open Email.")).toBeOnTheScreen();
   });
 
-  it("builds a deep link back into the payment screen", () => {
-    render(<WebBrowserExample />);
+  it("builds a deep link back into the payment screen", async () => {
+    await render(<WebBrowserExample />);
 
     expect(linking.createURL).toHaveBeenCalledWith("example/sdk/payment-code", {
       queryParams: { amount: "50000" },

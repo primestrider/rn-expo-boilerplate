@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import ClipboardExample from "@/app/(public)/example/sdk/clipboard";
 
 import { infoValue, pickNative, pressNative } from "../../helpers/native-ui";
+import { getByComponent } from "../../helpers/host";
 
 let mockClipboardListener: (() => void) | undefined;
 const mockRemoveListener = jest.fn();
@@ -49,7 +50,7 @@ beforeEach(() => {
 
 describe("Clipboard & Haptics example", () => {
   it("copies the referral code and confirms with a success haptic", async () => {
-    render(<ClipboardExample />);
+    await render(<ClipboardExample />);
 
     await pressNative("Copy");
 
@@ -60,18 +61,18 @@ describe("Clipboard & Haptics example", () => {
   it("pastes clipboard text into the native field", async () => {
     clipboard.hasStringAsync.mockResolvedValue(true);
     clipboard.getStringAsync.mockResolvedValue("1234567890");
-    render(<ClipboardExample />);
+    await render(<ClipboardExample />);
 
     await pressNative("Paste");
 
-    expect(screen.UNSAFE_getByType(TextInput).props.value.value).toBe("1234567890");
+    expect(getByComponent(TextInput).props.value.value).toBe("1234567890");
     expect(infoValue("Last pasted")).toBe("1234567890");
     expect(haptics.selectionAsync).toHaveBeenCalledTimes(1);
   });
 
   it("warns instead of reading an empty clipboard", async () => {
     clipboard.hasStringAsync.mockResolvedValue(false);
-    render(<ClipboardExample />);
+    await render(<ClipboardExample />);
 
     await pressNative("Paste");
 
@@ -80,22 +81,22 @@ describe("Clipboard & Haptics example", () => {
     expect(infoValue("Last pasted")).toBeUndefined();
   });
 
-  it("counts clipboard changes and stops listening on unmount", () => {
-    const { unmount } = render(<ClipboardExample />);
+  it("counts clipboard changes and stops listening on unmount", async () => {
+    const { unmount } = await render(<ClipboardExample />);
 
-    act(() => mockClipboardListener?.());
-    act(() => mockClipboardListener?.());
+    await act(() => mockClipboardListener?.());
+    await act(() => mockClipboardListener?.());
 
     expect(
       screen.getByText("Clipboard changed 2 times while this screen was open."),
     ).toBeOnTheScreen();
 
-    unmount();
+    await unmount();
     expect(mockRemoveListener).toHaveBeenCalledTimes(1);
   });
 
   it("plays the chosen impact and ticks on every picker change", async () => {
-    render(<ClipboardExample />);
+    await render(<ClipboardExample />);
 
     await pressNative("Impact");
     expect(haptics.impactAsync).toHaveBeenLastCalledWith("medium");
@@ -108,7 +109,7 @@ describe("Clipboard & Haptics example", () => {
   });
 
   it("plays the chosen notification outcome", async () => {
-    render(<ClipboardExample />);
+    await render(<ClipboardExample />);
 
     await pickNative("error", 1);
     await pressNative("Notify");

@@ -162,7 +162,7 @@ export default function FormExample() {
             block
             loading={isSubmitting}
             disabled={isSubmitting}
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => handleSubmit(onSubmit)()}
           />
 
           <Button title="Clear" variant="outline" size="md" block onPress={handleClear} />

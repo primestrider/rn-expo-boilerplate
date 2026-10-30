@@ -131,7 +131,7 @@ export default function SignInScreen() {
             block
             loading={isSigningIn}
             disabled={isSigningIn}
-            onPress={handleSubmit((values) => submitSignIn(values))}
+            onPress={() => handleSubmit((values) => submitSignIn(values))()}
           />
         </View>
       </Screen>

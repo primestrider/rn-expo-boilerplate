@@ -114,14 +114,14 @@ async function pickPhoto(width: number) {
 }
 
 describe("Image Manipulator & Files example", () => {
-  it("cannot compress before a photo is picked", () => {
-    render(<FilesExample />);
+  it("cannot compress before a photo is picked", async () => {
+    await render(<FilesExample />);
 
     expect(nativeButton("Compress").props.disabled).toBe(true);
   });
 
   it("scales a large photo down to the max width and re-encodes it", async () => {
-    render(<FilesExample />);
+    await render(<FilesExample />);
 
     await pickPhoto(4000);
     await pressNative("Compress");
@@ -136,7 +136,7 @@ describe("Image Manipulator & Files example", () => {
   });
 
   it("never upscales a photo already narrower than the max width", async () => {
-    render(<FilesExample />);
+    await render(<FilesExample />);
 
     await pickPhoto(800);
     await pressNative("Compress");
@@ -146,7 +146,7 @@ describe("Image Manipulator & Files example", () => {
   });
 
   it("downloads into a cache subfolder and lists the result", async () => {
-    render(<FilesExample />);
+    await render(<FilesExample />);
 
     expect(screen.getByText("No downloaded files.")).toBeOnTheScreen();
 
@@ -163,7 +163,7 @@ describe("Image Manipulator & Files example", () => {
 
   it("shows a failed download", async () => {
     fs.File.downloadFileAsync.mockRejectedValueOnce(new Error("Network request failed"));
-    render(<FilesExample />);
+    await render(<FilesExample />);
 
     await pressNative("Download PDF");
 
@@ -171,7 +171,7 @@ describe("Image Manipulator & Files example", () => {
   });
 
   it("clears downloaded files", async () => {
-    render(<FilesExample />);
+    await render(<FilesExample />);
     await pressNative("Download PDF");
 
     await pressNative("Clear");

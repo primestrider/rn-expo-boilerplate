@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { MeshGradientView } from "expo-mesh-gradient";
 import { Stack } from "expo-router";
 import { useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import { Platform, View, type HostInstance } from "react-native";
 
 import { Section } from "@/features/example/components";
 import { AppText, Screen } from "@/shared/components";
@@ -54,7 +54,7 @@ const MESH_COLORS = [
  */
 export default function EffectsExample() {
   const styles = useStyles();
-  const blurTarget = useRef<View>(null);
+  const blurTarget = useRef<HostInstance>(null);
 
   const [gradient, setGradient] = useState<GradientName>("ocean");
   const [angle, setAngle] = useState(45);

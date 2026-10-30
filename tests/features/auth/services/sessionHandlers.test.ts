@@ -26,10 +26,10 @@ function adapterWith(refresh: AuthAdapter["refresh"]): AuthAdapter {
   return { signIn: jest.fn(), refresh };
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   mmkvStorage.clearAll();
   resetAuthAdapter();
-  act(() => useSessionStore.setState({ user, tokens, signOutReason: null }));
+  await act(() => useSessionStore.setState({ user, tokens, signOutReason: null }));
 });
 
 describe("sessionHandlers.getAccessToken", () => {
@@ -37,8 +37,8 @@ describe("sessionHandlers.getAccessToken", () => {
     expect(sessionHandlers.getAccessToken()).toBe("access-1");
   });
 
-  it("answers undefined when signed out", () => {
-    act(() => useSessionStore.setState({ tokens: null }));
+  it("answers undefined when signed out", async () => {
+    await act(() => useSessionStore.setState({ tokens: null }));
 
     expect(sessionHandlers.getAccessToken()).toBeUndefined();
   });
@@ -87,7 +87,7 @@ describe("sessionHandlers.refreshSession", () => {
     registerAuthAdapter(adapterWith(jest.fn().mockRejectedValue(new Error("no"))));
 
     await sessionHandlers.refreshSession();
-    act(() => useSessionStore.getState().clearSignOutReason());
+    await act(() => useSessionStore.getState().clearSignOutReason());
 
     await expect(sessionHandlers.refreshSession()).resolves.toBeNull();
 
@@ -96,7 +96,7 @@ describe("sessionHandlers.refreshSession", () => {
 
   it("leaves a deliberate sign-out recorded as deliberate", async () => {
     registerAuthAdapter(adapterWith(jest.fn().mockRejectedValue(new Error("no"))));
-    act(() => useSessionStore.getState().signOut("user"));
+    await act(() => useSessionStore.getState().signOut("user"));
 
     await sessionHandlers.refreshSession();
 

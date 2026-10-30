@@ -1,32 +1,31 @@
 import { act, render, screen } from "@testing-library/react-native";
 import {
-  KeyboardAvoidingView,
-  ScrollView,
   StyleSheet,
   Text,
-  View,
 } from "react-native";
 
 import { Screen } from "@/shared/components";
 import { useThemeStore } from "@/styles";
 import { colors, spacing } from "@/styles/tokens";
 
+import { getByHostType, queryAllByHostType, queryByHostType } from "../../helpers/host";
+
 /** The safe-area mock reports zero insets, so only the gutter remains. */
 const BOTTOM_CLEARANCE = spacing[6];
 
 function contentStyle() {
   return StyleSheet.flatten(
-    screen.UNSAFE_getByType(ScrollView).props.contentContainerStyle,
+    getByHostType("RCTScrollView").props.contentContainerStyle,
   );
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("Screen", () => {
-  it("renders its children", () => {
-    render(
+  it("renders its children", async () => {
+    await render(
       <Screen>
         <Text>Body</Text>
       </Screen>,
@@ -35,14 +34,14 @@ describe("Screen", () => {
     expect(screen.getByText("Body")).toBeOnTheScreen();
   });
 
-  it("paints the themed background on the container", () => {
-    render(
+  it("paints the themed background on the container", async () => {
+    await render(
       <Screen>
         <Text>Body</Text>
       </Screen>,
     );
 
-    const container = screen.UNSAFE_getAllByType(View)[0];
+    const container = queryAllByHostType("View")[0];
 
     expect(StyleSheet.flatten(container.props.style)).toEqual(
       expect.objectContaining({
@@ -52,29 +51,29 @@ describe("Screen", () => {
     );
   });
 
-  it("scrolls by default", () => {
-    render(
+  it("scrolls by default", async () => {
+    await render(
       <Screen>
         <Text>Body</Text>
       </Screen>,
     );
 
-    expect(screen.UNSAFE_queryByType(ScrollView)).not.toBeNull();
+    expect(queryByHostType("RCTScrollView")).not.toBeNull();
   });
 
-  it("does not scroll when told not to", () => {
-    render(
+  it("does not scroll when told not to", async () => {
+    await render(
       <Screen scroll={false}>
         <Text>Body</Text>
       </Screen>,
     );
 
-    expect(screen.UNSAFE_queryByType(ScrollView)).toBeNull();
+    expect(queryByHostType("RCTScrollView")).toBeNull();
     expect(screen.getByText("Body")).toBeOnTheScreen();
   });
 
-  it("applies the standard gutter", () => {
-    render(
+  it("applies the standard gutter", async () => {
+    await render(
       <Screen>
         <Text>Body</Text>
       </Screen>,
@@ -83,8 +82,8 @@ describe("Screen", () => {
     expect(contentStyle().padding).toBe(spacing[4]);
   });
 
-  it("drops the gutter when padded is off", () => {
-    render(
+  it("drops the gutter when padded is off", async () => {
+    await render(
       <Screen padded={false}>
         <Text>Body</Text>
       </Screen>,
@@ -93,8 +92,8 @@ describe("Screen", () => {
     expect(contentStyle().padding).toBeUndefined();
   });
 
-  it("clears the bottom inset below the content", () => {
-    render(
+  it("clears the bottom inset below the content", async () => {
+    await render(
       <Screen>
         <Text>Body</Text>
       </Screen>,
@@ -103,8 +102,8 @@ describe("Screen", () => {
     expect(contentStyle().paddingBottom).toBe(BOTTOM_CLEARANCE);
   });
 
-  it("hands the bottom inset to the footer instead of the content", () => {
-    render(
+  it("hands the bottom inset to the footer instead of the content", async () => {
+    await render(
       <Screen footer={<Text>Save</Text>}>
         <Text>Body</Text>
       </Screen>,
@@ -114,45 +113,45 @@ describe("Screen", () => {
     expect(contentStyle().paddingBottom).toBe(0);
   });
 
-  it("wraps in a KeyboardAvoidingView only when asked", () => {
-    const { rerender } = render(
+  it("wraps in a KeyboardAvoidingView only when asked", async () => {
+    const { rerender } = await render(
       <Screen>
         <Text>Body</Text>
       </Screen>,
     );
 
-    expect(screen.UNSAFE_queryByType(KeyboardAvoidingView)).toBeNull();
+    expect(screen.queryByTestId("screen-keyboard-avoiding")).toBeNull();
 
-    rerender(
+    await rerender(
       <Screen keyboardAvoiding>
         <Text>Body</Text>
       </Screen>,
     );
 
-    expect(screen.UNSAFE_queryByType(KeyboardAvoidingView)).not.toBeNull();
+    expect(screen.queryByTestId("screen-keyboard-avoiding")).not.toBeNull();
   });
 
-  it("forwards ScrollView props", () => {
-    render(
+  it("forwards ScrollView props", async () => {
+    await render(
       <Screen showsVerticalScrollIndicator={false}>
         <Text>Body</Text>
       </Screen>,
     );
 
     expect(
-      screen.UNSAFE_getByType(ScrollView).props.showsVerticalScrollIndicator,
+      getByHostType("RCTScrollView").props.showsVerticalScrollIndicator,
     ).toBe(false);
   });
 
-  it("keeps taps working while the keyboard is up", () => {
-    render(
+  it("keeps taps working while the keyboard is up", async () => {
+    await render(
       <Screen>
         <Text>Body</Text>
       </Screen>,
     );
 
     expect(
-      screen.UNSAFE_getByType(ScrollView).props.keyboardShouldPersistTaps,
+      getByHostType("RCTScrollView").props.keyboardShouldPersistTaps,
     ).toBe("handled");
   });
 });

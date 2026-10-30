@@ -21,79 +21,79 @@ function radios() {
   return screen.getAllByRole("radio");
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   // The dot animation would otherwise keep a timer pending past the test.
   jest.useFakeTimers();
-  act(() => useThemeStore.getState().setMode("light"));
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
-afterEach(() => {
-  act(() => {
+afterEach(async () => {
+  await act(() => {
     jest.runOnlyPendingTimers();
   });
   jest.useRealTimers();
 });
 
 describe("Radio", () => {
-  it("renders its label and description", () => {
-    render(<Radio label="Monthly" description="Billed every month" />);
+  it("renders its label and description", async () => {
+    await render(<Radio label="Monthly" description="Billed every month" />);
 
     expect(screen.getByText("Monthly")).toBeOnTheScreen();
     expect(screen.getByText("Billed every month")).toBeOnTheScreen();
   });
 
-  it("exposes the radio role", () => {
-    render(<Radio testID="radio" label="Monthly" />);
+  it("exposes the radio role", async () => {
+    await render(<Radio testID="radio" label="Monthly" />);
 
     expect(screen.getByTestId("radio").props.accessibilityRole).toBe("radio");
   });
 
-  it("reports its selected state to assistive tech", () => {
-    const { rerender } = render(<Radio testID="radio" />);
+  it("reports its selected state to assistive tech", async () => {
+    const { rerender } = await render(<Radio testID="radio" />);
 
     expect(
       screen.getByTestId("radio").props.accessibilityState.selected,
     ).toBe(false);
 
-    rerender(<Radio testID="radio" selected />);
+    await rerender(<Radio testID="radio" selected />);
 
     expect(
       screen.getByTestId("radio").props.accessibilityState.selected,
     ).toBe(true);
   });
 
-  it("calls onSelect when tapped", () => {
+  it("calls onSelect when tapped", async () => {
     const onSelect = jest.fn();
-    render(<Radio testID="radio" onSelect={onSelect} />);
+    await render(<Radio testID="radio" onSelect={onSelect} />);
 
-    fireEvent.press(screen.getByTestId("radio"));
+    await fireEvent.press(screen.getByTestId("radio"));
 
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
-  it("does not call onSelect while disabled", () => {
+  it("does not call onSelect while disabled", async () => {
     const onSelect = jest.fn();
-    render(<Radio testID="radio" disabled onSelect={onSelect} />);
+    await render(<Radio testID="radio" disabled onSelect={onSelect} />);
 
-    fireEvent.press(screen.getByTestId("radio"));
+    await fireEvent.press(screen.getByTestId("radio"));
 
     expect(onSelect).not.toHaveBeenCalled();
     expect(styleOf("radio").opacity).toBe(0.5);
   });
 
   describe("ring", () => {
-    it("is fully rounded", () => {
-      render(<Radio />);
+    it("is fully rounded", async () => {
+      await render(<Radio />);
 
       expect(ring().borderRadius).toBe(radii.full);
     });
 
-    it("tints its outline once selected", () => {
-      const { rerender } = render(<Radio />);
+    it("tints its outline once selected", async () => {
+      const { rerender } = await render(<Radio />);
 
       expect(ring().borderColor).toBe(colors.border);
 
-      rerender(<Radio selected />);
+      await rerender(<Radio selected />);
 
       expect(ring().borderColor).toBe(colors.primary);
     });
@@ -101,26 +101,26 @@ describe("Radio", () => {
     it.each([
       ["sm", spacing[4]],
       ["md", spacing[5]],
-    ] as const)("sizes %s from the spacing scale", (size, expected) => {
-      render(<Radio size={size} />);
+    ] as const)("sizes %s from the spacing scale", async (size, expected) => {
+      await render(<Radio size={size} />);
 
       expect(ring().width).toBe(expected);
       expect(ring().height).toBe(expected);
     });
 
-    it("follows the active color scheme", () => {
-      render(<Radio selected />);
+    it("follows the active color scheme", async () => {
+      await render(<Radio selected />);
 
       expect(ring().borderColor).toBe(colors.primary);
 
-      act(() => useThemeStore.getState().setMode("dark"));
+      await act(() => useThemeStore.getState().setMode("dark"));
 
       expect(ring().borderColor).toBe(darkColors.primary);
     });
   });
 
-  it("merges a caller-provided style", () => {
-    render(<Radio testID="radio" style={{ marginTop: spacing[6] }} />);
+  it("merges a caller-provided style", async () => {
+    await render(<Radio testID="radio" style={{ marginTop: spacing[6] }} />);
 
     expect(styleOf("radio").marginTop).toBe(spacing[6]);
   });
@@ -133,8 +133,8 @@ describe("Radio", () => {
       { value: "yearly", label: "Yearly", description: "Two months free" },
     ];
 
-    it("renders one radio per option", () => {
-      render(
+    it("renders one radio per option", async () => {
+      await render(
         <Radio.Group options={options} value="monthly" onChange={jest.fn()} />,
       );
 
@@ -143,8 +143,8 @@ describe("Radio", () => {
       expect(screen.getByText("Two months free")).toBeOnTheScreen();
     });
 
-    it("carries the radiogroup role and a label", () => {
-      render(
+    it("carries the radiogroup role and a label", async () => {
+      await render(
         <Radio.Group
           testID="group"
           accessibilityLabel="Billing period"
@@ -160,8 +160,8 @@ describe("Radio", () => {
       expect(group.props.accessibilityLabel).toBe("Billing period");
     });
 
-    it("selects exactly the option matching value", () => {
-      render(
+    it("selects exactly the option matching value", async () => {
+      await render(
         <Radio.Group options={options} value="yearly" onChange={jest.fn()} />,
       );
 
@@ -172,24 +172,24 @@ describe("Radio", () => {
       expect(selected).toEqual([false, true]);
     });
 
-    it("calls onChange with the option value", () => {
+    it("calls onChange with the option value", async () => {
       const onChange = jest.fn();
-      render(
+      await render(
         <Radio.Group options={options} value="monthly" onChange={onChange} />,
       );
 
-      fireEvent.press(screen.getByText("Yearly"));
+      await fireEvent.press(screen.getByText("Yearly"));
 
       expect(onChange).toHaveBeenCalledWith("yearly");
     });
 
-    it("keeps a numeric option value numeric", () => {
+    it("keeps a numeric option value numeric", async () => {
       // Typed as `(value: number) => void`: this only compiles while the
       // generic actually flows from `options` through to `onChange`.
       const received: number[] = [];
       const onChange = (value: number) => received.push(value);
 
-      render(
+      await render(
         <Radio.Group
           options={[
             { value: 1, label: "One" },
@@ -200,17 +200,17 @@ describe("Radio", () => {
         />,
       );
 
-      fireEvent.press(screen.getByText("Two"));
+      await fireEvent.press(screen.getByText("Two"));
 
       expect(received).toEqual([2]);
     });
 
-    it("never selects more than one option at a time", () => {
-      const { rerender } = render(
+    it("never selects more than one option at a time", async () => {
+      const { rerender } = await render(
         <Radio.Group options={options} value="monthly" onChange={jest.fn()} />,
       );
 
-      rerender(
+      await rerender(
         <Radio.Group options={options} value="yearly" onChange={jest.fn()} />,
       );
 
@@ -221,9 +221,9 @@ describe("Radio", () => {
       expect(selected).toHaveLength(1);
     });
 
-    it("disables the options that ask for it", () => {
+    it("disables the options that ask for it", async () => {
       const onChange = jest.fn();
-      render(
+      await render(
         <Radio.Group
           options={[
             { value: "a", label: "Available" },
@@ -238,13 +238,13 @@ describe("Radio", () => {
 
       expect(soldOut.props.accessibilityState.disabled).toBe(true);
 
-      fireEvent.press(soldOut);
+      await fireEvent.press(soldOut);
 
       expect(onChange).not.toHaveBeenCalled();
     });
 
-    it("renders an error in the destructive color", () => {
-      render(
+    it("renders an error in the destructive color", async () => {
+      await render(
         <Radio.Group
           options={options}
           value="monthly"
@@ -260,8 +260,8 @@ describe("Radio", () => {
       );
     });
 
-    it("gaps its options with a spacing token", () => {
-      render(
+    it("gaps its options with a spacing token", async () => {
+      await render(
         <Radio.Group
           testID="group"
           options={options}

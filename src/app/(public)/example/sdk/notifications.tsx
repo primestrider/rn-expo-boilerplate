@@ -1,5 +1,6 @@
 import { PermissionStatus } from "expo";
 import * as Notifications from "expo-notifications";
+import { AndroidImportance } from "expo-notifications";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
@@ -48,7 +49,7 @@ export default function NotificationsExample() {
       if (Platform.OS === "android") {
         await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
           name: "Default",
-          importance: Notifications.AndroidImportance.HIGH,
+          importance: AndroidImportance.HIGH,
         });
       }
       setPermission((await Notifications.getPermissionsAsync()).status);

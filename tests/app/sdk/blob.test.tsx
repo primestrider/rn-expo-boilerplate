@@ -15,15 +15,15 @@ jest.mock("expo-router", () => ({
 jest.mock("expo-blob", () => ({ Blob: globalThis.Blob }));
 
 describe("Blob example", () => {
-  it("disables reading until a blob exists", () => {
-    render(<BlobExample />);
+  it("disables reading until a blob exists", async () => {
+    await render(<BlobExample />);
 
     expect(nativeButton("Text").props.disabled).toBe(true);
     expect(nativeButton("Slice").props.disabled).toBe(true);
   });
 
   it("creates a JSON blob sized in bytes, not characters", async () => {
-    render(<BlobExample />);
+    await render(<BlobExample />);
 
     await typeNative("Rp 50.000 ✓");
     await pressNative("Create");
@@ -34,7 +34,7 @@ describe("Blob example", () => {
   });
 
   it("reads the content back as text", async () => {
-    render(<BlobExample />);
+    await render(<BlobExample />);
 
     await typeNative("hello");
     await pressNative("Create");
@@ -44,7 +44,7 @@ describe("Blob example", () => {
   });
 
   it("slices the first eight bytes and shows them as hex", async () => {
-    render(<BlobExample />);
+    await render(<BlobExample />);
 
     await typeNative("ABCDEFGHIJ");
     await pressNative("Create");
@@ -55,7 +55,7 @@ describe("Blob example", () => {
   });
 
   it("combines blobs and strings into one", async () => {
-    render(<BlobExample />);
+    await render(<BlobExample />);
 
     await typeNative("ab");
     await pressNative("Create");

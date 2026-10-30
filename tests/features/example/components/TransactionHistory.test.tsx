@@ -31,7 +31,7 @@ jest.mock("expo-sqlite", () => ({
 }));
 
 async function renderHistory() {
-  render(<TransactionHistory />);
+  await render(<TransactionHistory />);
   await act(async () => {});
 }
 

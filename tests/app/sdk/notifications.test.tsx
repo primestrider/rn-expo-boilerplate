@@ -44,7 +44,7 @@ jest.mock("expo-notifications", () => ({
 const notifications = jest.mocked(Notifications);
 
 async function renderScreen() {
-  const view = render(<NotificationsExample />);
+  const view = await render(<NotificationsExample />);
   await act(async () => {});
   return view;
 }
@@ -126,7 +126,7 @@ describe("Notifications example", () => {
   it("restores the default handler when leaving the screen", async () => {
     const { unmount } = await renderScreen();
 
-    unmount();
+    await unmount();
 
     expect(notifications.setNotificationHandler).toHaveBeenLastCalledWith(null);
   });
@@ -134,10 +134,10 @@ describe("Notifications example", () => {
   it("logs notifications received and tapped", async () => {
     await renderScreen();
 
-    act(() =>
+    await act(() =>
       mockListeners.received?.({ request: { content: { title: "Top-up done" } } }),
     );
-    act(() =>
+    await act(() =>
       mockListeners.response?.({
         notification: { request: { content: { title: "Promo" } } },
       }),

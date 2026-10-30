@@ -7,6 +7,7 @@ import { PermissionGate } from "@/features/example/components";
 import { Spinner } from "@/shared/components";
 
 import { nativeButton, pressNative } from "../../../helpers/native-ui";
+import { getByComponent } from "../../../helpers/host";
 
 const permission = (
   granted: boolean,
@@ -18,8 +19,8 @@ const permission = (
   status: granted ? PermissionStatus.GRANTED : PermissionStatus.DENIED,
 });
 
-function renderGate(value: PermissionResponse | null, onRequest = jest.fn()) {
-  render(
+async function renderGate(value: PermissionResponse | null, onRequest = jest.fn()) {
+  await render(
     <PermissionGate
       permission={value}
       onRequest={onRequest}
@@ -32,21 +33,21 @@ function renderGate(value: PermissionResponse | null, onRequest = jest.fn()) {
 }
 
 describe("PermissionGate", () => {
-  it("shows a spinner while the permission is still loading", () => {
-    renderGate(null);
+  it("shows a spinner while the permission is still loading", async () => {
+    await renderGate(null);
 
-    expect(screen.UNSAFE_getByType(Spinner)).toBeTruthy();
+    expect(getByComponent(Spinner)).toBeTruthy();
     expect(screen.queryByText("Protected content")).toBeNull();
   });
 
-  it("renders its children once the permission is granted", () => {
-    renderGate(permission(true));
+  it("renders its children once the permission is granted", async () => {
+    await renderGate(permission(true));
 
     expect(screen.getByText("Protected content")).toBeOnTheScreen();
   });
 
   it("explains why and asks when the permission is not granted", async () => {
-    const onRequest = renderGate(permission(false));
+    const onRequest = await renderGate(permission(false));
 
     expect(screen.queryByText("Protected content")).toBeNull();
     expect(screen.getByText("Camera access is needed.")).toBeOnTheScreen();
@@ -60,7 +61,7 @@ describe("PermissionGate", () => {
     const openSettings = jest
       .spyOn(Linking, "openSettings")
       .mockResolvedValue(undefined);
-    const onRequest = renderGate(permission(false, false));
+    const onRequest = await renderGate(permission(false, false));
 
     expect(
       screen.getByText("Camera access is needed. Enable it in Settings to continue."),

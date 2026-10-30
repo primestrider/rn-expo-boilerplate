@@ -1,31 +1,33 @@
 import { act, render, screen } from "@testing-library/react-native";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { Spinner } from "@/shared/components/Spinner";
 import { useThemeStore } from "@/styles";
 import { colors, darkColors, spacing } from "@/styles/tokens";
+
+import { getByHostType, queryByHostType } from "../../helpers/host";
 
 function styleOf(testID: string) {
   return StyleSheet.flatten(screen.getByTestId(testID).props.style);
 }
 
 function indicator() {
-  return screen.UNSAFE_getByType(ActivityIndicator);
+  return getByHostType("ActivityIndicator");
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("Spinner", () => {
-  it("renders an activity indicator", () => {
-    render(<Spinner testID="spinner" />);
+  it("renders an activity indicator", async () => {
+    await render(<Spinner testID="spinner" />);
 
-    expect(screen.UNSAFE_queryByType(ActivityIndicator)).not.toBeNull();
+    expect(queryByHostType("ActivityIndicator")).not.toBeNull();
   });
 
-  it("centers its content", () => {
-    render(<Spinner testID="spinner" />);
+  it("centers its content", async () => {
+    await render(<Spinner testID="spinner" />);
 
     const style = styleOf("spinner");
 
@@ -37,8 +39,8 @@ describe("Spinner", () => {
     ["sm", "small", spacing[1]],
     ["md", "small", spacing[2]],
     ["lg", "large", spacing[3]],
-  ] as const)("maps size %s to its indicator and gap", (size, glyph, gap) => {
-    render(<Spinner size={size} testID="spinner" />);
+  ] as const)("maps size %s to its indicator and gap", async (size, glyph, gap) => {
+    await render(<Spinner size={size} testID="spinner" />);
 
     expect(indicator().props.size).toBe(glyph);
     expect(styleOf("spinner").gap).toBe(gap);
@@ -48,20 +50,20 @@ describe("Spinner", () => {
     ["primary", colors.primary],
     ["muted", colors.mutedForeground],
     ["inverse", colors.primaryForeground],
-  ] as const)("tints the %s variant from the theme", (variant, expected) => {
-    render(<Spinner variant={variant} />);
+  ] as const)("tints the %s variant from the theme", async (variant, expected) => {
+    await render(<Spinner variant={variant} />);
 
     expect(indicator().props.color).toBe(expected);
   });
 
-  it("renders a caption under the spinner", () => {
-    render(<Spinner label="Uploading" />);
+  it("renders a caption under the spinner", async () => {
+    await render(<Spinner label="Uploading" />);
 
     expect(screen.getByText("Uploading")).toBeOnTheScreen();
   });
 
-  it("announces itself as a progress indicator", () => {
-    render(<Spinner testID="spinner" />);
+  it("announces itself as a progress indicator", async () => {
+    await render(<Spinner testID="spinner" />);
 
     const element = screen.getByTestId("spinner");
 
@@ -69,22 +71,22 @@ describe("Spinner", () => {
     expect(element.props.accessibilityLabel).toBe("Loading");
   });
 
-  it("prefers the label as the accessibility label", () => {
-    render(<Spinner label="Uploading" testID="spinner" />);
+  it("prefers the label as the accessibility label", async () => {
+    await render(<Spinner label="Uploading" testID="spinner" />);
 
     expect(screen.getByTestId("spinner").props.accessibilityLabel).toBe(
       "Uploading",
     );
   });
 
-  it("lets the caller override the accessibility label", () => {
-    render(<Spinner label="Uploading" accessibilityLabel="Busy" testID="s" />);
+  it("lets the caller override the accessibility label", async () => {
+    await render(<Spinner label="Uploading" accessibilityLabel="Busy" testID="s" />);
 
     expect(screen.getByTestId("s").props.accessibilityLabel).toBe("Busy");
   });
 
-  it("stays inline unless asked to overlay", () => {
-    render(<Spinner testID="spinner" />);
+  it("stays inline unless asked to overlay", async () => {
+    await render(<Spinner testID="spinner" />);
 
     const style = styleOf("spinner");
 
@@ -92,8 +94,8 @@ describe("Spinner", () => {
     expect(style.backgroundColor).toBeUndefined();
   });
 
-  it("fills its parent with a scrim when overlaying", () => {
-    render(<Spinner overlay testID="spinner" />);
+  it("fills its parent with a scrim when overlaying", async () => {
+    await render(<Spinner overlay testID="spinner" />);
 
     const style = styleOf("spinner");
 
@@ -104,13 +106,13 @@ describe("Spinner", () => {
     expect(style.backgroundColor).toBe(`${colors.background}CC`);
   });
 
-  it("follows the active color scheme", () => {
-    render(<Spinner overlay testID="spinner" />);
+  it("follows the active color scheme", async () => {
+    await render(<Spinner overlay testID="spinner" />);
 
     expect(indicator().props.color).toBe(colors.primary);
     expect(styleOf("spinner").backgroundColor).toBe(`${colors.background}CC`);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(indicator().props.color).toBe(darkColors.primary);
     expect(styleOf("spinner").backgroundColor).toBe(
@@ -118,14 +120,14 @@ describe("Spinner", () => {
     );
   });
 
-  it("lets an external style win", () => {
-    render(<Spinner overlay style={{ backgroundColor: "red" }} testID="s" />);
+  it("lets an external style win", async () => {
+    await render(<Spinner overlay style={{ backgroundColor: "red" }} testID="s" />);
 
     expect(styleOf("s").backgroundColor).toBe("red");
   });
 
-  it("forwards props to the underlying View", () => {
-    render(<Spinner testID="spinner" pointerEvents="none" />);
+  it("forwards props to the underlying View", async () => {
+    await render(<Spinner testID="spinner" pointerEvents="none" />);
 
     expect(screen.getByTestId("spinner").props.pointerEvents).toBe("none");
   });

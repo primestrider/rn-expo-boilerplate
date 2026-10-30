@@ -22,9 +22,9 @@ const tokens: AuthTokens = {
   refreshToken: "refresh-1",
 };
 
-beforeEach(() => {
+beforeEach(async () => {
   mmkvStorage.clearAll();
-  act(() =>
+  await act(() =>
     useSessionStore.setState({ user: null, tokens: null, signOutReason: null }),
   );
 });
@@ -35,22 +35,22 @@ describe("useSessionStore", () => {
     expect(useSessionStore.getState().tokens).toBeNull();
   });
 
-  it("holds the tokens itself rather than a side channel", () => {
-    act(() => useSessionStore.getState().signIn({ user, tokens }));
+  it("holds the tokens itself rather than a side channel", async () => {
+    await act(() => useSessionStore.getState().signIn({ user, tokens }));
 
     expect(useSessionStore.getState().tokens).toEqual(tokens);
     expect(selectIsAuthenticated(useSessionStore.getState())).toBe(true);
   });
 
-  it("treats the tokens, not the profile, as what makes a session", () => {
-    act(() => useSessionStore.setState({ user, tokens: null }));
+  it("treats the tokens, not the profile, as what makes a session", async () => {
+    await act(() => useSessionStore.setState({ user, tokens: null }));
 
     expect(selectIsAuthenticated(useSessionStore.getState())).toBe(false);
   });
 
-  it("replaces only the tokens on refresh", () => {
-    act(() => useSessionStore.getState().signIn({ user, tokens }));
-    act(() =>
+  it("replaces only the tokens on refresh", async () => {
+    await act(() => useSessionStore.getState().signIn({ user, tokens }));
+    await act(() =>
       useSessionStore.getState().setTokens({
         accessToken: "access-2",
         refreshToken: "refresh-2",
@@ -61,31 +61,31 @@ describe("useSessionStore", () => {
     expect(useSessionStore.getState().user).toEqual(user);
   });
 
-  it("records why the session ended", () => {
-    act(() => useSessionStore.getState().signIn({ user, tokens }));
-    act(() => useSessionStore.getState().signOut("expired"));
+  it("records why the session ended", async () => {
+    await act(() => useSessionStore.getState().signIn({ user, tokens }));
+    await act(() => useSessionStore.getState().signOut("expired"));
 
     expect(useSessionStore.getState().user).toBeNull();
     expect(useSessionStore.getState().tokens).toBeNull();
     expect(useSessionStore.getState().signOutReason).toBe("expired");
   });
 
-  it("clears the reason once it has been shown", () => {
-    act(() => useSessionStore.getState().signOut("expired"));
-    act(() => useSessionStore.getState().clearSignOutReason());
+  it("clears the reason once it has been shown", async () => {
+    await act(() => useSessionStore.getState().signOut("expired"));
+    await act(() => useSessionStore.getState().clearSignOutReason());
 
     expect(useSessionStore.getState().signOutReason).toBeNull();
   });
 
-  it("drops a stale reason when a new session starts", () => {
-    act(() => useSessionStore.getState().signOut("expired"));
-    act(() => useSessionStore.getState().signIn({ user, tokens }));
+  it("drops a stale reason when a new session starts", async () => {
+    await act(() => useSessionStore.getState().signOut("expired"));
+    await act(() => useSessionStore.getState().signIn({ user, tokens }));
 
     expect(useSessionStore.getState().signOutReason).toBeNull();
   });
 
-  it("persists the session so a restart stays signed in", () => {
-    act(() => useSessionStore.getState().signIn({ user, tokens }));
+  it("persists the session so a restart stays signed in", async () => {
+    await act(() => useSessionStore.getState().signIn({ user, tokens }));
 
     const persisted = mmkvStorage.getString("auth.session");
 
@@ -93,8 +93,8 @@ describe("useSessionStore", () => {
     expect(persisted).toContain("access-1");
   });
 
-  it("never persists the sign-out reason, so a restart raises no toast", () => {
-    act(() => useSessionStore.getState().signOut("expired"));
+  it("never persists the sign-out reason, so a restart raises no toast", async () => {
+    await act(() => useSessionStore.getState().signOut("expired"));
 
     expect(mmkvStorage.getString("auth.session")).not.toContain("expired");
   });

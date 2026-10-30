@@ -5,8 +5,8 @@ import { InfoRows } from "@/features/example/components";
 import { infoValue, nativeTexts } from "../../../helpers/native-ui";
 
 describe("InfoRows", () => {
-  it("renders each label next to its value", () => {
-    render(
+  it("renders each label next to its value", async () => {
+    await render(
       <InfoRows
         rows={[
           ["City", "Jakarta"],
@@ -19,8 +19,8 @@ describe("InfoRows", () => {
     expect(infoValue("Accuracy")).toBe("12");
   });
 
-  it("shows an em dash for missing values", () => {
-    render(
+  it("shows an em dash for missing values", async () => {
+    await render(
       <InfoRows
         rows={[
           ["Street", null],
@@ -35,8 +35,8 @@ describe("InfoRows", () => {
     expect(infoValue("Postal code")).toBe("—");
   });
 
-  it("keeps rows that share a label", () => {
-    render(
+  it("keeps rows that share a label", async () => {
+    await render(
       <InfoRows
         rows={[
           ["report.pdf", "1.0 KB"],

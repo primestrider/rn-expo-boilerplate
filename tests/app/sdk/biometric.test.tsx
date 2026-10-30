@@ -13,6 +13,7 @@ import {
   toggleNative,
   typeNative,
 } from "../../helpers/native-ui";
+import { getByComponent } from "../../helpers/host";
 
 jest.mock("expo-router", () => ({
   Stack: { Screen: () => null },
@@ -51,7 +52,7 @@ const keychain = (jest.requireMock("expo-secure-store") as { mockStore: Map<stri
 const PIN_KEY = "example.pin";
 
 async function renderScreen() {
-  render(<BiometricExample />);
+  await render(<BiometricExample />);
   // Let the capability checks on mount resolve.
   await act(async () => {});
 }
@@ -121,7 +122,7 @@ describe("Biometric & Secure Store example", () => {
     expect(store.setItemAsync).toHaveBeenCalledWith(PIN_KEY, "123456");
     expect(screen.getByText("PIN saved to secure storage.")).toBeOnTheScreen();
     // The typed PIN does not linger in the field.
-    expect(screen.UNSAFE_getByType(TextInput).props.value.value).toBe("");
+    expect(getByComponent(TextInput).props.value.value).toBe("");
     expect(nativeButton("Reveal").props.disabled).toBe(false);
   });
 

@@ -13,31 +13,31 @@ function styleOfText(content: string) {
   return StyleSheet.flatten(screen.getByText(content).props.style);
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("EmptyState", () => {
-  it("renders the title", () => {
-    render(<EmptyState title="No messages yet" />);
+  it("renders the title", async () => {
+    await render(<EmptyState title="No messages yet" />);
 
     expect(screen.getByText("No messages yet")).toBeOnTheScreen();
   });
 
-  it("renders the title at the title size", () => {
-    render(<EmptyState title="No messages yet" />);
+  it("renders the title at the title size", async () => {
+    await render(<EmptyState title="No messages yet" />);
 
     expect(styleOfText("No messages yet").fontSize).toBe(fontSize.lg);
   });
 
-  it("omits the description when there is none", () => {
-    render(<EmptyState title="No messages yet" />);
+  it("omits the description when there is none", async () => {
+    await render(<EmptyState title="No messages yet" />);
 
     expect(screen.queryByText("Nothing here")).toBeNull();
   });
 
-  it("renders a muted, centered description", () => {
-    render(
+  it("renders a muted, centered description", async () => {
+    await render(
       <EmptyState title="No messages yet" description="Start a conversation." />,
     );
 
@@ -47,24 +47,24 @@ describe("EmptyState", () => {
     expect(style.textAlign).toBe("center");
   });
 
-  it("caps the description at a readable measure", () => {
-    render(
+  it("caps the description at a readable measure", async () => {
+    await render(
       <EmptyState title="No messages yet" description="Start a conversation." />,
     );
 
     expect(styleOfText("Start a conversation.").maxWidth).toBe(spacing[80]);
   });
 
-  it("renders the icon slot", () => {
-    render(<EmptyState icon={<Text testID="icon">*</Text>} title="Empty" />);
+  it("renders the icon slot", async () => {
+    await render(<EmptyState icon={<Text testID="icon">*</Text>} title="Empty" />);
 
     expect(screen.getByTestId("icon")).toBeOnTheScreen();
   });
 
-  it("renders the action slot and keeps it interactive", () => {
+  it("renders the action slot and keeps it interactive", async () => {
     const onPress = jest.fn();
 
-    render(
+    await render(
       <EmptyState
         title="Empty"
         action={
@@ -75,13 +75,13 @@ describe("EmptyState", () => {
       />,
     );
 
-    fireEvent.press(screen.getByTestId("action"));
+    await fireEvent.press(screen.getByTestId("action"));
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it("centers its column with generous vertical padding", () => {
-    render(<EmptyState title="Empty" testID="empty" />);
+  it("centers its column with generous vertical padding", async () => {
+    await render(<EmptyState title="Empty" testID="empty" />);
 
     const style = styleOf("empty");
 
@@ -92,32 +92,32 @@ describe("EmptyState", () => {
     expect(style.gap).toBe(spacing[3]);
   });
 
-  it("rounds the block at the 2xl radius", () => {
-    render(<EmptyState title="Empty" testID="empty" />);
+  it("rounds the block at the 2xl radius", async () => {
+    await render(<EmptyState title="Empty" testID="empty" />);
 
     expect(styleOf("empty").borderRadius).toBe(radii["2xl"]);
   });
 
-  it("follows the active color scheme", () => {
-    render(<EmptyState title="Empty" description="Nothing here" />);
+  it("follows the active color scheme", async () => {
+    await render(<EmptyState title="Empty" description="Nothing here" />);
 
     expect(styleOfText("Empty").color).toBe(colors.foreground);
     expect(styleOfText("Nothing here").color).toBe(colors.muted);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(styleOfText("Empty").color).toBe(darkColors.foreground);
     expect(styleOfText("Nothing here").color).toBe(darkColors.muted);
   });
 
-  it("lets an external style win", () => {
-    render(<EmptyState title="Empty" style={{ paddingVertical: 0 }} testID="e" />);
+  it("lets an external style win", async () => {
+    await render(<EmptyState title="Empty" style={{ paddingVertical: 0 }} testID="e" />);
 
     expect(styleOf("e").paddingVertical).toBe(0);
   });
 
-  it("forwards props to the underlying View", () => {
-    render(<EmptyState title="Empty" testID="empty" pointerEvents="box-none" />);
+  it("forwards props to the underlying View", async () => {
+    await render(<EmptyState title="Empty" testID="empty" pointerEvents="box-none" />);
 
     expect(screen.getByTestId("empty").props.pointerEvents).toBe("box-none");
   });

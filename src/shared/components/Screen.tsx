@@ -108,6 +108,7 @@ export function Screen({
 
   return (
     <KeyboardAvoidingView
+      testID="screen-keyboard-avoiding"
       style={view(styles.flex1)}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >

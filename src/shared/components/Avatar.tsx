@@ -1,6 +1,6 @@
 import { Children, useState, type ReactNode } from "react";
-import { View, type ImageSourcePropType, type ViewProps } from "react-native";
-import { Image } from "expo-image";
+import { View, type ViewProps } from "react-native";
+import { Image, type ImageProps } from "expo-image";
 
 import { useStyles, useTheme, view } from "@/styles";
 import { spacing, type ThemeColors } from "@/styles/tokens";
@@ -14,7 +14,8 @@ type AvatarShape = "circle" | "rounded";
 type AvatarStatus = "online" | "offline" | "busy" | "away";
 
 export type AvatarProps = ViewProps & {
-  source?: ImageSourcePropType | string;
+  /** Anything expo-image accepts — a URL string, `require()`d asset, or source object. */
+  source?: ImageProps["source"];
   /** Falls back to initials derived from this name. */
   name?: string;
   size?: AvatarSize;
@@ -76,7 +77,7 @@ export function Avatar({
     >
       {showImage ? (
         <Image
-          source={typeof source === "string" ? { uri: source } : source}
+          source={source}
           onError={() => setFailed(true)}
           contentFit="cover"
           style={[

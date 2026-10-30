@@ -41,7 +41,7 @@ beforeEach(() => {
 
 describe("Share & Print example", () => {
   it("renders the receipt to a PDF and shares it as a PDF", async () => {
-    render(<ShareExample />);
+    await render(<ShareExample />);
 
     await pressNative("Share PDF");
 
@@ -57,7 +57,7 @@ describe("Share & Print example", () => {
   });
 
   it("uses the chosen merchant and keeps only the digits of the amount", async () => {
-    render(<ShareExample />);
+    await render(<ShareExample />);
 
     await pickNative("PLN Token");
     await typeNative("Rp 75.000");
@@ -69,7 +69,7 @@ describe("Share & Print example", () => {
 
   it("explains when sharing is unavailable, without rendering a file", async () => {
     sharing.isAvailableAsync.mockResolvedValue(false);
-    render(<ShareExample />);
+    await render(<ShareExample />);
 
     await pressNative("Share PDF");
 
@@ -80,7 +80,7 @@ describe("Share & Print example", () => {
   });
 
   it("sends the same receipt to the system print dialog", async () => {
-    render(<ShareExample />);
+    await render(<ShareExample />);
 
     await pressNative("Print");
 
@@ -90,7 +90,7 @@ describe("Share & Print example", () => {
 
   it("shows a print failure instead of throwing", async () => {
     print.printAsync.mockRejectedValue(new Error("Printing was cancelled"));
-    render(<ShareExample />);
+    await render(<ShareExample />);
 
     await pressNative("Print");
 

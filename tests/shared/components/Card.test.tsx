@@ -9,13 +9,13 @@ function styleOf(testID: string) {
   return StyleSheet.flatten(screen.getByTestId(testID).props.style);
 }
 
-beforeEach(() => {
-  act(() => useThemeStore.getState().setMode("light"));
+beforeEach(async () => {
+  await act(() => useThemeStore.getState().setMode("light"));
 });
 
 describe("Card", () => {
-  it("renders its children", () => {
-    render(
+  it("renders its children", async () => {
+    await render(
       <Card>
         <Text>Body</Text>
       </Card>,
@@ -24,8 +24,8 @@ describe("Card", () => {
     expect(screen.getByText("Body")).toBeOnTheScreen();
   });
 
-  it("raises the elevated variant off the card surface", () => {
-    render(<Card testID="card" />);
+  it("raises the elevated variant off the card surface", async () => {
+    await render(<Card testID="card" />);
 
     const style = styleOf("card");
 
@@ -34,8 +34,8 @@ describe("Card", () => {
     expect(style.borderWidth).toBe(0);
   });
 
-  it("outlines the outlined variant instead of shadowing it", () => {
-    render(<Card variant="outlined" testID="card" />);
+  it("outlines the outlined variant instead of shadowing it", async () => {
+    await render(<Card variant="outlined" testID="card" />);
 
     const style = styleOf("card");
 
@@ -45,8 +45,8 @@ describe("Card", () => {
     expect(style.elevation).toBeFalsy();
   });
 
-  it("fills the filled variant with the secondary surface", () => {
-    render(<Card variant="filled" testID="card" />);
+  it("fills the filled variant with the secondary surface", async () => {
+    await render(<Card variant="filled" testID="card" />);
 
     const style = styleOf("card");
 
@@ -55,26 +55,26 @@ describe("Card", () => {
     expect(style.elevation).toBeFalsy();
   });
 
-  it("rounds every variant to the 2xl radius", () => {
-    render(<Card testID="card" />);
+  it("rounds every variant to the 2xl radius", async () => {
+    await render(<Card testID="card" />);
 
     expect(styleOf("card").borderRadius).toBe(radii["2xl"]);
   });
 
-  it("never clips, so the elevated shadow survives on Android", () => {
-    render(<Card testID="card" />);
+  it("never clips, so the elevated shadow survives on Android", async () => {
+    await render(<Card testID="card" />);
 
     expect(styleOf("card").overflow).toBeUndefined();
   });
 
-  it("applies the card gutter by default", () => {
-    render(<Card testID="card" />);
+  it("applies the card gutter by default", async () => {
+    await render(<Card testID="card" />);
 
     expect(styleOf("card").padding).toBe(spacing[4]);
   });
 
-  it("drops the gutter and the gap when padded is off", () => {
-    render(<Card padded={false} testID="card" />);
+  it("drops the gutter and the gap when padded is off", async () => {
+    await render(<Card padded={false} testID="card" />);
 
     const style = styleOf("card");
 
@@ -82,23 +82,23 @@ describe("Card", () => {
     expect(style.gap).toBeUndefined();
   });
 
-  it("is not a button without onPress", () => {
-    render(<Card testID="card" />);
+  it("is not a button without onPress", async () => {
+    await render(<Card testID="card" />);
 
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  it("becomes a button that fires when given onPress", () => {
+  it("becomes a button that fires when given onPress", async () => {
     const onPress = jest.fn();
-    render(<Card onPress={onPress} testID="card" />);
+    await render(<Card onPress={onPress} testID="card" />);
 
-    fireEvent.press(screen.getByRole("button"));
+    await fireEvent.press(screen.getByRole("button"));
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps the variant styling when pressable", () => {
-    render(<Card variant="outlined" onPress={jest.fn()} testID="card" />);
+  it("keeps the variant styling when pressable", async () => {
+    await render(<Card variant="outlined" onPress={jest.fn()} testID="card" />);
 
     const style = styleOf("card");
 
@@ -106,70 +106,70 @@ describe("Card", () => {
     expect(style.borderColor).toBe(colors.border);
   });
 
-  it("follows the active color scheme", () => {
-    render(<Card testID="card" />);
+  it("follows the active color scheme", async () => {
+    await render(<Card testID="card" />);
 
     expect(styleOf("card").backgroundColor).toBe(colors.card);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(styleOf("card").backgroundColor).toBe(darkColors.card);
   });
 
-  it("follows the active color scheme on the outlined border", () => {
-    render(<Card variant="outlined" testID="card" />);
+  it("follows the active color scheme on the outlined border", async () => {
+    await render(<Card variant="outlined" testID="card" />);
 
     expect(styleOf("card").borderColor).toBe(colors.border);
 
-    act(() => useThemeStore.getState().setMode("dark"));
+    await act(() => useThemeStore.getState().setMode("dark"));
 
     expect(styleOf("card").borderColor).toBe(darkColors.border);
   });
 
-  it("lets an external style win over the variant", () => {
-    render(<Card style={{ backgroundColor: "#123456" }} testID="card" />);
+  it("lets an external style win over the variant", async () => {
+    await render(<Card style={{ backgroundColor: "#123456" }} testID="card" />);
 
     expect(styleOf("card").backgroundColor).toBe("#123456");
   });
 
-  it("forwards props to the underlying view", () => {
-    render(<Card accessibilityLabel="Summary" testID="card" />);
+  it("forwards props to the underlying view", async () => {
+    await render(<Card accessibilityLabel="Summary" testID="card" />);
 
     expect(screen.getByLabelText("Summary")).toBeOnTheScreen();
   });
 });
 
 describe("Card.Header", () => {
-  it("renders the title and subtitle", () => {
-    render(<Card.Header title="Storage" subtitle="12.4 GB of 50 GB" />);
+  it("renders the title and subtitle", async () => {
+    await render(<Card.Header title="Storage" subtitle="12.4 GB of 50 GB" />);
 
     expect(screen.getByText("Storage")).toBeOnTheScreen();
     expect(screen.getByText("12.4 GB of 50 GB")).toBeOnTheScreen();
   });
 
-  it("mutes the subtitle", () => {
-    render(<Card.Header title="Storage" subtitle="Almost full" />);
+  it("mutes the subtitle", async () => {
+    await render(<Card.Header title="Storage" subtitle="Almost full" />);
 
     expect(
       StyleSheet.flatten(screen.getByText("Almost full").props.style).color,
     ).toBe(colors.muted);
   });
 
-  it("renders the right slot alongside the title", () => {
-    render(<Card.Header title="Team" right={<Text>2</Text>} />);
+  it("renders the right slot alongside the title", async () => {
+    await render(<Card.Header title="Team" right={<Text>2</Text>} />);
 
     expect(screen.getByText("Team")).toBeOnTheScreen();
     expect(screen.getByText("2")).toBeOnTheScreen();
   });
 
-  it("truncates a long title rather than pushing the right slot away", () => {
-    render(<Card.Header title="A very long header title" />);
+  it("truncates a long title rather than pushing the right slot away", async () => {
+    await render(<Card.Header title="A very long header title" />);
 
     expect(screen.getByText("A very long header title").props.numberOfLines).toBe(1);
   });
 
-  it("renders children instead of the title pair when given", () => {
-    render(
+  it("renders children instead of the title pair when given", async () => {
+    await render(
       <Card.Header title="Ignored">
         <Text>Custom</Text>
       </Card.Header>,
@@ -181,8 +181,8 @@ describe("Card.Header", () => {
 });
 
 describe("Card.Body", () => {
-  it("renders its children", () => {
-    render(
+  it("renders its children", async () => {
+    await render(
       <Card.Body>
         <Text>Everything is up to date</Text>
       </Card.Body>,
@@ -193,8 +193,8 @@ describe("Card.Body", () => {
 });
 
 describe("Card.Footer", () => {
-  it("lays its actions out in a row aligned to the end", () => {
-    render(
+  it("lays its actions out in a row aligned to the end", async () => {
+    await render(
       <Card.Footer testID="footer">
         <Text>Save</Text>
       </Card.Footer>,
@@ -209,8 +209,8 @@ describe("Card.Footer", () => {
 });
 
 describe("Card composition", () => {
-  it("does not double the gutter when sections are nested inside", () => {
-    render(
+  it("does not double the gutter when sections are nested inside", async () => {
+    await render(
       <Card testID="card">
         <Card.Header title="Storage" testID="header" />
         <Card.Body testID="body" />

@@ -33,10 +33,10 @@ function adapterWith(refresh: AuthAdapter["refresh"]): AuthAdapter {
   return { signIn: jest.fn(), refresh };
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   mmkvStorage.clearAll();
   resetAuthAdapter();
-  act(() =>
+  await act(() =>
     useSessionStore.setState({ user, tokens, signOutReason: null }),
   );
 });
@@ -104,7 +104,7 @@ describe("ensureFreshToken", () => {
   it("never calls the backend when no refresh token is stored", async () => {
     const refresh = jest.fn();
     registerAuthAdapter(adapterWith(refresh));
-    act(() => useSessionStore.setState({ tokens: null }));
+    await act(() => useSessionStore.setState({ tokens: null }));
 
     await expect(ensureFreshToken()).resolves.toBeNull();
     expect(refresh).not.toHaveBeenCalled();
